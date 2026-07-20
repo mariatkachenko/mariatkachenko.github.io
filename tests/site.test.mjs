@@ -73,3 +73,17 @@ test('setLanguage updates copy, document language, controls, and persistence', a
   delete globalThis.document;
   delete globalThis.localStorage;
 });
+
+test('portfolio is branded for Maria Tkachenko in both languages', async () => {
+  const [html, script, readme] = await Promise.all([
+    readFile(new URL('index.html', root), 'utf8'),
+    readFile(new URL('script.js', root), 'utf8'),
+    readFile(new URL('README.md', root), 'utf8')
+  ]);
+  const content = `${html}\n${script}\n${readme}`;
+  assert.match(content, /Мария Ткаченко/);
+  assert.match(content, /Maria Tkachenko/);
+  assert.doesNotMatch(content, /Александра|Alexandra|Волкова|Volkova/);
+  assert.match(html, />MT<span>®<\/span>/);
+  assert.match(html, /<div class="portrait-shape">MT<\/div>/);
+});

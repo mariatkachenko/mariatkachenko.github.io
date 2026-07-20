@@ -1,4 +1,4 @@
-# Alexandra Volkova — Product Designer Portfolio
+# Maria Tkachenko — Product Designer Portfolio
 
 Dependency-free bilingual one-page portfolio built with HTML, CSS, and vanilla JavaScript.
 
