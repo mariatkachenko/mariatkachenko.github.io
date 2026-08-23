@@ -216,12 +216,15 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelector('.maria-scroll-stop')).not.toBeInTheDocument()
   })
 
-  it('keeps the works scene live while the native route transition is running', async () => {
+  it('starts one clean works scene when the native route transition is ready', async () => {
+    vi.useFakeTimers()
+    let readyTransition!: () => void
     let finishTransition!: () => void
+    const ready = new Promise<void>((resolve) => { readyTransition = resolve })
     const finished = new Promise<void>((resolve) => { finishTransition = resolve })
     const startViewTransition = vi.fn((update: () => void | Promise<void>) => {
       void update()
-      return { finished }
+      return { ready, finished }
     })
     Object.defineProperty(document, 'startViewTransition', {
       value: startViewTransition,
@@ -236,6 +239,18 @@ describe('Maria Tkachenko portfolio', () => {
       expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entering')
       expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entry-active')
       expect(container.querySelector('.mts-flyout-overlay')).toBeInTheDocument()
+      expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
+
+      await act(async () => {
+        readyTransition()
+        await ready
+      })
+      expect(container.querySelector('.maria-works-page')).toHaveClass('is-scene-ready')
+      expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entry-active')
+      expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
+
+      act(() => vi.advanceTimersByTime(600))
+      expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entering')
       expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
 
       finishTransition()
@@ -246,6 +261,7 @@ describe('Maria Tkachenko portfolio', () => {
         writable: true,
         configurable: true,
       })
+      vi.useRealTimers()
     }
   })
 
@@ -266,7 +282,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(cover.querySelector('.mts-project-card__butterfly-flyout')).toBeNull()
     expect(container.querySelector('.mts-flyout-overlay__logo')).toHaveAttribute('src', '/assets/maria/mts-pay-logo-flyout.png')
     expect(container.querySelector('.mts-flyout-overlay__butterfly')).toHaveAttribute('src', '/assets/maria/mts-pay-butterfly-flyout.png')
-    expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
+    expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
     expect(Array.from(cover.children).map((node) => node.className)).toEqual([
       'mts-project-card__media',
       'mts-project-card__footer',

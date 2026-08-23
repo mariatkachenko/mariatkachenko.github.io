@@ -40,7 +40,9 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
 ::view-transition-group(works-hand){animation:none;z-index:2}
 ::view-transition-group(works-carousel){z-index:3}
 ::view-transition-old(works-hand){animation:none;opacity:0}
-::view-transition-new(works-hand){transform-origin:100% 54%;animation:maria-works-hand-enter .52s cubic-bezier(.2,.8,.2,1) both}
+::view-transition-new(works-hand){animation:none;opacity:0}
+html[data-transition-route="works"]::view-transition-new(root){display:none}
+html[data-transition-route="works"]::view-transition-new(works-carousel){display:none}
 ::view-transition-group(fixed-header),::view-transition-group(fixed-controls){animation:none;z-index:1000}
 ::view-transition-old(fixed-header),::view-transition-old(fixed-controls){animation:none;mix-blend-mode:normal}
 ::view-transition-new(fixed-header),::view-transition-new(fixed-controls){display:none}
@@ -127,7 +129,8 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
 .maria-works-hand__image--alternate{position:absolute;left:0;top:-5px;bottom:auto;opacity:0}
 .maria-works-hand.is-alternate .maria-works-hand__image--primary{opacity:0}
 .maria-works-hand.is-alternate .maria-works-hand__image--alternate{opacity:1}
-@supports(view-transition-name:root){.maria-works-hand{animation:none!important}}
+.maria-works-page:not(.is-scene-ready) .maria-works-hand{animation:none!important;opacity:0}
+.maria-works-page.is-scene-ready .maria-works-hand{opacity:1;animation:maria-works-hand-enter .52s cubic-bezier(.2,.8,.2,1) both!important}
 .maria-works-carousel{position:absolute;z-index:3;left:0;right:0;top:16vh;height:58vh;overflow:visible;perspective:1800px;touch-action:none;overscroll-behavior-x:contain;cursor:grab;user-select:none;-webkit-user-select:none;view-transition-name:works-carousel}
 .maria-works-carousel img{pointer-events:none;-webkit-user-drag:none;user-drag:none}
 .maria-works-carousel.is-dragging{cursor:grabbing}
@@ -140,7 +143,8 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
 .maria-works-deck-card.has-rarible{--works-card-back:linear-gradient(138deg,#211347 0%,#43206f 38%,#67278d 72%,#8e6711 100%)}
 .maria-works-deck-card.has-aliexpress{--works-card-back:linear-gradient(138deg,#fffaf6 0%,#ffe8d8 42%,#fff2eb 72%,#ffd0bd 100%)}
 .maria-works-deck-card.has-mts-game{--works-card-back:linear-gradient(138deg,#08133d 0%,#1b2c70 38%,#4e1b74 72%,#8f223c 100%)}
-.maria-works-carousel.is-entering .maria-works-deck-card{animation:maria-works-card-enter .52s cubic-bezier(.2,.82,.24,1) both;animation-delay:calc(var(--works-entry-index) * 38ms)}
+.maria-works-carousel.is-entering:not(.is-entry-active) .maria-works-deck-card{transform:translate3d(calc(-50% + var(--works-entry-x)),calc(-50% + var(--works-entry-lift-y)),0) rotateY(var(--works-entry-rotate-y)) scale(.94)}
+.maria-works-carousel.is-entering.is-entry-active .maria-works-deck-card{animation:maria-works-card-enter .52s cubic-bezier(.2,.82,.24,1) both;animation-delay:calc(var(--works-entry-index) * 38ms)}
 @keyframes maria-works-card-enter{from{transform:translate3d(calc(-50% + var(--works-entry-x)),calc(-50% + var(--works-entry-lift-y)),0) rotateY(var(--works-entry-rotate-y)) scale(.94)}to{transform:translate3d(calc(-50% + var(--works-row-x)),-50%,0) rotateY(var(--works-row-rotate-y)) scale(var(--works-row-scale))}}
 .mts-project-card{position:relative;box-sizing:border-box;width:100%;height:100%;container-type:inline-size;overflow:visible;padding:0;border:0;border-radius:inherit;background:transparent;box-shadow:none;color:#181217;text-align:left;cursor:pointer}
 .mts-project-card::before,.works-project-card::before{content:"";position:absolute;z-index:1;inset:0 0 25%;height:auto;border-radius:11.111cqi 11.111cqi 0 0;background:var(--works-card-back);box-shadow:0 13px 28px rgba(48,54,64,.14);pointer-events:none}
@@ -201,9 +205,9 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
 .rarible-project-card{position:relative;box-sizing:border-box;width:100%;height:100%;container-type:inline-size;overflow:visible;border:0;border-radius:inherit;background:transparent;color:#181217;text-align:left;cursor:pointer}
 .rarible-project-card__surface{position:absolute;z-index:1;inset:0 0 25%;border-radius:11.111cqi 11.111cqi 0 0;background:var(--works-card-back);box-shadow:0 13px 28px rgba(48,54,64,.14);pointer-events:none}
 .rarible-project-card__artwork{position:absolute;z-index:2;inset:0 0 25%;overflow:visible;clip-path:inset(-100vh -100vw 0 -100vw);opacity:0;transition:opacity .28s ease;pointer-events:none}
-.rarible-project-card__cover{position:absolute;z-index:5;left:50%;top:-22%;width:92%;max-width:none;height:auto;display:block;transform:translate3d(-50%,7%,0) scale(.68);transform-origin:50% 72%;transition:transform .72s cubic-bezier(.18,.76,.2,1);pointer-events:none}
-.rarible-project-card__ape{position:absolute;z-index:6;left:-11%;top:7%;width:47%;max-width:none;height:auto;display:block;opacity:0;transform:translate3d(72%,10%,0) rotate(0deg) scale(.68);transform-origin:72% 72%;pointer-events:none}
-.rarible-project-card__logo{position:absolute;z-index:6;right:-7%;top:32%;width:45%;max-width:none;height:auto;display:block;opacity:0;transform:translate3d(-72%,10%,0) rotate(0deg) scale(.68);transform-origin:28% 72%;pointer-events:none}
+.rarible-project-card__cover{position:absolute;z-index:5;left:50%;top:-40%;width:88%;max-width:none;height:auto;display:block;transform:translate3d(-50%,7%,0) scale(.68);transform-origin:50% 72%;transition:transform .72s cubic-bezier(.18,.76,.2,1);pointer-events:none}
+.rarible-project-card__ape{position:absolute;z-index:6;left:-7%;top:13%;width:47%;max-width:none;height:auto;display:block;opacity:0;transform:translate3d(72%,10%,0) rotate(0deg) scale(.68);transform-origin:72% 72%;pointer-events:none}
+.rarible-project-card__logo{position:absolute;z-index:6;right:-5%;top:42%;width:42%;max-width:none;height:auto;display:block;opacity:0;transform:translate3d(-72%,10%,0) rotate(0deg) scale(.68);transform-origin:28% 72%;pointer-events:none}
 .rarible-project-card__footer{position:absolute;z-index:20;left:0;right:0;bottom:0;height:25%;box-sizing:border-box;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:clamp(8px,.75vw,13px);padding:2.4cqi 5.5cqi 3.1cqi;background:#fffafb;border-radius:0 0 11.111cqi 11.111cqi;transform:translateZ(.2px);backface-visibility:hidden}
 .rarible-project-card__file-icon{display:grid;place-items:center;width:clamp(24px,2.25vw,34px);aspect-ratio:1;border-radius:5px;background:#168cff;color:#fff}.rarible-project-card__file-icon svg{width:70%;height:70%;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .rarible-project-card__copy{min-width:0;display:flex;flex-direction:column;gap:clamp(2px,.35vw,6px)}
@@ -211,7 +215,7 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
 .rarible-project-card__meta{overflow:hidden;color:rgba(38,27,34,.58);font-size:clamp(10px,.8vw,14px);line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
 .maria-works-deck-card.has-rarible.is-centered{z-index:112}
 .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__artwork{opacity:1}
-.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__cover{transform:translate3d(-50%,3%,0) scale(1.02)}
+.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__cover{transform:translate3d(-50%,3%,0) scale(.96)}
 .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__ape{animation:rarible-ape-enter .84s cubic-bezier(.16,.76,.2,1) both}
 .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__logo{animation:rarible-logo-enter .84s cubic-bezier(.16,.76,.2,1) .04s both}
 @keyframes rarible-ape-enter{0%{opacity:0;transform:translate3d(72%,10%,0) rotate(0deg) scale(.68)}22%{opacity:1;transform:translate3d(50%,8%,0) rotate(-3deg) scale(.78)}72%{opacity:1;transform:translate3d(-1%,2%,0) rotate(-14deg) scale(1.03)}100%{opacity:1;transform:translate3d(2%,5%,0) rotate(-11deg) scale(.96)}}
@@ -252,14 +256,14 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
 @keyframes works-grafico-to-viewer{0%{opacity:0;filter:blur(0);transform:translate3d(-50%,-50%,0) rotate(-2deg) scale(.45)}12%{opacity:1}72%{opacity:1;filter:blur(0);transform:translate3d(-50%,-50%,360px) rotate(3deg) scale(1.7)}90%{opacity:.88;filter:blur(3px);transform:translate3d(-50%,-50%,620px) rotate(6deg) scale(2.75)}100%{opacity:0;filter:blur(22px);transform:translate3d(-50%,-50%,780px) rotate(8deg) scale(3.5)}}
 .theme-dark .maria-works-deck-card{filter:saturate(var(--works-card-saturation-dark)) hue-rotate(var(--works-card-dark-hue));box-shadow:0 0 42px rgba(255,70,164,var(--works-card-dark-glow)),0 32px 76px rgba(0,0,0,.3)}
 .theme-dark .mts-project-card,.theme-dark .works-project-card{background:transparent;color:#fff8fb}
-.theme-dark .maria-works-deck-card:nth-child(4n+1){--works-card-back:linear-gradient(138deg,#193266 0%,#2456a0 43%,#323478 72%,#482d88 100%)}
-.theme-dark .maria-works-deck-card:nth-child(4n+2){--works-card-back:linear-gradient(138deg,#31205f 0%,#5a3195 43%,#68367f 72%,#8b3c9d 100%)}
-.theme-dark .maria-works-deck-card:nth-child(4n+3){--works-card-back:linear-gradient(138deg,#572047 0%,#922f68 43%,#57307d 72%,#6d3699 100%)}
-.theme-dark .maria-works-deck-card:nth-child(4n){--works-card-back:linear-gradient(138deg,#123f61 0%,#176c8e 43%,#254f8f 72%,#343e92 100%)}
-.theme-dark .maria-works-deck-card.has-project{--works-card-back:linear-gradient(138deg,#17335f 0%,#285b9b 40%,#76334f 72%,#aa3f68 100%)}
-.theme-dark .maria-works-deck-card.has-rarible{--works-card-back:linear-gradient(138deg,#34235e 0%,#6840a8 40%,#9b6b12 72%,#d49b13 100%)}
-.theme-dark .maria-works-deck-card.has-aliexpress{--works-card-back:linear-gradient(138deg,#552414 0%,#91351f 40%,#bd4930 72%,#6d211c 100%)}
-.theme-dark .maria-works-deck-card.has-mts-game{--works-card-back:linear-gradient(138deg,#0c1742 0%,#1f3074 40%,#4d1e75 72%,#90263f 100%)}
+.theme-dark .maria-works-deck-card:nth-child(4n+1){--works-card-back:linear-gradient(138deg,#10265d 0%,#193f8a 43%,#2853a8 72%,#172d73 100%)}
+.theme-dark .maria-works-deck-card:nth-child(4n+2){--works-card-back:linear-gradient(138deg,#211356 0%,#3c2383 43%,#5732a6 72%,#2d1968 100%)}
+.theme-dark .maria-works-deck-card:nth-child(4n+3){--works-card-back:linear-gradient(138deg,#421646 0%,#68255f 43%,#82327d 72%,#4d1b55 100%)}
+.theme-dark .maria-works-deck-card:nth-child(4n){--works-card-back:linear-gradient(138deg,#0b345a 0%,#105a89 43%,#1775a8 72%,#104178 100%)}
+.theme-dark .maria-works-deck-card.has-project{--works-card-back:linear-gradient(138deg,#172c62 0%,#25478f 40%,#563163 72%,#793a75 100%)}
+.theme-dark .maria-works-deck-card.has-rarible{--works-card-back:linear-gradient(138deg,#1c1256 0%,#38227f 40%,#5731a2 72%,#713bb9 100%)}
+.theme-dark .maria-works-deck-card.has-aliexpress{--works-card-back:linear-gradient(138deg,#47172a 0%,#70213c 40%,#992c4e 72%,#bf3d65 100%)}
+.theme-dark .maria-works-deck-card.has-mts-game{--works-card-back:linear-gradient(138deg,#091644 0%,#17296f 40%,#2e1d70 72%,#57235d 100%)}
 .theme-dark .mts-project-card::before,.theme-dark .works-project-card::before{background:var(--works-card-back);box-shadow:0 13px 28px rgba(0,0,0,.24)}
 .theme-dark .mts-project-card__footer,.theme-dark .works-project-card__footer{background:#120b11}
 .theme-dark .mts-project-card{color:#fff8fb}
@@ -356,12 +360,12 @@ html[data-transition-route="hackathons"]::view-transition-group(works-route){z-i
       .maria-subpage{padding:112px 14px 86px}.maria-back{left:14px;top:87px;font-size:10px}.maria-works-hand{--works-hand-final-rotation:-90deg;--works-hand-x:0;--works-hand-y:0;bottom:-11vh;width:96vw;translate:-18.2% 0;animation:maria-works-hand-enter-mobile .52s cubic-bezier(.2,.8,.2,1) both}.maria-works-carousel{top:max(34vh,calc(env(safe-area-inset-top) + 132px));height:32vh;overflow:visible}.maria-works-deck-card{width:64vw;border-radius:11.111cqi;opacity:var(--works-loop-opacity-mobile);z-index:var(--works-loop-layer-mobile);transform:translate3d(-50%,calc(-50% + var(--works-loop-y-mobile)),0) scale(var(--works-loop-scale-mobile))}.maria-works-deck-card.is-hidden{opacity:0}.maria-works-deck-card .concept-cover{width:100%}.concept-cover{border-radius:11.111cqi}.concept-cover__title{font-size:24vw;bottom:62px}.concept-cover__open{font-size:0}.concept-cover__open b{width:32px;height:32px;font-size:16px}
   .maria-works-hand{bottom:-21vh;width:124vw}
      .maria-works-deck-card{width:72vw;height:68vw;opacity:1;z-index:var(--works-deck-layer-mobile);transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile));transition:transform 1.25s cubic-bezier(.22,.62,.28,1),filter .2s ease}
-   .maria-works-carousel.is-entering .maria-works-deck-card{animation-name:maria-works-card-enter-mobile}
+   .maria-works-page.is-scene-ready .maria-works-hand{animation-name:maria-works-hand-enter-mobile!important}.maria-works-carousel.is-entering:not(.is-entry-active) .maria-works-deck-card{transform:translate3d(-50%,calc(-50% + var(--works-entry-y-mobile) + var(--works-entry-lift-y)),0) scale(.94)}.maria-works-carousel.is-entering.is-entry-active .maria-works-deck-card{animation-name:maria-works-card-enter-mobile}
    @keyframes maria-works-card-enter-mobile{from{transform:translate3d(-50%,calc(-50% + var(--works-entry-y-mobile) + var(--works-entry-lift-y)),0) scale(.94)}to{transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile))}}
    .maria-works-carousel.is-dragging .maria-works-deck-card{transition:none}
       .works-project-card__mts-flag{right:5%;width:66px}
       .mts-game-card__girl{left:-14%;top:-2%;width:62%}.mts-game-card__statue{right:-24%;top:-16%;width:72%}.mts-game-card__phones{left:50%;top:-18%;width:100%}.maria-works-deck-card.has-mts-game.is-centered .mts-game-card__phones{transform:translate3d(-50%,0,0) scale(1)}
-      .rarible-project-card__cover{top:-17%;width:88%}.rarible-project-card__ape{left:-8%;top:9%;width:44%}.rarible-project-card__logo{right:-5%;top:33%;width:42%}.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__cover{transform:translate3d(-50%,3%,0) scale(.98)}
+      .rarible-project-card__cover{top:-35%;width:84%}.rarible-project-card__ape{left:-5%;top:14%;width:44%}.rarible-project-card__logo{right:-4%;top:43%;width:39%}.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__cover{transform:translate3d(-50%,3%,0) scale(.93)}
      .works-paint-splash__svg{width:128%;height:112%;left:-14%;top:-6%}
   .maria-hackathons-page .maria-model-pose{--model-pose-scale:var(--mobile-model-scale)!important}
   .maria-hackathons-porthole{width:var(--mobile-porthole-size)}

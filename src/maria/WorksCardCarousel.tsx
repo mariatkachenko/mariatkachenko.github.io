@@ -196,10 +196,12 @@ type WorksCardCarouselProps = {
   onOpen: (project: PresentationKind) => void
   onPositionChange?: (position: number) => void
   onCenteredIndexChange?: (index: number) => void
+  entryReady?: boolean
+  onEntryComplete?: () => void
   language: Language
 }
 
-export default function WorksCardCarousel({ onOpen, onPositionChange, onCenteredIndexChange, language }: WorksCardCarouselProps) {
+export default function WorksCardCarousel({ onOpen, onPositionChange, onCenteredIndexChange, entryReady = true, onEntryComplete, language }: WorksCardCarouselProps) {
   const [position, setPosition] = useState(WORKS_INITIAL_POSITION)
   const [dragging, setDragging] = useState(false)
   const [wheeling, setWheeling] = useState(false)
@@ -226,9 +228,13 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const centeredCardIndex = normalizeWorksPosition(Math.round(position))
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setIsEntering(false), WORKS_ENTRY_DURATION_MS)
+    if (!entryReady) return
+    const timer = window.setTimeout(() => {
+      setIsEntering(false)
+      onEntryComplete?.()
+    }, WORKS_ENTRY_DURATION_MS)
     return () => window.clearTimeout(timer)
-  }, [])
+  }, [entryReady, onEntryComplete])
 
   useEffect(() => () => {
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
@@ -341,7 +347,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   return <section
     ref={carouselElement}
-    className={`maria-works-carousel${dragging ? ' is-dragging' : ''}${wheeling ? ' is-wheeling' : ''}${isEntering ? ' is-entering' : ''}`}
+    className={`maria-works-carousel${dragging ? ' is-dragging' : ''}${wheeling ? ' is-wheeling' : ''}${isEntering ? ' is-entering' : ''}${isEntering && entryReady ? ' is-entry-active' : ''}`}
     aria-label={language === 'ru' ? 'Карусель рабочих проектов' : 'Work project carousel'}
     data-works-position={Number(position.toFixed(3))}
     onPointerDown={beginDrag}

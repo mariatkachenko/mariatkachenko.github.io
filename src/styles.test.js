@@ -16,14 +16,14 @@ describe('selective system swipe containment', () => {
 })
 
 describe('card scale route transition', () => {
-  it('uses the committed shared-element hand and carousel entrance without snapshot hiding gates', () => {
-    expect(styles).toContain('::view-transition-new(works-hand){transform-origin:100% 54%;animation:maria-works-hand-enter .52s cubic-bezier(.2,.8,.2,1) both}')
-    expect(styles).not.toContain('html[data-transition-route="works"]::view-transition-new(root){display:none}')
-    expect(styles).not.toContain('html[data-transition-route="works"]::view-transition-new(works-carousel){display:none}')
-    expect(styles).not.toContain('.is-scene-ready')
-    expect(styles).not.toContain('.is-entry-active')
-    expect(styles).toContain('@supports(view-transition-name:root){.maria-works-hand{animation:none!important}}')
-    expect(styles).toContain('.maria-works-carousel.is-entering .maria-works-deck-card{animation:maria-works-card-enter')
+  it('starts one live works entrance after native snapshots are ready', () => {
+    expect(styles).toContain('::view-transition-new(works-hand){animation:none;opacity:0}')
+    expect(styles).toContain('html[data-transition-route="works"]::view-transition-new(root){display:none}')
+    expect(styles).toContain('html[data-transition-route="works"]::view-transition-new(works-carousel){display:none}')
+    expect(styles).toContain('.maria-works-page:not(.is-scene-ready) .maria-works-hand{animation:none!important;opacity:0}')
+    expect(styles).toContain('.maria-works-page.is-scene-ready .maria-works-hand{opacity:1;animation:maria-works-hand-enter')
+    expect(styles).toContain('.maria-works-carousel.is-entering:not(.is-entry-active) .maria-works-deck-card{transform:')
+    expect(styles).toContain('.maria-works-carousel.is-entering.is-entry-active .maria-works-deck-card{animation:maria-works-card-enter')
   })
 
   it('scales the selected card over a bidirectional dissolve on desktop and mobile', () => {
@@ -282,10 +282,10 @@ describe('works responsive card deck', () => {
   })
 
   it('opens visible work cards from a compact desktop and mobile stack', () => {
-    expect(styles).toContain('.maria-works-carousel.is-entering .maria-works-deck-card{animation:maria-works-card-enter .52s cubic-bezier(.2,.82,.24,1) both;animation-delay:calc(var(--works-entry-index) * 38ms)}')
+    expect(styles).toContain('.maria-works-carousel.is-entering.is-entry-active .maria-works-deck-card{animation:maria-works-card-enter .52s cubic-bezier(.2,.82,.24,1) both;animation-delay:calc(var(--works-entry-index) * 38ms)}')
     expect(styles).toContain('@keyframes maria-works-card-enter{from{transform:translate3d(calc(-50% + var(--works-entry-x)),calc(-50% + var(--works-entry-lift-y)),0) rotateY(var(--works-entry-rotate-y)) scale(.94)}to{transform:translate3d(calc(-50% + var(--works-row-x)),-50%,0) rotateY(var(--works-row-rotate-y)) scale(var(--works-row-scale))}}')
     expect(styles).toContain('@keyframes maria-works-card-enter-mobile{from{transform:translate3d(-50%,calc(-50% + var(--works-entry-y-mobile) + var(--works-entry-lift-y)),0) scale(.94)}to{transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile))}}')
-    expect(styles).toContain('.maria-works-carousel.is-entering .maria-works-deck-card{animation-name:maria-works-card-enter-mobile}')
+    expect(styles).toContain('.maria-works-carousel.is-entering.is-entry-active .maria-works-deck-card{animation-name:maria-works-card-enter-mobile}')
     expect(styles).toContain('.maria-works-carousel.is-entering .maria-works-deck-card{animation:none!important}')
   })
 
@@ -445,7 +445,10 @@ describe('works card inner color and image hierarchy', () => {
     expect(styles).toContain('.maria-works-deck-card.has-rarible{--works-card-back:linear-gradient(138deg,#211347 0%,#43206f 38%,#67278d 72%,#8e6711 100%)}')
     expect(styles).toContain('.maria-works-deck-card.has-aliexpress{--works-card-back:linear-gradient(138deg,#fffaf6 0%,#ffe8d8 42%,#fff2eb 72%,#ffd0bd 100%)}')
     expect(styles).toContain('.maria-works-deck-card.has-mts-game{--works-card-back:linear-gradient(138deg,#08133d 0%,#1b2c70 38%,#4e1b74 72%,#8f223c 100%)}')
-    expect(styles).toContain('.theme-dark .maria-works-deck-card.has-mts-game{--works-card-back:linear-gradient(138deg,#0c1742 0%,#1f3074 40%,#4d1e75 72%,#90263f 100%)}')
+    expect(styles).toContain('.theme-dark .maria-works-deck-card:nth-child(4n+1){--works-card-back:linear-gradient(138deg,#10265d 0%,#193f8a 43%,#2853a8 72%,#172d73 100%)}')
+    expect(styles).toContain('.theme-dark .maria-works-deck-card.has-rarible{--works-card-back:linear-gradient(138deg,#1c1256 0%,#38227f 40%,#5731a2 72%,#713bb9 100%)}')
+    expect(styles).toContain('.theme-dark .maria-works-deck-card.has-aliexpress{--works-card-back:linear-gradient(138deg,#47172a 0%,#70213c 40%,#992c4e 72%,#bf3d65 100%)}')
+    expect(styles).toContain('.theme-dark .maria-works-deck-card.has-mts-game{--works-card-back:linear-gradient(138deg,#091644 0%,#17296f 40%,#2e1d70 72%,#57235d 100%)}')
     expect(styles).not.toContain('height:78%;border-radius:inherit')
     expect(styles).toContain('background:#fffafb;border-radius:0 0 11.111cqi 11.111cqi')
     expect(styles).not.toContain('works-project-card-back.svg')

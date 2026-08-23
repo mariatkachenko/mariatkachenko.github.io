@@ -110,19 +110,28 @@ describe('continuous works row geometry', () => {
 })
 
 describe('WorksCardCarousel', () => {
-  it('runs the committed entrance immediately without an external route gate', () => {
+  it('waits for the route gate, then runs and completes the entrance once', () => {
     vi.useFakeTimers()
     try {
-      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      const onEntryComplete = vi.fn()
+      const { rerender } = render(<WorksCardCarousel onOpen={vi.fn()} entryReady={false} onEntryComplete={onEntryComplete} language="ru" />)
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       expect(carousel).toHaveClass('is-entering')
       expect(carousel).not.toHaveClass('is-entry-active')
+      act(() => vi.advanceTimersByTime(700))
+      expect(carousel).toHaveClass('is-entering')
+      expect(onEntryComplete).not.toHaveBeenCalled()
+
+      rerender(<WorksCardCarousel onOpen={vi.fn()} entryReady onEntryComplete={onEntryComplete} language="ru" />)
+      expect(carousel).toHaveClass('is-entry-active')
       act(() => vi.advanceTimersByTime(599))
       expect(carousel).toHaveClass('is-entering')
+      expect(onEntryComplete).not.toHaveBeenCalled()
 
       act(() => vi.advanceTimersByTime(1))
       expect(carousel).not.toHaveClass('is-entering')
+      expect(onEntryComplete).toHaveBeenCalledOnce()
     } finally {
       vi.useRealTimers()
     }

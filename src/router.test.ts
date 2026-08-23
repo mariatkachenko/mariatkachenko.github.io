@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { navigateWithTransition } from './router'
+import { navigateWithTransition, ROUTE_TRANSITION_READY_EVENT } from './router'
 
 type TransitionDocument = Document & {
   startViewTransition?: (update: () => void | Promise<void>) => { ready?: Promise<void>; finished: Promise<void> }
@@ -61,6 +61,28 @@ describe('transition-aware navigation', () => {
     expect(window.location.pathname).toBe('/')
     await Promise.resolve()
     expect(document.documentElement.dataset.transitionDirection).toBeUndefined()
+  })
+
+  it('announces when the native transition snapshots are ready', async () => {
+    let resolveReady!: () => void
+    const ready = new Promise<void>((resolve) => { resolveReady = resolve })
+    const listener = vi.fn()
+    document.addEventListener(ROUTE_TRANSITION_READY_EVENT, listener, { once: true })
+    Object.defineProperty(document, 'startViewTransition', {
+      value: (update: () => void | Promise<void>) => {
+        void update()
+        return { ready, finished: new Promise<void>(() => undefined) }
+      },
+      writable: true,
+      configurable: true,
+    })
+
+    navigateWithTransition('/works')
+    expect(listener).not.toHaveBeenCalled()
+    resolveReady()
+    await ready
+    await Promise.resolve()
+    expect(listener).toHaveBeenCalledOnce()
   })
 
   it('navigates immediately when view transitions are unavailable', () => {
