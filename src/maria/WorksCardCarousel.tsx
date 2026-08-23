@@ -31,8 +31,7 @@ export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
 export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
 export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
 export const WORKS_PLACEHOLDER_COVERS = [
-  '/assets/maria/works-placeholder-payments-a.png',
-  '/assets/maria/works-placeholder-payments-b.png',
+  '/assets/maria/works-placeholder-payments-a.webp',
 ] as const
 
 const WORKS_PLACEHOLDER_COVER_POSITIONS = ['center', 'center'] as const
@@ -140,6 +139,14 @@ export function visibleWorksCardIndices(position: number, count = WORKS_CARD_COU
     { length: Math.min(5, count) },
     (_, slot) => Math.round(normalizeWorksPosition(center + slot - 2, count)),
   ))
+}
+
+export function shouldLoadDeferredWorksArtwork(offset: number) {
+  return Math.abs(offset) <= 1
+}
+
+export function shouldLoadVisibleWorksArtwork(offset: number) {
+  return Math.abs(offset) <= 2
 }
 
 export type MobileWorksLoopPose = {
@@ -417,13 +424,18 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         } as CSSProperties}
       >
         {projectCard
-          ? <ConceptProject onOpen={() => onOpen('mts')} language={language} />
+          ? <ConceptProject
+            onOpen={() => onOpen('mts')}
+            language={language}
+            loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+          />
           : raribleCard
             ? <RaribleProjectCard
               onOpen={() => onOpen('rarible')}
               ariaLabel={language === 'ru'
                 ? 'Открыть презентацию «Rarible Charity Program»'
                 : 'Open presentation “Rarible Charity Program”'}
+              loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
             />
             : aliexpressCard
               ? <AliExpressProjectCard
@@ -431,10 +443,11 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»'
                   : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
               />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {index === WORKS_MTS_PLACEHOLDER_INDEX
-              ? <MtsGameProjectCard language={language} />
+              ? <MtsGameProjectCard language={language} loadArtwork={shouldLoadDeferredWorksArtwork(offset)} />
               : <WorksProjectCard
                 title={language === 'ru' ? 'Новый проект' : 'New project'}
                 meta={language === 'ru' ? 'Скоро' : 'Coming soon'}

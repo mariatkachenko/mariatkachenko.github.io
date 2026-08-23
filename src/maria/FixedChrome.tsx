@@ -12,7 +12,7 @@ export default function FixedChrome({ theme, onThemeChange, language, onLanguage
   return <>
     <header className="maria-header maria-fixed-top">
       <div className="maria-identity">
-        <span className="maria-avatar" aria-hidden="true"><img src="/assets/maria/portrait.png" alt="" /></span>
+        <span className="maria-avatar" aria-hidden="true"><img src="/assets/maria/portrait-lossless.webp" alt="" /></span>
         <h1>{copy.name}</h1>
       </div>
       <a href="mailto:mery.tkachenko@gmail.com">mery.tkachenko@gmail.com</a>
@@ -22,9 +22,9 @@ export default function FixedChrome({ theme, onThemeChange, language, onLanguage
     <footer className="maria-controls maria-fixed-bottom">
       <div className="maria-languages"><button type="button" aria-label="Русский" aria-pressed={language === 'ru'} className={language === 'ru' ? 'is-active' : ''} onClick={() => onLanguageChange('ru')}>RU</button><span>|</span><button type="button" aria-label="English" aria-pressed={language === 'en'} className={language === 'en' ? 'is-active' : ''} onClick={() => onLanguageChange('en')}>EN</button></div>
       <div className="maria-theme" aria-label={copy.theme}>
-        <button type="button" className={theme === 'light' ? 'is-active' : ''} aria-label={copy.lightTheme} aria-pressed={theme === 'light'} onClick={() => onThemeChange('light')}><img src="/assets/maria/theme-sun.png" alt="" /></button>
+        <button type="button" className={theme === 'light' ? 'is-active' : ''} aria-label={copy.lightTheme} aria-pressed={theme === 'light'} onClick={() => onThemeChange('light')}><img src="/assets/maria/theme-sun-lossless.webp" alt="" /></button>
         <span aria-hidden="true">|</span>
-        <button type="button" className={theme === 'dark' ? 'is-active' : ''} aria-label={copy.darkTheme} aria-pressed={theme === 'dark'} onClick={() => onThemeChange('dark')}><img src="/assets/maria/theme-moon.png" alt="" /></button>
+        <button type="button" className={theme === 'dark' ? 'is-active' : ''} aria-label={copy.darkTheme} aria-pressed={theme === 'dark'} onClick={() => onThemeChange('dark')}><img src="/assets/maria/theme-moon-lossless.webp" alt="" /></button>
       </div>
     </footer>
   </>

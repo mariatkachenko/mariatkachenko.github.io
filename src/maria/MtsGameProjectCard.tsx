@@ -2,30 +2,31 @@ import type { Language } from './i18n'
 
 type MtsGameProjectCardProps = {
   language: Language
+  loadArtwork: boolean
 }
 
-export default function MtsGameProjectCard({ language }: MtsGameProjectCardProps) {
+export default function MtsGameProjectCard({ language, loadArtwork }: MtsGameProjectCardProps) {
   return <div className="mts-game-card">
     <span className="mts-game-card__surface" aria-hidden="true" />
     <span className="mts-game-card__artwork" aria-hidden="true">
-      <img
+      {loadArtwork && <><img
         className="mts-game-card__statue"
-        src="/assets/maria/mts-game-statue.png"
+        src="/assets/maria/mts-game-statue.webp"
         alt=""
         draggable="false"
       />
       <img
         className="mts-game-card__girl"
-        src="/assets/maria/mts-game-girl.png"
+        src="/assets/maria/mts-game-girl.webp"
         alt=""
         draggable="false"
       />
       <img
         className="mts-game-card__phones"
-        src="/assets/maria/mts-game-phones.png"
+        src="/assets/maria/mts-game-phones.webp"
         alt=""
         draggable="false"
-      />
+      /></>}
     </span>
     <span className="mts-game-card__footer">
       <span className="mts-game-card__file-icon" aria-hidden="true">

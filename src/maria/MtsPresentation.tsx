@@ -9,7 +9,7 @@ const SLIDE_IDS = [
 ] as const
 
 const DARK_SLIDES = new Set(['01', '29', '30', '31', '32', '36', '48'])
-const slideSource = (id: string) => `/assets/maria/mts-presentation/${id}.png`
+const slideSource = (id: string) => `/assets/maria/mts-presentation-webp/${id}.webp`
 
 type MtsPresentationProps = {
   language: Language
@@ -50,6 +50,7 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
       if (!id) return
       const image = new Image()
       image.src = slideSource(id)
+      void image.decode?.().catch(() => undefined)
     })
   }, [slideIndex])
 
@@ -84,12 +85,14 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
         src={slideSource(outgoingId)}
         alt=""
         aria-hidden="true"
+        decoding="async"
       />}
       <img
         className={`mts-presentation__slide mts-presentation__slide--active ${outgoingId ? `is-${direction}` : ''}`}
         src={slideSource(activeId)}
         alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
         fetchPriority="high"
+        decoding="async"
       />
     </div>
     <div className="mts-presentation__controls">

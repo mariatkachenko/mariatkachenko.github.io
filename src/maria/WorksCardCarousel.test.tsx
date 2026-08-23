@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import WorksCardCarousel, {
   WORKS_CARD_COUNT,
   WORKS_AUTOPLAY_MS,
+  WORKS_ENTRY_DURATION_MS,
   WORKS_INITIAL_POSITION,
   WORKS_MOBILE_DRAG_STEP_PX,
   WORKS_MOBILE_WHEEL_STEP_PX,
@@ -15,6 +16,8 @@ import WorksCardCarousel, {
   mobileWorksDeckPose,
   mobileWorksLoopPose,
   normalizeWorksPosition,
+  shouldLoadDeferredWorksArtwork,
+  shouldLoadVisibleWorksArtwork,
   worksPositionAfterDelta,
   worksDragReleasePosition,
   worksDesktopRowX,
@@ -72,6 +75,12 @@ describe('continuous works row geometry', () => {
     expect(worksRowPose(-3).rotateY).toBe(80)
     expect(worksRowPose(3).rotateY).toBe(-80)
     expect(worksRowPose(0.5).rotateY).toBe(-18)
+    expect(shouldLoadDeferredWorksArtwork(1)).toBe(true)
+    expect(shouldLoadDeferredWorksArtwork(-1)).toBe(true)
+    expect(shouldLoadDeferredWorksArtwork(1.001)).toBe(false)
+    expect(shouldLoadVisibleWorksArtwork(2)).toBe(true)
+    expect(shouldLoadVisibleWorksArtwork(-2)).toBe(true)
+    expect(shouldLoadVisibleWorksArtwork(2.001)).toBe(false)
     expect(worksDesktopRowX(0)).toBe(0)
     expect(worksDesktopRowX(-1)).toBe(-8.25)
     expect(worksDesktopRowX(1)).toBe(8.25)
@@ -244,10 +253,10 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelector('.mts-game-card')).not.toBeNull()
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelector('.works-project-card')).toBeNull()
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX]).toHaveClass('has-mts-game')
-    expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__phones')).toHaveLength(1)
+    expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__phones')).toHaveLength(0)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__artwork')).toHaveLength(1)
-    expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__girl')).toHaveLength(1)
-    expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__statue')).toHaveLength(1)
+    expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__girl')).toHaveLength(0)
+    expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__statue')).toHaveLength(0)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__footer')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('has-aliexpress')
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.aliexpress-project-card')).not.toBeNull()
@@ -280,13 +289,13 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__media')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__artwork')).toHaveLength(1)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.png"]')).toHaveLength(1)
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.webp"]')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-cover.png"]')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__logo-flyout')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__butterfly-flyout')).toHaveLength(0)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(0)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(0)
-    expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('img[src="/assets/maria/aliexpress-bag.png"]')).not.toBeNull()
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.webp"]')).toHaveLength(0)
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.webp"]')).toHaveLength(0)
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('img[src="/assets/maria/aliexpress-bag.webp"]')).not.toBeNull()
     expect(container.querySelectorAll('.works-project-card__breakout-artwork')).toHaveLength(0)
     expect(cards[8].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[7].querySelector('.works-project-card__mts-flag')).toBeNull()
@@ -326,34 +335,67 @@ describe('WorksCardCarousel', () => {
     ).toBe(0)
   })
 
-  it('alternates the two temporary covers across every generic card', () => {
+  it('reuses one identical temporary cover and defers distant MTS game artwork', () => {
     const { container } = render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
     const images = [...container.querySelectorAll<HTMLImageElement>('.works-project-card__image')]
     const sources = images.map((image) => image.getAttribute('src'))
 
     expect(WORKS_PLACEHOLDER_COVERS).toEqual([
-      '/assets/maria/works-placeholder-payments-a.png',
-      '/assets/maria/works-placeholder-payments-b.png',
+      '/assets/maria/works-placeholder-payments-a.webp',
     ])
     expect(images).toHaveLength(WORKS_CARD_COUNT - 4)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.png"]')).toHaveLength(5)
-    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(5)
-    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-bag.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-collections-cover.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-heart.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-sparkles.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/rarible-charity-cover.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(10)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-bag.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-collections-cover.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-heart.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-sparkles.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/rarible-charity-cover.webp"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-game-card.png"]')).toHaveLength(0)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-game-phones.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-game-girl.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-game-statue.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-game-phones.webp"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-game-girl.webp"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-game-statue.webp"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-cover.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-stage.png"]')).toHaveLength(0)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(0)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.webp"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.webp"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-flex-artwork.png"]')).toHaveLength(0)
-    expect(sources).not.toContain('/assets/maria/rarible-charity-cover.png')
+    expect(sources).not.toContain('/assets/maria/rarible-charity-cover.webp')
+  })
+
+  it('loads the deferred MTS game layers one position before the card reaches center', () => {
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      expect(container.querySelectorAll('.mts-game-card__artwork img')).toHaveLength(0)
+
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS))
+
+      expect(container.querySelectorAll('.mts-game-card__artwork img')).toHaveLength(3)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('unmounts heavy artwork only after a project leaves the five-card visible window', () => {
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      expect(container.querySelectorAll('.mts-project-card__artwork')).toHaveLength(1)
+      expect(container.querySelectorAll('.rarible-project-card__artwork img')).toHaveLength(3)
+      expect(container.querySelectorAll('.aliexpress-project-card__artwork img')).toHaveLength(4)
+
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS * 3))
+
+      expect(container.querySelectorAll('.mts-project-card__artwork')).toHaveLength(0)
+      expect(container.querySelectorAll('.rarible-project-card__artwork img')).toHaveLength(0)
+      expect(container.querySelectorAll('.aliexpress-project-card__artwork img')).toHaveLength(4)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('renders localized English project-card metadata', () => {

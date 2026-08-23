@@ -1,9 +1,10 @@
 type RaribleProjectCardProps = {
   onOpen: () => void
   ariaLabel: string
+  loadArtwork: boolean
 }
 
-export default function RaribleProjectCard({ onOpen, ariaLabel }: RaribleProjectCardProps) {
+export default function RaribleProjectCard({ onOpen, ariaLabel, loadArtwork }: RaribleProjectCardProps) {
   return <button
     className="rarible-project-card"
     type="button"
@@ -12,9 +13,11 @@ export default function RaribleProjectCard({ onOpen, ariaLabel }: RaribleProject
   >
     <span className="rarible-project-card__surface" aria-hidden="true" />
     <span className="rarible-project-card__artwork" aria-hidden="true">
-      <img className="rarible-project-card__ape" src="/assets/maria/rarible-ape.png" alt="" draggable="false" />
-      <img className="rarible-project-card__cover" src="/assets/maria/rarible-charity-cover.png" alt="" draggable="false" />
-      <img className="rarible-project-card__logo" src="/assets/maria/rarible-logo-hearts.png" alt="" draggable="false" />
+      {loadArtwork && <>
+        <img className="rarible-project-card__ape" src="/assets/maria/rarible-ape.webp" alt="" draggable="false" />
+        <img className="rarible-project-card__cover" src="/assets/maria/rarible-charity-cover.webp" alt="" draggable="false" />
+        <img className="rarible-project-card__logo" src="/assets/maria/rarible-logo-hearts.webp" alt="" draggable="false" />
+      </>}
     </span>
     <span className="rarible-project-card__footer">
       <span className="rarible-project-card__file-icon" aria-hidden="true">

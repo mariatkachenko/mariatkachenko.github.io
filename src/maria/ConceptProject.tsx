@@ -3,9 +3,10 @@ import { copyFor, type Language } from './i18n'
 type ConceptProjectProps = {
   onOpen: () => void
   language: Language
+  loadArtwork: boolean
 }
 
-export default function ConceptProject({ onOpen, language }: ConceptProjectProps) {
+export default function ConceptProject({ onOpen, language, loadArtwork }: ConceptProjectProps) {
   const copy = copyFor(language)
   return <button
     type="button"
@@ -17,12 +18,12 @@ export default function ConceptProject({ onOpen, language }: ConceptProjectProps
     }}
   >
     <span className="mts-project-card__media" aria-hidden="true">
-      <img
+      {loadArtwork && <img
         className="mts-project-card__artwork"
-        src="/assets/maria/mts-pay-card-composition.png"
+        src="/assets/maria/mts-pay-card-composition.webp"
         alt=""
         draggable="false"
-      />
+      />}
     </span>
     <span className="mts-project-card__footer">
       <span className="mts-project-card__file-icon" aria-hidden="true">

@@ -53,8 +53,8 @@ export default function WorksPage({ language }: { language: Language }) {
   >
     <HomeBackButton language={language} />
     <div className={`maria-works-hand${handVariant === 'alternate' ? ' is-alternate' : ''}`} aria-hidden="true">
-      <img className="maria-works-hand__image maria-works-hand__image--primary" src="/assets/maria/works-phone-hand.png" alt="" aria-hidden="true" />
-      <img className="maria-works-hand__image maria-works-hand__image--alternate" src="/assets/maria/works-phone-hand-lock.png" alt="" aria-hidden="true" />
+      <img className="maria-works-hand__image maria-works-hand__image--primary" src="/assets/maria/works-phone-hand.webp" alt="" aria-hidden="true" />
+      <img className="maria-works-hand__image maria-works-hand__image--alternate" src="/assets/maria/works-phone-hand-lock.webp" alt="" aria-hidden="true" />
     </div>
     <WorksCardCarousel
       onOpen={setPresentation}
