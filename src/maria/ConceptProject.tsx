@@ -24,20 +24,6 @@ export default function ConceptProject({ onOpen, language }: ConceptProjectProps
         draggable="false"
       />
     </span>
-    <img
-      className="mts-project-card__logo-flyout"
-      src="/assets/maria/mts-pay-logo-flyout.png"
-      alt=""
-      aria-hidden="true"
-      draggable="false"
-    />
-    <img
-      className="mts-project-card__butterfly-flyout"
-      src="/assets/maria/mts-pay-butterfly-flyout.png"
-      alt=""
-      aria-hidden="true"
-      draggable="false"
-    />
     <span className="mts-project-card__footer">
       <span className="mts-project-card__file-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false">

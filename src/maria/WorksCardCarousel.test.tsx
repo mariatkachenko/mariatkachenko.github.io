@@ -5,21 +5,26 @@ import WorksCardCarousel, {
   WORKS_AUTOPLAY_MS,
   WORKS_INITIAL_POSITION,
   WORKS_MOBILE_DRAG_STEP_PX,
+  WORKS_MOBILE_WHEEL_STEP_PX,
   WORKS_MTS_PLACEHOLDER_INDEX,
   WORKS_PLACEHOLDER_COVERS,
   WORKS_PROJECT_INDEX,
+  WORKS_RARIBLE_INDEX,
+  WORKS_WHEEL_STEP_PX,
   continuousWorksOffset,
   mobileWorksDeckPose,
   mobileWorksLoopPose,
   normalizeWorksPosition,
   worksPositionAfterDelta,
   worksDragReleasePosition,
+  worksDesktopRowX,
   worksDragStep,
   worksCardFocus,
   worksCardGradient,
   worksPointerCoordinate,
   worksPatternOffset,
   worksWheelDelta,
+  worksWheelStep,
   worksRowPose,
   visibleWorksCardIndices,
 } from './WorksCardCarousel'
@@ -40,6 +45,10 @@ describe('continuous works row geometry', () => {
     expect(WORKS_MOBILE_DRAG_STEP_PX).toBe(140)
     expect(worksDragStep(false)).toBe(150)
     expect(worksDragStep(true)).toBe(140)
+    expect(WORKS_WHEEL_STEP_PX).toBe(220)
+    expect(WORKS_MOBILE_WHEEL_STEP_PX).toBe(200)
+    expect(worksWheelStep(false)).toBe(220)
+    expect(worksWheelStep(true)).toBe(200)
     expect(worksPointerCoordinate({ clientX: 20, clientY: 80 }, false)).toBe(20)
     expect(worksPointerCoordinate({ clientX: 20, clientY: 80 }, true)).toBe(80)
     expect(worksWheelDelta(10, 70, false, true)).toBe(70)
@@ -56,13 +65,18 @@ describe('continuous works row geometry', () => {
     expect(worksDragReleasePosition(6.6, 14, true)).toBe(7)
     expect(worksDragReleasePosition(13.7, 14, true)).toBe(0)
     expect(worksRowPose(0).rotateY).toBe(0)
-    expect(worksRowPose(-1).rotateY).toBe(30)
-    expect(worksRowPose(1).rotateY).toBe(-30)
-    expect(worksRowPose(-2).rotateY).toBe(60)
-    expect(worksRowPose(2).rotateY).toBe(-60)
-    expect(worksRowPose(-3).rotateY).toBe(72)
-    expect(worksRowPose(3).rotateY).toBe(-72)
-    expect(worksRowPose(0.5).rotateY).toBe(-15)
+    expect(worksRowPose(-1).rotateY).toBe(36)
+    expect(worksRowPose(1).rotateY).toBe(-36)
+    expect(worksRowPose(-2).rotateY).toBe(72)
+    expect(worksRowPose(2).rotateY).toBe(-72)
+    expect(worksRowPose(-3).rotateY).toBe(80)
+    expect(worksRowPose(3).rotateY).toBe(-80)
+    expect(worksRowPose(0.5).rotateY).toBe(-18)
+    expect(worksDesktopRowX(0)).toBe(0)
+    expect(worksDesktopRowX(-1)).toBe(-8.25)
+    expect(worksDesktopRowX(1)).toBe(8.25)
+    expect(worksDesktopRowX(-2)).toBe(-18.75)
+    expect(worksDesktopRowX(2)).toBe(18.75)
     expect(worksRowPose(0).layer).toBeGreaterThan(worksRowPose(1).layer)
     expect(mobileWorksLoopPose(0, 14)).toEqual({ y: 0, scale: 1, opacity: 1, layer: 20 })
     expect(mobileWorksLoopPose(3.5, 14).y).toBeCloseTo(22)
@@ -70,12 +84,12 @@ describe('continuous works row geometry', () => {
     expect(mobileWorksLoopPose(7, 14)).toEqual({ y: 0, scale: 1, opacity: 0.18, layer: 1 })
     expect(mobileWorksLoopPose(-3.5, 14).y).toBeCloseTo(-22)
     expect(mobileWorksDeckPose(0)).toEqual({ y: 0, scale: 1, layer: 20 })
-    expect(mobileWorksDeckPose(-0.5)).toEqual({ y: -3.25, scale: 0.97, layer: 18 })
-    expect(mobileWorksDeckPose(0.5)).toEqual({ y: 3.25, scale: 0.97, layer: 18 })
-    expect(mobileWorksDeckPose(-1)).toEqual({ y: -6.5, scale: 0.94, layer: 16 })
-    expect(mobileWorksDeckPose(1)).toEqual({ y: 6.5, scale: 0.94, layer: 16 })
-    expect(mobileWorksDeckPose(-2)).toEqual({ y: -13, scale: 0.88, layer: 12 })
-    expect(mobileWorksDeckPose(2)).toEqual({ y: 13, scale: 0.88, layer: 12 })
+    expect(mobileWorksDeckPose(-0.5)).toEqual({ y: -2.708, scale: 0.97, layer: 18 })
+    expect(mobileWorksDeckPose(0.5)).toEqual({ y: 2.708, scale: 0.97, layer: 18 })
+    expect(mobileWorksDeckPose(-1)).toEqual({ y: -5.417, scale: 0.94, layer: 16 })
+    expect(mobileWorksDeckPose(1)).toEqual({ y: 5.417, scale: 0.94, layer: 16 })
+    expect(mobileWorksDeckPose(-2)).toEqual({ y: -10.834, scale: 0.88, layer: 12 })
+    expect(mobileWorksDeckPose(2)).toEqual({ y: 10.834, scale: 0.88, layer: 12 })
     expect(worksCardFocus(0)).toEqual({ lightBrightness: 1, lightSaturation: 1, darkSaturation: 1, darkHue: 0, darkGlow: 0.18 })
     expect(worksCardFocus(1)).toEqual({ lightBrightness: 0.92, lightSaturation: 0.97, darkSaturation: 0.96, darkHue: -3, darkGlow: 0.09 })
     expect(worksCardFocus(2)).toEqual({ lightBrightness: 0.84, lightSaturation: 0.94, darkSaturation: 0.92, darkHue: -6, darkGlow: 0 })
@@ -96,6 +110,24 @@ describe('continuous works row geometry', () => {
 })
 
 describe('WorksCardCarousel', () => {
+  it('runs the committed entrance immediately without an external route gate', () => {
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      expect(carousel).toHaveClass('is-entering')
+      expect(carousel).not.toHaveClass('is-entry-active')
+      act(() => vi.advanceTimersByTime(599))
+      expect(carousel).toHaveClass('is-entering')
+
+      act(() => vi.advanceTimersByTime(1))
+      expect(carousel).not.toHaveClass('is-entering')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('reports a centered card only when the rounded center changes', () => {
     vi.useFakeTimers()
     try {
@@ -114,7 +146,7 @@ describe('WorksCardCarousel', () => {
       fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(1)
 
-      fireEvent.wheel(carousel, { deltaX: 50, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 100, deltaY: 0 })
       expect(onCenteredIndexChange).toHaveBeenLastCalledWith(7)
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(2)
     } finally {
@@ -158,14 +190,14 @@ describe('WorksCardCarousel', () => {
       expect(cards[WORKS_PROJECT_INDEX - 2]).toHaveStyle({ '--works-entry-index': '2' })
       expect(cards[WORKS_PROJECT_INDEX - 2]).toHaveStyle({ '--works-entry-lift-y': '-3vh' })
 
-      fireEvent.wheel(carousel, { deltaX: 150, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
       fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 420 })
       fireEvent.pointerMove(carousel, { pointerId: 1, clientX: 120 })
       expect(carousel).toHaveAttribute('data-works-position', '6')
 
       act(() => vi.advanceTimersByTime(600))
       expect(carousel).not.toHaveClass('is-entering')
-      fireEvent.wheel(carousel, { deltaX: 150, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
       expect(carousel).toHaveAttribute('data-works-position', '7')
     } finally {
       vi.useRealTimers()
@@ -190,11 +222,16 @@ describe('WorksCardCarousel', () => {
     expect(cards[7]).toHaveAttribute('data-offset', '1')
     expect(screen.queryByText('MTS Pay')).not.toBeInTheDocument()
     expect(screen.queryByText('Coming soon')).not.toBeInTheDocument()
-    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(13)
-    expect(container.querySelectorAll('.works-project-card')).toHaveLength(12)
-    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(12)
-    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(12)
-    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(12)
+    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(11)
+    expect(container.querySelectorAll('.works-project-card')).toHaveLength(10)
+    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(10)
+    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(10)
+    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(10)
+    expect(cards[WORKS_RARIBLE_INDEX]).toHaveClass('has-rarible')
+    expect(cards[WORKS_RARIBLE_INDEX].querySelector('.rarible-project-card')).not.toBeNull()
+    expect(cards[WORKS_RARIBLE_INDEX].querySelectorAll('.rarible-project-card__cover')).toHaveLength(1)
+    expect(cards[WORKS_RARIBLE_INDEX].querySelectorAll('.rarible-project-card__ape')).toHaveLength(1)
+    expect(cards[WORKS_RARIBLE_INDEX].querySelectorAll('.rarible-project-card__logo')).toHaveLength(1)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelector('.mts-game-card')).not.toBeNull()
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelector('.works-project-card')).toBeNull()
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX]).toHaveClass('has-mts-game')
@@ -203,17 +240,29 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__girl')).toHaveLength(1)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__statue')).toHaveLength(1)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__footer')).toHaveLength(1)
+    expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('has-aliexpress')
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.aliexpress-project-card')).not.toBeNull()
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__phones')).toHaveLength(1)
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__bag')).toHaveLength(1)
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__heart')).toHaveLength(1)
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__sparkles')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.mts-project-card')).not.toBeNull()
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.works-project-card')).toBeNull()
     expect(screen.getByText('Концепт v3 — Преза')).toBeInTheDocument()
     expect(screen.getByText('Проект · МТС Финтех')).toBeInTheDocument()
-    expect(screen.getAllByText('Новый проект')).toHaveLength(13)
-    expect(screen.getAllByText('Скоро')).toHaveLength(13)
+    expect(screen.getByText('Rarible Charity Program')).toBeInTheDocument()
+    expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
+    expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
+    expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
+    expect(screen.getAllByText('Новый проект')).toHaveLength(11)
+    expect(screen.getAllByText('Скоро')).toHaveLength(11)
     expect(container.querySelectorAll('.maria-works-deck-card:not(.is-hidden)')).toHaveLength(5)
     expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(9)
     expect(container.querySelectorAll('.maria-works-deck-card__spine')).toHaveLength(0)
     expect(container.querySelectorAll('.maria-works-deck-card__pages')).toHaveLength(0)
-    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(12)
+    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(10)
+    expect(container.querySelectorAll('.rarible-project-card__file-icon')).toHaveLength(1)
+    expect(container.querySelectorAll('.aliexpress-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-game-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-project-card__file-icon')).toHaveLength(1)
     const mtsFlags = container.querySelectorAll('.works-project-card__mts-flag')
@@ -224,15 +273,11 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__artwork')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-live-triptych.png"]')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-cover.png"]')).toHaveLength(0)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__logo-flyout')).toHaveLength(1)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__butterfly-flyout')).toHaveLength(1)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(1)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('.works-corner-ribbon')).toHaveLength(1)
-    expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.works-corner-ribbon')).not.toBeNull()
-    expect(cards[WORKS_PROJECT_INDEX].querySelector('.works-corner-ribbon')).toBeNull()
-    expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.works-corner-ribbon__wrap')).toHaveLength(2)
-    expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.works-corner-ribbon__tail')).not.toBeNull()
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__logo-flyout')).toHaveLength(0)
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__butterfly-flyout')).toHaveLength(0)
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(0)
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(0)
+    expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('img[src="/assets/maria/aliexpress-bag.png"]')).not.toBeNull()
     expect(container.querySelectorAll('.works-grafico-flyout')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX + 3].querySelector('.works-grafico-flyout')).not.toBeNull()
     expect(cards[WORKS_PROJECT_INDEX + 2].querySelector('.works-grafico-flyout')).toBeNull()
@@ -240,7 +285,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[8].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[7].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[13].querySelector('.works-project-card__mts-flag')).toBeNull()
-    expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-row-scale': '1' })
+    expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-row-scale': '1.1' })
     expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-card-brightness-light': '1' })
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveStyle({ '--works-card-brightness-light': '0.92' })
     expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-card-dark-glow': '0.18' })
@@ -254,9 +299,9 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX - 1]).toHaveStyle({ '--works-card-mobile-lower-depth': '0' })
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveStyle({ '--works-card-mobile-lower-depth': '0.008' })
     expect(cards[WORKS_PROJECT_INDEX + 2]).toHaveStyle({ '--works-card-mobile-lower-depth': '0.002' })
-    expect(cards[0]).toHaveStyle({ '--works-row-scale': '1' })
+    expect(cards[0]).toHaveStyle({ '--works-row-scale': '1.1' })
     expect(cards[0]).toHaveStyle({
-      '--works-row-x': '-69vw',
+      '--works-row-x': '-60.75vw',
     })
     expect(cards[0].style.getPropertyValue('--works-loop-y-mobile')).not.toBe('')
     expect(cards[0].style.getPropertyValue('--works-loop-scale-mobile')).not.toBe('')
@@ -275,25 +320,34 @@ describe('WorksCardCarousel', () => {
     ).toBe(0)
   })
 
-  it('cycles the five temporary covers across every placeholder card', () => {
+  it('alternates the two temporary covers across every generic card', () => {
     const { container } = render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
     const images = [...container.querySelectorAll<HTMLImageElement>('.works-project-card__image')]
     const sources = images.map((image) => image.getAttribute('src'))
 
-    expect(WORKS_PLACEHOLDER_COVERS).toHaveLength(5)
-    expect(WORKS_PLACEHOLDER_COVERS[2]).toBe('/assets/maria/mts-pay-game-card.png')
-    expect(images).toHaveLength(WORKS_CARD_COUNT - 2)
+    expect(WORKS_PLACEHOLDER_COVERS).toEqual([
+      '/assets/maria/works-placeholder-payments-a.png',
+      '/assets/maria/works-placeholder-payments-b.png',
+    ])
+    expect(images).toHaveLength(WORKS_CARD_COUNT - 4)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-live-triptych.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-game-card.png"]')).toHaveLength(2)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.png"]')).toHaveLength(5)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(5)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-bag.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-collections-cover.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-heart.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-sparkles.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/rarible-charity-cover.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-game-card.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-game-phones.png"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-game-girl.png"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-game-statue.png"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-cover.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-stage.png"]')).toHaveLength(0)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-flex-artwork.png"]')).toHaveLength(0)
-    WORKS_PLACEHOLDER_COVERS.forEach((source) => expect(sources).toContain(source))
+    expect(sources).not.toContain('/assets/maria/rarible-charity-cover.png')
   })
 
   it('renders localized English project-card metadata', () => {
@@ -301,8 +355,12 @@ describe('WorksCardCarousel', () => {
 
     expect(screen.getByText('Concept v3 — Presentation')).toBeInTheDocument()
     expect(screen.getByText('Project · MTS Fintech')).toBeInTheDocument()
-    expect(screen.getAllByText('New project')).toHaveLength(13)
-    expect(screen.getAllByText('Coming soon')).toHaveLength(13)
+    expect(screen.getByText('Rarible Charity Program')).toBeInTheDocument()
+    expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
+    expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
+    expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
+    expect(screen.getAllByText('New project')).toHaveLength(11)
+    expect(screen.getAllByText('Coming soon')).toHaveLength(11)
   })
 
   it('prevents native card dragging', () => {
@@ -348,24 +406,30 @@ describe('WorksCardCarousel', () => {
 
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.167')
+    expect(carousel).toHaveAttribute('data-works-position', '6.114')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.333')
+    expect(carousel).toHaveAttribute('data-works-position', '6.227')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.5')
+    expect(carousel).toHaveAttribute('data-works-position', '6.341')
+    expect(project).toHaveClass('is-centered')
+    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    expect(carousel).toHaveAttribute('data-works-position', '6.455')
+    expect(project).toHaveClass('is-centered')
+    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    expect(carousel).toHaveAttribute('data-works-position', '6.568')
     expect(project).not.toHaveClass('is-centered')
     expect(cards[7]).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 1, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.507')
+    expect(carousel).toHaveAttribute('data-works-position', '6.573')
     expect(cards[7]).toHaveClass('is-centered')
     expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
-    fireEvent.wheel(carousel, { deltaX: -26, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.333')
+    fireEvent.wheel(carousel, { deltaX: -76, deltaY: 0 })
+    expect(carousel).toHaveAttribute('data-works-position', '6.227')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 0, deltaY: 120 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.333')
+    expect(carousel).toHaveAttribute('data-works-position', '6.227')
   })
 
   it('settles horizontal trackpad movement to the nearest card after input pauses', () => {
@@ -376,11 +440,11 @@ describe('WorksCardCarousel', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
       const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
 
-      fireEvent.wheel(carousel, { deltaX: 100, deltaY: 0 })
-      expect(carousel).toHaveAttribute('data-works-position', '6.667')
+      fireEvent.wheel(carousel, { deltaX: 120, deltaY: 0 })
+      expect(carousel).toHaveAttribute('data-works-position', '6.545')
       expect(carousel).toHaveClass('is-wheeling')
       act(() => vi.advanceTimersByTime(119))
-      expect(carousel).toHaveAttribute('data-works-position', '6.667')
+      expect(carousel).toHaveAttribute('data-works-position', '6.545')
       act(() => vi.advanceTimersByTime(1))
       expect(carousel).toHaveAttribute('data-works-position', '7')
       expect(carousel).not.toHaveClass('is-wheeling')
@@ -390,24 +454,70 @@ describe('WorksCardCarousel', () => {
     }
   })
 
-  it('restores the MTS centered state after a complete carousel loop', () => {
-    const { container } = renderReadyWorksCarousel()
-    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
-    const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
-    const project = cards[WORKS_PROJECT_INDEX]
+  it('limits one continuous horizontal wheel gesture to one project', () => {
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      act(() => vi.advanceTimersByTime(600))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-    expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 150, deltaY: 0 })
-    expect(project).not.toHaveClass('is-centered')
-    expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('is-centered')
+      fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
+      expect(carousel).toHaveAttribute('data-works-position', '7')
 
-    for (let step = 0; step < WORKS_CARD_COUNT - 1; step += 1) {
-      fireEvent.wheel(carousel, { deltaX: 150, deltaY: 0 })
+      act(() => vi.advanceTimersByTime(120))
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      expect(carousel).toHaveAttribute('data-works-position', '8')
+    } finally {
+      vi.useRealTimers()
     }
+  })
 
-    expect(carousel).toHaveAttribute('data-works-position', String(WORKS_PROJECT_INDEX))
-    expect(project).toHaveClass('is-centered')
-    expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
+  it('starts a new wheel gesture when a fresh impulse follows the inertial tail', () => {
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      act(() => vi.advanceTimersByTime(600))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      expect(carousel).toHaveAttribute('data-works-position', '7')
+      fireEvent.wheel(carousel, { deltaX: 2, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 60, deltaY: 0 })
+      fireEvent.wheel(carousel, { deltaX: 160, deltaY: 0 })
+
+      expect(carousel).toHaveAttribute('data-works-position', '8')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('restores the MTS centered state after a complete carousel loop', () => {
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      act(() => vi.advanceTimersByTime(600))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+      const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
+      const project = cards[WORKS_PROJECT_INDEX]
+
+      expect(project).toHaveClass('is-centered')
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      expect(project).not.toHaveClass('is-centered')
+      expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('is-centered')
+
+      for (let step = 0; step < WORKS_CARD_COUNT - 1; step += 1) {
+        act(() => vi.advanceTimersByTime(120))
+        fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      }
+
+      expect(carousel).toHaveAttribute('data-works-position', String(WORKS_PROJECT_INDEX))
+      expect(project).toHaveClass('is-centered')
+      expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('tracks mobile vertical wheel directly and settles after the gesture', () => {
@@ -420,8 +530,8 @@ describe('WorksCardCarousel', () => {
       act(() => vi.advanceTimersByTime(600))
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-      fireEvent.wheel(carousel, { deltaX: 0, deltaY: 100 })
-      expect(carousel).toHaveAttribute('data-works-position', '6.667')
+      fireEvent.wheel(carousel, { deltaX: 0, deltaY: 120 })
+      expect(carousel).toHaveAttribute('data-works-position', '6.6')
       expect(carousel).toHaveClass('is-wheeling')
       act(() => vi.advanceTimersByTime(120))
       expect(carousel).toHaveAttribute('data-works-position', '7')
@@ -479,5 +589,27 @@ describe('WorksCardCarousel', () => {
     fireEvent.pointerUp(carousel, { pointerId: 1, clientX: 100 })
     fireEvent.click(project)
     expect(onOpen).toHaveBeenCalledTimes(1)
+  })
+
+  it('opens the AliExpress vertical presentation from its project card', () => {
+    const onOpen = vi.fn()
+    renderReadyWorksCarousel(onOpen)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
+    expect(onOpen).toHaveBeenCalledWith('aliexpress')
+  })
+
+  it('does not capture a desktop pointer before it becomes a drag', () => {
+    renderReadyWorksCarousel()
+    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+    const project = screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' })
+    const setPointerCapture = vi.fn()
+    Object.defineProperty(carousel, 'setPointerCapture', { configurable: true, value: setPointerCapture })
+
+    fireEvent.pointerDown(project, { pointerId: 7, clientX: 300 })
+    expect(setPointerCapture).not.toHaveBeenCalled()
+
+    fireEvent.pointerMove(carousel, { pointerId: 7, clientX: 292 })
+    expect(setPointerCapture).toHaveBeenCalledWith(7)
   })
 })

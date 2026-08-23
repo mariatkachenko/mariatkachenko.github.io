@@ -5,6 +5,8 @@ type WorksProjectCardProps = {
   imagePosition?: string
   placeholder?: boolean
   mtsFlag?: boolean
+  onOpen?: () => void
+  ariaLabel?: string
 }
 
 export default function WorksProjectCard({
@@ -14,8 +16,10 @@ export default function WorksProjectCard({
   imagePosition = 'center',
   placeholder = false,
   mtsFlag = false,
+  onOpen,
+  ariaLabel,
 }: WorksProjectCardProps) {
-  return <div className={`works-project-card${placeholder ? ' is-placeholder' : ''}`}>
+  const content = <>
     {mtsFlag && <span className="works-project-card__mts-flag" aria-hidden="true">
       <img src="/assets/maria/mts-hanging-flag.png" alt="" draggable="false" />
     </span>}
@@ -42,5 +46,10 @@ export default function WorksProjectCard({
         <span className="works-project-card__meta">{meta}</span>
       </span>
     </span>
-  </div>
+  </>
+
+  const className = `works-project-card${placeholder ? ' is-placeholder' : ''}`
+  return onOpen
+    ? <button className={className} type="button" onClick={onOpen} aria-label={ariaLabel}>{content}</button>
+    : <div className={className}>{content}</div>
 }

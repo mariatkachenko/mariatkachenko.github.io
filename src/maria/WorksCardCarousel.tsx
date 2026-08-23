@@ -7,33 +7,37 @@ import {
   type WheelEvent as ReactWheelEvent,
 } from 'react'
 import ConceptProject from './ConceptProject'
+import AliExpressProjectCard from './AliExpressProjectCard'
 import MtsGameProjectCard from './MtsGameProjectCard'
-import WorksCornerRibbon from './WorksCornerRibbon'
+import RaribleProjectCard from './RaribleProjectCard'
 import WorksGraficoFlyout from './WorksGraficoFlyout'
 import WorksProjectCard from './WorksProjectCard'
 import type { Language } from './i18n'
+import type { PresentationKind } from './PresentationModal'
 import useCarouselNavigationGuard from './useCarouselNavigationGuard'
 
 export const WORKS_CARD_COUNT = 14
+export const WORKS_RARIBLE_INDEX = 5
 export const WORKS_PROJECT_INDEX = 6
-export const WORKS_RIBBON_INDEX = WORKS_PROJECT_INDEX + 1
+export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
 export const WORKS_MTS_PLACEHOLDER_INDEX = 8
 export const WORKS_GRAFICO_INDEX = WORKS_PROJECT_INDEX + 3
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
+export const WORKS_WHEEL_STEP_PX = 220
+export const WORKS_MOBILE_WHEEL_STEP_PX = 200
 export const WORKS_INITIAL_POSITION = WORKS_PROJECT_INDEX
 export const WORKS_ENTRY_DURATION_MS = 600
 export const WORKS_AUTOPLAY_MS = 4200
 export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
+export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
+export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
 export const WORKS_PLACEHOLDER_COVERS = [
-  '/assets/maria/works-cover-01.jpg',
-  '/assets/maria/works-cover-02.jpg',
-  '/assets/maria/mts-pay-game-card.png',
-  '/assets/maria/works-cover-04.jpg',
-  '/assets/maria/works-cover-05.jpg',
+  '/assets/maria/works-placeholder-payments-a.png',
+  '/assets/maria/works-placeholder-payments-b.png',
 ] as const
 
-const WORKS_PLACEHOLDER_COVER_POSITIONS = ['center', 'center', 'center 42%', 'center 38%', 'center'] as const
+const WORKS_PLACEHOLDER_COVER_POSITIONS = ['center', 'center'] as const
 
 export type WorksRowPose = {
   rotateY: number
@@ -81,18 +85,30 @@ export function worksDragStep(isMobile: boolean) {
   return isMobile ? WORKS_MOBILE_DRAG_STEP_PX : WORKS_DRAG_STEP_PX
 }
 
+export function worksWheelStep(isMobile: boolean) {
+  return isMobile ? WORKS_MOBILE_WHEEL_STEP_PX : WORKS_WHEEL_STEP_PX
+}
+
 export function handVariantForWorksPosition(position: number): 'primary' | 'alternate' {
   const centeredIndex = normalizeWorksPosition(Math.round(position))
   return Math.floor(centeredIndex / 3) % 2 === 0 ? 'primary' : 'alternate'
 }
 
 export function worksRowPose(offset: number): WorksRowPose {
-  const magnitude = Math.min(72, Math.abs(offset) * 30)
+  const magnitude = Math.min(80, Math.abs(offset) * 36)
   return {
     rotateY: offset === 0 ? 0 : -Math.sign(offset) * magnitude,
     x: offset,
     layer: Math.max(1, 14 - Math.round(Math.abs(offset))),
   }
+}
+
+export function worksDesktopRowX(offset: number) {
+  const outerDistance = Math.max(0, Math.abs(offset) - 1)
+  return Number((
+    offset * WORKS_DESKTOP_CARD_GAP_VW
+    + Math.sign(offset) * outerDistance * WORKS_DESKTOP_OUTER_GAP_VW
+  ).toFixed(3))
 }
 
 export function worksCardFocus(offset: number) {
@@ -145,7 +161,7 @@ export function mobileWorksDeckPose(offset: number): MobileWorksDeckPose {
   const distance = Math.min(2, Math.abs(offset))
   const rounded = (value: number) => Number(value.toFixed(3))
   return {
-    y: rounded(offset * 6.5),
+    y: rounded(offset * 5.417),
     scale: rounded(1 - distance * 0.06),
     layer: 20 - Math.round(distance * 4),
   }
@@ -177,7 +193,7 @@ export function worksWheelDelta(deltaX: number, deltaY: number, shiftKey: boolea
 }
 
 type WorksCardCarouselProps = {
-  onOpen: () => void
+  onOpen: (project: PresentationKind) => void
   onPositionChange?: (position: number) => void
   onCenteredIndexChange?: (index: number) => void
   language: Language
@@ -189,9 +205,21 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const [wheeling, setWheeling] = useState(false)
   const [isEntering, setIsEntering] = useState(true)
   const [interactionVersion, setInteractionVersion] = useState(0)
-  const pointerOrigin = useRef<{ coordinate: number; position: number; isMobile: boolean } | null>(null)
+  const pointerOrigin = useRef<{
+    coordinate: number
+    position: number
+    isMobile: boolean
+    pointerId: number
+    captured: boolean
+  } | null>(null)
   const suppressClick = useRef(false)
   const wheelSettleTimer = useRef<number | null>(null)
+  const wheelGesture = useRef<{
+    position: number
+    delta: number
+    capped: boolean
+    tailSeen: boolean
+  } | null>(null)
   const carouselElement = useRef<HTMLElement | null>(null)
   useCarouselNavigationGuard(carouselElement)
   const visibleCardIndices = visibleWorksCardIndices(position)
@@ -226,6 +254,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const beginDrag = (event: ReactPointerEvent<HTMLElement>) => {
     if (isEntering) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    wheelGesture.current = null
     setWheeling(false)
     setInteractionVersion((current) => current + 1)
     const isMobile = window.matchMedia?.('(max-width: 600px)').matches ?? false
@@ -233,10 +262,11 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       coordinate: worksPointerCoordinate(event, isMobile),
       position,
       isMobile,
+      pointerId: event.pointerId,
+      captured: false,
     }
     suppressClick.current = false
     setDragging(true)
-    event.currentTarget.setPointerCapture?.(event.pointerId)
   }
 
   const currentDragStep = () => worksDragStep(
@@ -247,6 +277,10 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     if (!pointerOrigin.current) return
     event.preventDefault()
     const delta = worksPointerCoordinate(event, pointerOrigin.current.isMobile) - pointerOrigin.current.coordinate
+    if (Math.abs(delta) >= 6 && !pointerOrigin.current.captured) {
+      event.currentTarget.setPointerCapture?.(pointerOrigin.current.pointerId)
+      pointerOrigin.current.captured = true
+    }
     setPosition(worksPositionAfterDelta(pointerOrigin.current.position, delta, currentDragStep()))
   }
 
@@ -260,9 +294,10 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       WORKS_CARD_COUNT,
       true,
     ))
+    const captured = pointerOrigin.current.captured
     pointerOrigin.current = null
     setDragging(false)
-    event.currentTarget.releasePointerCapture?.(event.pointerId)
+    if (captured) event.currentTarget.releasePointerCapture?.(event.pointerId)
   }
 
   const cancelDrag = () => {
@@ -279,11 +314,27 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     event.preventDefault()
     setWheeling(true)
     setInteractionVersion((current) => current + 1)
-    setPosition((current) => worksPositionAfterDelta(current, -delta))
+    const step = worksWheelStep(isMobile)
+    if (!wheelGesture.current) {
+      wheelGesture.current = { position: Math.round(position), delta: 0, capped: false, tailSeen: false }
+    } else if (wheelGesture.current.capped) {
+      const magnitude = Math.abs(delta)
+      const reversesDirection = Math.sign(delta) !== Math.sign(wheelGesture.current.delta)
+      if (magnitude <= 6) {
+        wheelGesture.current.tailSeen = true
+      } else if ((wheelGesture.current.tailSeen || reversesDirection) && magnitude >= 24) {
+        wheelGesture.current = { position: Math.round(position), delta: 0, capped: false, tailSeen: false }
+      }
+    }
+    wheelGesture.current.delta += delta
+    const gestureOffset = Math.max(-1, Math.min(1, wheelGesture.current.delta / step))
+    wheelGesture.current.capped = Math.abs(gestureOffset) === 1
+    setPosition(normalizeWorksPosition(wheelGesture.current.position + gestureOffset))
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     wheelSettleTimer.current = window.setTimeout(() => {
       setPosition((current) => worksDragReleasePosition(current, WORKS_CARD_COUNT, true))
       setWheeling(false)
+      wheelGesture.current = null
       wheelSettleTimer.current = null
     }, WORKS_WHEEL_SETTLE_DELAY_MS)
   }
@@ -317,20 +368,24 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       const entryDistance = Math.abs(offset)
       const entryLift = entryDistance >= 1.5 ? -3 : entryDistance >= 0.5 ? -1 : 0
       const projectCard = index === WORKS_PROJECT_INDEX
+      const raribleCard = index === WORKS_RARIBLE_INDEX
+      const aliexpressCard = index === WORKS_ALIEXPRESS_INDEX
       const centered = index === centeredCardIndex
       const visible = visibleCardIndices.has(index)
-      const placeholderIndex = index > WORKS_PROJECT_INDEX ? index - 1 : index
-      const coverIndex = placeholderIndex % WORKS_PLACEHOLDER_COVERS.length
+      const genericCardIndex = index
+        - (index > WORKS_PROJECT_INDEX ? 1 : 0)
+        - (index > WORKS_MTS_PLACEHOLDER_INDEX ? 1 : 0)
+      const coverIndex = genericCardIndex % WORKS_PLACEHOLDER_COVERS.length
       return <article
-        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
+        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
         aria-hidden={!visible}
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
         data-layer={pose.layer}
         key={index}
         style={{
-          '--works-row-scale': 1,
-          '--works-row-x': `${pose.x * 11.5}vw`,
+          '--works-row-scale': 1.1,
+          '--works-row-x': `${worksDesktopRowX(pose.x)}vw`,
           '--works-row-rotate-y': `${pose.rotateY}deg`,
           '--works-entry-x': `${compact(offset * 1.4)}vw`,
           '--works-entry-lift-y': `${entryLift}vh`,
@@ -358,8 +413,22 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         } as CSSProperties}
       >
         {projectCard
-          ? <ConceptProject onOpen={onOpen} language={language} />
-          : <div className="maria-works-deck-card__empty" aria-hidden="true">
+          ? <ConceptProject onOpen={() => onOpen('mts')} language={language} />
+          : raribleCard
+            ? <RaribleProjectCard
+              onOpen={() => onOpen('rarible')}
+              ariaLabel={language === 'ru'
+                ? 'Открыть презентацию «Rarible Charity Program»'
+                : 'Open presentation “Rarible Charity Program”'}
+            />
+            : aliexpressCard
+              ? <AliExpressProjectCard
+                onOpen={() => onOpen('aliexpress')}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»'
+                  : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
+              />
+            : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {index === WORKS_MTS_PLACEHOLDER_INDEX
               ? <MtsGameProjectCard language={language} />
               : <WorksProjectCard
@@ -369,7 +438,6 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 imagePosition={WORKS_PLACEHOLDER_COVER_POSITIONS[coverIndex]}
                 placeholder
               />}
-            {index === WORKS_RIBBON_INDEX && <WorksCornerRibbon />}
             {index === WORKS_GRAFICO_INDEX && <WorksGraficoFlyout active={centered} />}
           </div>}
       </article>

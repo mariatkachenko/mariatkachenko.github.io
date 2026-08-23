@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { navigateWithTransition } from './router'
 
 type TransitionDocument = Document & {
-  startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> }
+  startViewTransition?: (update: () => void | Promise<void>) => { ready?: Promise<void>; finished: Promise<void> }
 }
 
 beforeEach(() => {

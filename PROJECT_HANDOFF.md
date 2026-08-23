@@ -452,6 +452,14 @@ CSS скрывает его по умолчанию и показывает пр
 - cover: `/assets/maria/mts-pay-cover.png`;
 - по клику открывает presentation modal.
 
+### MTS flyout overlay
+
+Логотип Figma и бабочка не вложены в `ConceptProject`: они рендерятся компонентом `MtsFlyoutOverlay` как фиксированный экранный слой внутри `WorksPage`. Это изолирует их сильное масштабирование от `translate3d`/`rotateY` карточки и предотвращает снижение качества при перелистывании. `WorksPage` перезапускает overlay при каждом возвращении MTS-карточки в центр и удаляет его при уходе. Для отката удалить компонент и вернуть два flyout `<img>` вместе со старыми `.is-centered` CSS-триггерами в `ConceptProject`.
+
+Первый запуск сцены после перехода на `/works` синхронизирован не с условным таймером и не с поздним `transition.finished`, а с `transition.ready`: в этот момент браузер уже построил snapshots и начинает route-анимацию. `router.ts` отправляет `ROUTE_TRANSITION_READY_EVENT`; до него `WorksPage` не активирует live-анимации руки и карточек. Flyout-изображения при этом уже смонтированы без active-класса для ранней загрузки, а после события рука, карусель и flyout стартуют вместе. Только для перехода на `/works` статические new-snapshots корня и карусели скрыты, поэтому старый экран главной плавно растворяется поверх уже движущейся live-сцены без повторного раскрытия и дополнительной задержки. При fallback-навигации сцена готова сразу. Полный откат этой синхронизации описан в `docs/superpowers/specs/2026-08-15-works-scene-transition-sync-design.md`.
+
+Awaiting-состояние карусели обязано повторять `from`-геометрию `maria-works-card-enter`, иначе snapshot покажет раскрытые карточки до повторного запуска animation. Два flyout PNG preload-ятся из `index.html` с высоким приоритетом, а их `<img>` используют eager/sync decoding, чтобы первый кадр вылета не опаздывал после scene-ready event.
+
 ### Presentation modal
 
 - fixed dark blurred overlay;

@@ -1,57 +1,72 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { copyFor, type Language } from './i18n'
+import MtsPresentation from './MtsPresentation'
+import RariblePresentation from './RariblePresentation'
+import AliExpressPresentation from './AliExpressPresentation'
+
+export type PresentationKind = 'mts' | 'rarible' | 'aliexpress'
 
 type PresentationModalProps = {
-  open: boolean
+  project: PresentationKind | null
   onClose: () => void
   language: Language
 }
 
-const FIGMA_EMBED_URL = 'https://embed.figma.com/proto/X679nLVF8CfbUmiLVRreSP/Концепт-v3?node-id=40007012-21703&p=f&t=n4fciFNHirxhrr8W-1&scaling=contain&content-scaling=fixed&page-id=40006247%3A22563&starting-point-node-id=40007012%3A21703&show-proto-sidebar=0&hide-ui=1&device-frame=false&footer=false&viewport-controls=false&hotspot-hints=false&embed-host=share'
-
-export default function PresentationModal({ open, onClose, language }: PresentationModalProps) {
+export default function PresentationModal({ project, onClose, language }: PresentationModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const copy = copyFor(language)
+  const presentationLabel = project === 'rarible'
+    ? 'Rarible Charity Program'
+    : project === 'aliexpress'
+      ? 'Collections Prototype - AliExpress DAU Hackathon'
+      : copy.presentation
 
   useEffect(() => {
-    if (!open) return
+    if (!project) return
 
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const previousOverflow = document.body.style.overflow
+    const app = document.querySelector<HTMLElement>('.maria-app')
+    const previousAriaHidden = app?.getAttribute('aria-hidden')
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
     }
 
     document.body.style.overflow = 'hidden'
+    app?.classList.add('maria-app--presentation-open')
+    app?.setAttribute('inert', '')
+    app?.setAttribute('aria-hidden', 'true')
     document.addEventListener('keydown', handleKeyDown)
     closeRef.current?.focus()
 
     return () => {
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', handleKeyDown)
+      app?.classList.remove('maria-app--presentation-open')
+      app?.removeAttribute('inert')
+      if (previousAriaHidden === null || previousAriaHidden === undefined) app?.removeAttribute('aria-hidden')
+      else app?.setAttribute('aria-hidden', previousAriaHidden)
       previousFocus?.focus()
     }
-  }, [open, onClose])
+  }, [project, onClose])
 
-  if (!open) return null
+  if (!project) return null
 
-  return <div
+  return createPortal(<div
     className="presentation-modal presentation-modal--dimmed"
     role="dialog"
     aria-modal="true"
-    aria-label={copy.presentation}
+    aria-label={presentationLabel}
     onMouseDown={(event) => {
       if (event.target === event.currentTarget) onClose()
     }}
   >
     <button ref={closeRef} className="presentation-modal__close" type="button" onClick={onClose} aria-label={copy.closePresentation}>×</button>
-    <iframe
-      src={FIGMA_EMBED_URL}
-      title={copy.presentation}
-      width="1920"
-      height="1080"
-      allowFullScreen
-      loading="lazy"
-    />
-  </div>
+    {project === 'mts'
+      ? <MtsPresentation language={language} />
+      : project === 'rarible'
+        ? <RariblePresentation language={language} />
+        : <AliExpressPresentation language={language} />}
+  </div>, document.body)
 }
