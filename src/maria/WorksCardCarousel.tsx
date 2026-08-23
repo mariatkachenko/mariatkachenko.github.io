@@ -10,7 +10,6 @@ import ConceptProject from './ConceptProject'
 import AliExpressProjectCard from './AliExpressProjectCard'
 import MtsGameProjectCard from './MtsGameProjectCard'
 import RaribleProjectCard from './RaribleProjectCard'
-import WorksGraficoFlyout from './WorksGraficoFlyout'
 import WorksProjectCard from './WorksProjectCard'
 import type { Language } from './i18n'
 import type { PresentationKind } from './PresentationModal'
@@ -21,7 +20,6 @@ export const WORKS_RARIBLE_INDEX = 5
 export const WORKS_PROJECT_INDEX = 6
 export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
 export const WORKS_MTS_PLACEHOLDER_INDEX = 8
-export const WORKS_GRAFICO_INDEX = WORKS_PROJECT_INDEX + 3
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
 export const WORKS_WHEEL_STEP_PX = 220
@@ -444,7 +442,6 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 imagePosition={WORKS_PLACEHOLDER_COVER_POSITIONS[coverIndex]}
                 placeholder
               />}
-            {index === WORKS_GRAFICO_INDEX && <WorksGraficoFlyout active={centered} />}
           </div>}
       </article>
     })}

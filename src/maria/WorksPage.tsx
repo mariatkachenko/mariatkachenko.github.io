@@ -3,7 +3,6 @@ import PresentationModal, { type PresentationKind } from './PresentationModal'
 import WorksCardCarousel, { handVariantForWorksPosition, worksPatternOffset, WORKS_INITIAL_POSITION, WORKS_PROJECT_INDEX } from './WorksCardCarousel'
 import HomeBackButton from './HomeBackButton'
 import MtsFlyoutOverlay from './MtsFlyoutOverlay'
-import WorksPaintSplash, { shouldTriggerWorksPaintSplash } from './WorksPaintSplash'
 import { type Language } from './i18n'
 import { ROUTE_TRANSITION_READY_EVENT } from '../router'
 
@@ -12,7 +11,6 @@ export default function WorksPage({ language }: { language: Language }) {
   const [presentation, setPresentation] = useState<PresentationKind | null>(null)
   const [handVariant, setHandVariant] = useState(() => handVariantForWorksPosition(WORKS_INITIAL_POSITION))
   const [patternOffset, setPatternOffset] = useState(() => worksPatternOffset(WORKS_INITIAL_POSITION))
-  const [paintActivation, setPaintActivation] = useState(0)
   const [flyoutActivation, setFlyoutActivation] = useState(1)
   const [flyoutVisible, setFlyoutVisible] = useState(false)
   const previousCenteredIndex = useRef<number | null>(WORKS_INITIAL_POSITION)
@@ -30,9 +28,6 @@ export default function WorksPage({ language }: { language: Language }) {
       }
     } else {
       setFlyoutVisible(false)
-    }
-    if (shouldTriggerWorksPaintSplash(previousCenteredIndex.current, nextIndex)) {
-      setPaintActivation((current) => current + 1)
     }
     previousCenteredIndex.current = nextIndex
   }, [])
@@ -69,7 +64,6 @@ export default function WorksPage({ language }: { language: Language }) {
       onEntryComplete={finishCarouselEntry}
       language={language}
     />
-    <WorksPaintSplash activation={paintActivation} />
     <MtsFlyoutOverlay activation={flyoutActivation} visible={sceneReady && flyoutVisible} />
     <PresentationModal project={presentation} onClose={closePresentation} language={language} />
   </main>

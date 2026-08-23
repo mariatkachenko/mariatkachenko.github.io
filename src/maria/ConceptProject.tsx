@@ -19,7 +19,7 @@ export default function ConceptProject({ onOpen, language }: ConceptProjectProps
     <span className="mts-project-card__media" aria-hidden="true">
       <img
         className="mts-project-card__artwork"
-        src="/assets/maria/mts-live-triptych.png"
+        src="/assets/maria/mts-pay-card-composition.png"
         alt=""
         draggable="false"
       />

@@ -76,11 +76,13 @@ describe('Maria Tkachenko portfolio', () => {
 
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
     expect(app.querySelector('.maria-route-content')).toHaveClass('maria-route-content--forward')
+    expect(app.querySelector('.maria-works-card-transition')).not.toBeInTheDocument()
     expect(app.querySelector('.maria-route-content .maria-header')).not.toBeInTheDocument()
     expect(app.querySelector('.maria-route-content .maria-controls')).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'На Главную' }))
     expect(app.querySelector('.maria-route-content')).toHaveClass('maria-route-content--back')
+    expect(app.querySelector('.maria-works-card-transition')).not.toBeInTheDocument()
   })
 
   it('uses the portfolio title and favicon', () => {
@@ -261,7 +263,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(cover).toHaveClass('mts-project-card')
     expect(cover.querySelector('.works-project-card')).toBeNull()
     expect(cover.querySelector('.concept-cover')).toBeNull()
-    expect(cover.querySelector('.mts-project-card__artwork')).toHaveAttribute('src', '/assets/maria/mts-live-triptych.png')
+    expect(cover.querySelector('.mts-project-card__artwork')).toHaveAttribute('src', '/assets/maria/mts-pay-card-composition.png')
     expect(cover.querySelector('.mts-project-card__media')).toContainElement(cover.querySelector('.mts-project-card__artwork'))
     expect(cover.querySelector('.mts-project-card__artwork')?.parentElement).toHaveClass('mts-project-card__media')
     expect(cover.querySelector('.mts-project-card__logo-flyout')).toBeNull()
