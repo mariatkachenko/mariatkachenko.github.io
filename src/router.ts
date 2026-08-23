@@ -19,6 +19,10 @@ export function routeTransitionDirection(
   return to === '/' ? 'back' : 'forward'
 }
 
+function shouldSkipNativeTransition(from: ActiveRoutePath, to: ActiveRoutePath) {
+  return (from === '/' && to === '/works') || (from === '/works' && to === '/')
+}
+
 export function navigate(path: RoutePath) {
   window.history.pushState({}, '', path)
   window.dispatchEvent(new PopStateEvent('popstate'))
@@ -35,6 +39,11 @@ export function navigateWithTransition(path: RoutePath): RouteViewTransition | n
 
   const currentPath = normalizePath(window.location.pathname)
   const targetPath = normalizePath(path)
+  if (shouldSkipNativeTransition(currentPath, targetPath)) {
+    navigate(path)
+    return null
+  }
+
   const transitionDirection = routeTransitionDirection(currentPath, targetPath)
   const activePath = path === '/' ? currentPath : normalizePath(path)
   const transitionRoute = activePath === '/works' ? 'works' : activePath === '/hackathons' ? 'hackathons' : ''
@@ -44,7 +53,7 @@ export function navigateWithTransition(path: RoutePath): RouteViewTransition | n
   const transition = transitionDocument.startViewTransition(() => {
     flushSync(() => navigate(path))
   })
-  void (transition.ready ?? Promise.resolve()).then(() => {
+  void transition.finished.then(() => {
     document.dispatchEvent(new Event(ROUTE_TRANSITION_READY_EVENT))
   }).catch(() => undefined)
   void transition.finished.finally(() => {

@@ -216,15 +216,11 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelector('.maria-scroll-stop')).not.toBeInTheDocument()
   })
 
-  it('starts one clean works scene when the native route transition is ready', async () => {
+  it('starts the works scene immediately without the native snapshot transition', () => {
     vi.useFakeTimers()
-    let readyTransition!: () => void
-    let finishTransition!: () => void
-    const ready = new Promise<void>((resolve) => { readyTransition = resolve })
-    const finished = new Promise<void>((resolve) => { finishTransition = resolve })
     const startViewTransition = vi.fn((update: () => void | Promise<void>) => {
       void update()
-      return { ready, finished }
+      return { finished: Promise.resolve() }
     })
     Object.defineProperty(document, 'startViewTransition', {
       value: startViewTransition,
@@ -235,26 +231,16 @@ describe('Maria Tkachenko portfolio', () => {
       const { container } = render(<App />)
       fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
 
-      expect(container.querySelector('.maria-works-page')).not.toHaveClass('is-scene-ready')
-      expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entering')
-      expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entry-active')
-      expect(container.querySelector('.mts-flyout-overlay')).toBeInTheDocument()
-      expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
-
-      await act(async () => {
-        readyTransition()
-        await ready
-      })
+      expect(startViewTransition).not.toHaveBeenCalled()
       expect(container.querySelector('.maria-works-page')).toHaveClass('is-scene-ready')
+      expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entering')
       expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entry-active')
+      expect(container.querySelector('.mts-flyout-overlay')).toBeInTheDocument()
       expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
 
       act(() => vi.advanceTimersByTime(600))
       expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entering')
       expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
-
-      finishTransition()
-      await finished
     } finally {
       Object.defineProperty(document, 'startViewTransition', {
         value: undefined,
