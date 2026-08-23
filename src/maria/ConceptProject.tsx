@@ -33,10 +33,10 @@ export default function ConceptProject({ onOpen, language }: ConceptProjectProps
       </span>
       <span className="mts-project-card__copy">
         <strong className="mts-project-card__title">
-          {language === 'ru' ? 'Концепт v3 — Преза' : 'Concept v3 — Presentation'}
+          {language === 'ru' ? 'Редизайн модуля оплаты МТС Pay' : 'MTS Pay payment module redesign'}
         </strong>
         <span className="mts-project-card__meta">
-          {language === 'ru' ? 'Проект · МТС Финтех' : 'Project · MTS Fintech'}
+          {language === 'ru' ? 'МТС Финтех 2026' : 'MTS Fintech 2026'}
         </span>
       </span>
     </span>
