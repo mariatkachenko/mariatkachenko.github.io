@@ -79,7 +79,8 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
   const outgoingId = outgoingIndex === null ? null : SLIDE_IDS[outgoingIndex]
 
   return <section className={`mts-presentation mts-presentation--${DARK_SLIDES.has(activeId) ? 'dark' : 'light'}`} aria-label={copy.slide}>
-    <div className="mts-presentation__slides" aria-live="polite" onClick={handleSlideClick}>
+    <div className="mts-presentation__frame">
+      <div className="mts-presentation__slides" aria-live="polite" onClick={handleSlideClick}>
       {outgoingId && <img
         className={`mts-presentation__slide mts-presentation__slide--outgoing is-${direction}`}
         src={slideSource(outgoingId)}
@@ -94,6 +95,7 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
         fetchPriority="high"
         decoding="async"
       />
+      </div>
     </div>
     <div className="mts-presentation__controls">
       <button type="button" aria-label={copy.previous} disabled={slideIndex === 0} onClick={() => goToSlide(slideIndex - 1)}>←</button>

@@ -10,6 +10,8 @@ import ConceptProject from './ConceptProject'
 import AliExpressProjectCard from './AliExpressProjectCard'
 import MtsGameProjectCard from './MtsGameProjectCard'
 import RaribleProjectCard from './RaribleProjectCard'
+import TinnotechProjectCard from './TinnotechProjectCard'
+import WalletProjectCard from './WalletProjectCard'
 import WorksProjectCard from './WorksProjectCard'
 import type { Language } from './i18n'
 import type { PresentationKind } from './PresentationModal'
@@ -20,6 +22,8 @@ export const WORKS_RARIBLE_INDEX = 5
 export const WORKS_PROJECT_INDEX = 6
 export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
 export const WORKS_MTS_PLACEHOLDER_INDEX = 8
+export const WORKS_TINNOTECH_INDEX = 9
+export const WORKS_WALLET_INDEX = 10
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
 export const WORKS_WHEEL_STEP_PX = 220
@@ -381,6 +385,8 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       const projectCard = index === WORKS_PROJECT_INDEX
       const raribleCard = index === WORKS_RARIBLE_INDEX
       const aliexpressCard = index === WORKS_ALIEXPRESS_INDEX
+      const tinnotechCard = index === WORKS_TINNOTECH_INDEX
+      const walletCard = index === WORKS_WALLET_INDEX
       const centered = index === centeredCardIndex
       const visible = visibleCardIndices.has(index)
       const genericCardIndex = index
@@ -388,7 +394,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         - (index > WORKS_MTS_PLACEHOLDER_INDEX ? 1 : 0)
       const coverIndex = genericCardIndex % WORKS_PLACEHOLDER_COVERS.length
       return <article
-        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
+        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
         aria-hidden={!visible}
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
@@ -448,6 +454,10 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {index === WORKS_MTS_PLACEHOLDER_INDEX
               ? <MtsGameProjectCard language={language} loadArtwork={shouldLoadDeferredWorksArtwork(offset)} />
+              : tinnotechCard
+                ? <TinnotechProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
+              : walletCard
+                ? <WalletProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : <WorksProjectCard
                 title={language === 'ru' ? 'Новый проект' : 'New project'}
                 meta={language === 'ru' ? 'Скоро' : 'Coming soon'}

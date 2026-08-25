@@ -11,6 +11,8 @@ import WorksCardCarousel, {
   WORKS_PLACEHOLDER_COVERS,
   WORKS_PROJECT_INDEX,
   WORKS_RARIBLE_INDEX,
+  WORKS_TINNOTECH_INDEX,
+  WORKS_WALLET_INDEX,
   WORKS_WHEEL_STEP_PX,
   continuousWorksOffset,
   mobileWorksDeckPose,
@@ -241,10 +243,10 @@ describe('WorksCardCarousel', () => {
     expect(screen.queryByText('MTS Pay')).not.toBeInTheDocument()
     expect(screen.queryByText('Coming soon')).not.toBeInTheDocument()
     expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(11)
-    expect(container.querySelectorAll('.works-project-card')).toHaveLength(10)
-    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(10)
-    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(10)
-    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(10)
+    expect(container.querySelectorAll('.works-project-card')).toHaveLength(8)
+    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(8)
+    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(8)
+    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(8)
     expect(cards[WORKS_RARIBLE_INDEX]).toHaveClass('has-rarible')
     expect(cards[WORKS_RARIBLE_INDEX].querySelector('.rarible-project-card')).not.toBeNull()
     expect(cards[WORKS_RARIBLE_INDEX].querySelectorAll('.rarible-project-card__cover')).toHaveLength(1)
@@ -258,6 +260,14 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__girl')).toHaveLength(0)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__statue')).toHaveLength(0)
     expect(cards[WORKS_MTS_PLACEHOLDER_INDEX].querySelectorAll('.mts-game-card__footer')).toHaveLength(1)
+    expect(cards[WORKS_TINNOTECH_INDEX].querySelector('.tinnotech-project-card')).not.toBeNull()
+    expect(cards[WORKS_TINNOTECH_INDEX].querySelector('.works-project-card')).toBeNull()
+    expect(cards[WORKS_TINNOTECH_INDEX]).toHaveClass('has-tinnotech')
+    expect(cards[WORKS_TINNOTECH_INDEX].querySelectorAll('.tinnotech-project-card__phones')).toHaveLength(0)
+    expect(cards[WORKS_TINNOTECH_INDEX].querySelectorAll('.tinnotech-project-card__footer')).toHaveLength(1)
+    expect(cards[WORKS_WALLET_INDEX].querySelector('.wallet-project-card')).not.toBeNull()
+    expect(cards[WORKS_WALLET_INDEX]).toHaveClass('has-wallet')
+    expect(cards[WORKS_WALLET_INDEX].querySelectorAll('.wallet-project-card__phones')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('has-aliexpress')
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.aliexpress-project-card')).not.toBeNull()
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__phones')).toHaveLength(1)
@@ -272,16 +282,17 @@ describe('WorksCardCarousel', () => {
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
     expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
     expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
-    expect(screen.getAllByText('Новый проект')).toHaveLength(10)
-    expect(screen.getAllByText('Скоро')).toHaveLength(10)
+    expect(screen.getAllByText('Новый проект')).toHaveLength(8)
+    expect(screen.getAllByText('Скоро')).toHaveLength(8)
     expect(container.querySelectorAll('.maria-works-deck-card:not(.is-hidden)')).toHaveLength(5)
     expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(9)
     expect(container.querySelectorAll('.maria-works-deck-card__spine')).toHaveLength(0)
     expect(container.querySelectorAll('.maria-works-deck-card__pages')).toHaveLength(0)
-    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(10)
+    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(8)
     expect(container.querySelectorAll('.rarible-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.aliexpress-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-game-card__file-icon')).toHaveLength(1)
+    expect(container.querySelectorAll('.tinnotech-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-project-card__file-icon')).toHaveLength(1)
     const mtsFlags = container.querySelectorAll('.works-project-card__mts-flag')
     expect(mtsFlags).toHaveLength(0)
@@ -343,9 +354,9 @@ describe('WorksCardCarousel', () => {
     expect(WORKS_PLACEHOLDER_COVERS).toEqual([
       '/assets/maria/works-placeholder-payments-a.webp',
     ])
-    expect(images).toHaveLength(WORKS_CARD_COUNT - 4)
+    expect(images).toHaveLength(WORKS_CARD_COUNT - 6)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.webp"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(10)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(8)
     expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-bag.webp"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-collections-cover.webp"]')).toHaveLength(1)
@@ -356,6 +367,10 @@ describe('WorksCardCarousel', () => {
     expect(container.querySelectorAll('img[src="/assets/maria/mts-game-phones.webp"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-game-girl.webp"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-game-statue.webp"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/tinnotech-phones.png"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/tinnotech-chat.png"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/tinnotech-poll.png"]')).toHaveLength(0)
+    expect(container.querySelectorAll('img[src="/assets/maria/tinnotech-logo.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-cover.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-stage.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.webp"]')).toHaveLength(0)
@@ -393,6 +408,7 @@ describe('WorksCardCarousel', () => {
       expect(container.querySelectorAll('.mts-project-card__artwork')).toHaveLength(0)
       expect(container.querySelectorAll('.rarible-project-card__artwork img')).toHaveLength(0)
       expect(container.querySelectorAll('.aliexpress-project-card__artwork img')).toHaveLength(4)
+      expect(container.querySelectorAll('.tinnotech-project-card__artwork img')).toHaveLength(4)
     } finally {
       vi.useRealTimers()
     }
@@ -407,8 +423,8 @@ describe('WorksCardCarousel', () => {
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
     expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
     expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
-    expect(screen.getAllByText('New project')).toHaveLength(10)
-    expect(screen.getAllByText('Coming soon')).toHaveLength(10)
+    expect(screen.getAllByText('New project')).toHaveLength(8)
+    expect(screen.getAllByText('Coming soon')).toHaveLength(8)
   })
 
   it('prevents native card dragging', () => {
