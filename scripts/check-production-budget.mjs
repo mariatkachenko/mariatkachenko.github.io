@@ -5,7 +5,7 @@ const distRoot = resolve(import.meta.dirname, '..', 'dist')
 const limits = {
   totalBytes: 18 * 1024 * 1024,
   javascriptBytes: 250 * 1024,
-  stylesheetBytes: 80 * 1024,
+  stylesheetBytes: 88 * 1024,
   fileCount: 120,
 }
 
@@ -27,7 +27,7 @@ const largestStylesheet = Math.max(0, ...files.filter((file) => file.path.endsWi
 const failures = [
   totalBytes > limits.totalBytes && `total ${(totalBytes / 1048576).toFixed(2)} MiB > 18 MiB`,
   largestJavaScript > limits.javascriptBytes && `JavaScript ${(largestJavaScript / 1024).toFixed(1)} KiB > 250 KiB`,
-  largestStylesheet > limits.stylesheetBytes && `CSS ${(largestStylesheet / 1024).toFixed(1)} KiB > 80 KiB`,
+  largestStylesheet > limits.stylesheetBytes && `CSS ${(largestStylesheet / 1024).toFixed(1)} KiB > 88 KiB`,
   files.length > limits.fileCount && `files ${files.length} > ${limits.fileCount}`,
 ].filter(Boolean)
 

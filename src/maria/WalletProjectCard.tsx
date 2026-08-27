@@ -10,10 +10,10 @@ export default function WalletProjectCard({ language, loadArtwork }: WalletProje
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="wallet-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
-        <img className="wallet-project-card__phones" src="/assets/maria/wallet-phones.png" alt="" draggable="false" />
-        <img className="wallet-project-card__drink" src="/assets/maria/wallet-drink.png" alt="" draggable="false" />
-        <img className="wallet-project-card__bottle" src="/assets/maria/wallet-bottle.png" alt="" draggable="false" />
-        <img className="wallet-project-card__cart" src="/assets/maria/wallet-cart.png" alt="" draggable="false" />
+        <img className="wallet-project-card__phones" src="/assets/maria/wallet-phones.webp" alt="" draggable="false" />
+        <img className="wallet-project-card__drink" src="/assets/maria/wallet-drink.webp" alt="" draggable="false" />
+        <img className="wallet-project-card__bottle" src="/assets/maria/wallet-bottle.webp" alt="" draggable="false" />
+        <img className="wallet-project-card__cart" src="/assets/maria/wallet-cart.webp" alt="" draggable="false" />
       </>}
     </span>
     <span className="wallet-project-card__footer">
