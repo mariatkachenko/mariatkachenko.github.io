@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { copyFor, type Language } from './i18n'
 import MtsPresentation from './MtsPresentation'
+import MtsGamePresentation from './MtsGamePresentation'
 import RariblePresentation from './RariblePresentation'
 import AliExpressPresentation from './AliExpressPresentation'
 
-export type PresentationKind = 'mts' | 'rarible' | 'aliexpress'
+export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress'
 
 type PresentationModalProps = {
   project: PresentationKind | null
@@ -20,7 +21,9 @@ export default function PresentationModal({ project, onClose, language }: Presen
     ? 'Rarible Charity Program'
     : project === 'aliexpress'
       ? 'Collections Prototype - AliExpress DAU Hackathon'
-      : copy.presentation
+      : project === 'mts-game'
+        ? (language === 'ru' ? 'Страницы игр на сайте МТС Оплата' : 'Game pages on the MTS Payment website')
+        : copy.presentation
 
   useEffect(() => {
     if (!project) return
@@ -65,8 +68,10 @@ export default function PresentationModal({ project, onClose, language }: Presen
     <button ref={closeRef} className="presentation-modal__close" type="button" onClick={onClose} aria-label={copy.closePresentation}>×</button>
     {project === 'mts'
       ? <MtsPresentation language={language} />
-      : project === 'rarible'
-        ? <RariblePresentation language={language} />
-        : <AliExpressPresentation language={language} />}
+      : project === 'mts-game'
+        ? <MtsGamePresentation language={language} />
+        : project === 'rarible'
+          ? <RariblePresentation language={language} />
+          : <AliExpressPresentation language={language} />}
   </div>, document.body)
 }

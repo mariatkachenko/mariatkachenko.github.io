@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import WorksCardCarousel, {
   WORKS_CARD_COUNT,
   WORKS_AUTOPLAY_MS,
+  WORKS_AUTOPAY_INDEX,
   WORKS_ENTRY_DURATION_MS,
   WORKS_INITIAL_POSITION,
   WORKS_MOBILE_DRAG_STEP_PX,
@@ -177,6 +178,7 @@ describe('WorksCardCarousel', () => {
   it('advances one card at a relaxed autoplay interval after the entrance', () => {
     vi.useFakeTimers()
     try {
+      expect(WORKS_AUTOPLAY_MS).toBe(4800)
       render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
@@ -191,6 +193,31 @@ describe('WorksCardCarousel', () => {
 
       act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS))
       expect(carousel).toHaveAttribute('data-works-position', '8')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('freezes autoplay and manual navigation while a presentation is open', () => {
+    vi.useFakeTimers()
+    try {
+      const { rerender } = render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      act(() => vi.advanceTimersByTime(600))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      rerender(<WorksCardCarousel onOpen={vi.fn()} language="ru" paused />)
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      fireEvent.pointerDown(carousel, { pointerId: 7, clientX: 420 })
+      fireEvent.pointerMove(carousel, { pointerId: 7, clientX: 120 })
+      fireEvent.pointerUp(carousel, { pointerId: 7, clientX: 120 })
+      act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS * 2))
+      expect(carousel).toHaveAttribute('data-works-position', '6')
+
+      rerender(<WorksCardCarousel onOpen={vi.fn()} language="ru" paused={false} />)
+      act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS - 1))
+      expect(carousel).toHaveAttribute('data-works-position', '6')
+      act(() => vi.advanceTimersByTime(1))
+      expect(carousel).toHaveAttribute('data-works-position', '7')
     } finally {
       vi.useRealTimers()
     }
@@ -242,11 +269,11 @@ describe('WorksCardCarousel', () => {
     expect(cards[7]).toHaveAttribute('data-offset', '1')
     expect(screen.queryByText('MTS Pay')).not.toBeInTheDocument()
     expect(screen.queryByText('Coming soon')).not.toBeInTheDocument()
-    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(11)
-    expect(container.querySelectorAll('.works-project-card')).toHaveLength(8)
-    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(8)
-    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(8)
-    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(8)
+    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(10)
+    expect(container.querySelectorAll('.works-project-card')).toHaveLength(7)
+    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(7)
+    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(7)
+    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(7)
     expect(cards[WORKS_RARIBLE_INDEX]).toHaveClass('has-rarible')
     expect(cards[WORKS_RARIBLE_INDEX].querySelector('.rarible-project-card')).not.toBeNull()
     expect(cards[WORKS_RARIBLE_INDEX].querySelectorAll('.rarible-project-card__cover')).toHaveLength(1)
@@ -268,6 +295,9 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_WALLET_INDEX].querySelector('.wallet-project-card')).not.toBeNull()
     expect(cards[WORKS_WALLET_INDEX]).toHaveClass('has-wallet')
     expect(cards[WORKS_WALLET_INDEX].querySelectorAll('.wallet-project-card__phones')).toHaveLength(0)
+    expect(cards[WORKS_AUTOPAY_INDEX]).toHaveClass('has-autopay')
+    expect(cards[WORKS_AUTOPAY_INDEX].querySelector('.autopay-project-card')).not.toBeNull()
+    expect(cards[WORKS_AUTOPAY_INDEX].querySelectorAll('.autopay-project-card__phones')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('has-aliexpress')
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.aliexpress-project-card')).not.toBeNull()
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__phones')).toHaveLength(1)
@@ -288,7 +318,7 @@ describe('WorksCardCarousel', () => {
     expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(9)
     expect(container.querySelectorAll('.maria-works-deck-card__spine')).toHaveLength(0)
     expect(container.querySelectorAll('.maria-works-deck-card__pages')).toHaveLength(0)
-    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(8)
+    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(7)
     expect(container.querySelectorAll('.rarible-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.aliexpress-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-game-card__file-icon')).toHaveLength(1)
@@ -300,7 +330,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__media')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__artwork')).toHaveLength(1)
-    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.webp"]')).toHaveLength(1)
+    expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-card-composition-crisp.png"]')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-cover.png"]')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__logo-flyout')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('.mts-project-card__butterfly-flyout')).toHaveLength(0)
@@ -311,7 +341,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[8].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[7].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[13].querySelector('.works-project-card__mts-flag')).toBeNull()
-    expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-row-scale': '1.1' })
+    expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-row-scale': '1' })
     expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-card-brightness-light': '1' })
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveStyle({ '--works-card-brightness-light': '0.92' })
     expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-card-dark-glow': '0.18' })
@@ -354,9 +384,9 @@ describe('WorksCardCarousel', () => {
     expect(WORKS_PLACEHOLDER_COVERS).toEqual([
       '/assets/maria/works-placeholder-payments-a.webp',
     ])
-    expect(images).toHaveLength(WORKS_CARD_COUNT - 6)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition.webp"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(8)
+    expect(images).toHaveLength(WORKS_CARD_COUNT - 7)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition-crisp.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(7)
     expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-bag.webp"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-collections-cover.webp"]')).toHaveLength(1)

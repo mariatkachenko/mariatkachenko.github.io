@@ -12,6 +12,7 @@ import MtsGameProjectCard from './MtsGameProjectCard'
 import RaribleProjectCard from './RaribleProjectCard'
 import TinnotechProjectCard from './TinnotechProjectCard'
 import WalletProjectCard from './WalletProjectCard'
+import AutopayProjectCard from './AutopayProjectCard'
 import WorksProjectCard from './WorksProjectCard'
 import type { Language } from './i18n'
 import type { PresentationKind } from './PresentationModal'
@@ -24,13 +25,14 @@ export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
 export const WORKS_MTS_PLACEHOLDER_INDEX = 8
 export const WORKS_TINNOTECH_INDEX = 9
 export const WORKS_WALLET_INDEX = 10
+export const WORKS_AUTOPAY_INDEX = 11
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
 export const WORKS_WHEEL_STEP_PX = 220
 export const WORKS_MOBILE_WHEEL_STEP_PX = 200
 export const WORKS_INITIAL_POSITION = WORKS_PROJECT_INDEX
 export const WORKS_ENTRY_DURATION_MS = 600
-export const WORKS_AUTOPLAY_MS = 4200
+export const WORKS_AUTOPLAY_MS = 4800
 export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
 export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
 export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
@@ -207,10 +209,11 @@ type WorksCardCarouselProps = {
   onCenteredIndexChange?: (index: number) => void
   entryReady?: boolean
   onEntryComplete?: () => void
+  paused?: boolean
   language: Language
 }
 
-export default function WorksCardCarousel({ onOpen, onPositionChange, onCenteredIndexChange, entryReady = true, onEntryComplete, language }: WorksCardCarouselProps) {
+export default function WorksCardCarousel({ onOpen, onPositionChange, onCenteredIndexChange, entryReady = true, onEntryComplete, paused = false, language }: WorksCardCarouselProps) {
   const [position, setPosition] = useState(WORKS_INITIAL_POSITION)
   const [dragging, setDragging] = useState(false)
   const [wheeling, setWheeling] = useState(false)
@@ -250,6 +253,16 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }, [])
 
   useEffect(() => {
+    if (!paused) return
+    if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    wheelSettleTimer.current = null
+    wheelGesture.current = null
+    pointerOrigin.current = null
+    setWheeling(false)
+    setDragging(false)
+  }, [paused])
+
+  useEffect(() => {
     onPositionChange?.(position)
   }, [onPositionChange, position])
 
@@ -258,16 +271,16 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }, [centeredCardIndex, onCenteredIndexChange])
 
   useEffect(() => {
-    if (isEntering || dragging) return
+    if (isEntering || dragging || paused) return
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
     const timer = window.setInterval(() => {
       setPosition((current) => normalizeWorksPosition(Math.round(current) + 1))
     }, WORKS_AUTOPLAY_MS)
     return () => window.clearInterval(timer)
-  }, [dragging, interactionVersion, isEntering])
+  }, [dragging, interactionVersion, isEntering, paused])
 
   const beginDrag = (event: ReactPointerEvent<HTMLElement>) => {
-    if (isEntering) return
+    if (isEntering || paused) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     wheelGesture.current = null
     setWheeling(false)
@@ -322,7 +335,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }
 
   const handleWheel = (event: ReactWheelEvent<HTMLElement>) => {
-    if (isEntering) return
+    if (isEntering || paused) return
     const isMobile = window.matchMedia?.('(max-width: 600px)').matches ?? false
     const delta = worksWheelDelta(event.deltaX, event.deltaY, event.shiftKey, isMobile)
     if (delta === 0) return
@@ -383,10 +396,12 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       const entryDistance = Math.abs(offset)
       const entryLift = entryDistance >= 1.5 ? -3 : entryDistance >= 0.5 ? -1 : 0
       const projectCard = index === WORKS_PROJECT_INDEX
+      const mtsGameCard = index === WORKS_MTS_PLACEHOLDER_INDEX
       const raribleCard = index === WORKS_RARIBLE_INDEX
       const aliexpressCard = index === WORKS_ALIEXPRESS_INDEX
       const tinnotechCard = index === WORKS_TINNOTECH_INDEX
       const walletCard = index === WORKS_WALLET_INDEX
+      const autopayCard = index === WORKS_AUTOPAY_INDEX
       const centered = index === centeredCardIndex
       const visible = visibleCardIndices.has(index)
       const genericCardIndex = index
@@ -394,14 +409,14 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         - (index > WORKS_MTS_PLACEHOLDER_INDEX ? 1 : 0)
       const coverIndex = genericCardIndex % WORKS_PLACEHOLDER_COVERS.length
       return <article
-        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
+        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${autopayCard ? ' has-autopay' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
         aria-hidden={!visible}
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
         data-layer={pose.layer}
         key={index}
         style={{
-          '--works-row-scale': 1.1,
+          '--works-row-scale': projectCard ? 1 : 1.1,
           '--works-row-x': `${worksDesktopRowX(pose.x)}vw`,
           '--works-row-rotate-y': `${pose.rotateY}deg`,
           '--works-entry-x': `${compact(offset * 1.4)}vw`,
@@ -451,13 +466,22 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
               />
+            : mtsGameCard
+              ? <MtsGameProjectCard
+                onOpen={() => onOpen('mts-game')}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Страницы игр на сайте МТС Оплата»'
+                  : 'Open presentation “Game pages on the MTS Payment website”'}
+                language={language}
+                loadArtwork={shouldLoadDeferredWorksArtwork(offset)}
+              />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
-            {index === WORKS_MTS_PLACEHOLDER_INDEX
-              ? <MtsGameProjectCard language={language} loadArtwork={shouldLoadDeferredWorksArtwork(offset)} />
-              : tinnotechCard
+            {tinnotechCard
                 ? <TinnotechProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : walletCard
                 ? <WalletProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
+              : autopayCard
+                ? <AutopayProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : <WorksProjectCard
                 title={language === 'ru' ? 'Новый проект' : 'New project'}
                 meta={language === 'ru' ? 'Скоро' : 'Coming soon'}

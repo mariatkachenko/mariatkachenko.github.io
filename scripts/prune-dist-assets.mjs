@@ -52,12 +52,16 @@ const keepFiles = new Set([
   'maria/wallet-drink.webp',
   'maria/wallet-cart.webp',
   'maria/wallet-bottle.webp',
+  'maria/autopay-phones.webp',
+  'maria/autopay-arrows.webp',
+  'maria/autopay-timer.webp',
   'maria/about-space-pattern.svg',
   'maria/astronaut-optimized.glb',
 ])
 
 const keepDirectories = [
   'maria/mts-presentation-webp/',
+  'maria/mts-game-presentation/',
   'maria/rarible-presentation-numbered-webp/',
   'maria/aliexpress-presentation-numbered-webp/',
 ]

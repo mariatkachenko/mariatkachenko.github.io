@@ -62,6 +62,7 @@ export default function WorksPage({ language }: { language: Language }) {
       onCenteredIndexChange={updateCenteredIndex}
       entryReady={sceneReady}
       onEntryComplete={finishCarouselEntry}
+      paused={presentation !== null}
       language={language}
     />
     <MtsFlyoutOverlay activation={flyoutActivation} visible={sceneReady && flyoutVisible} />

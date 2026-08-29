@@ -9,10 +9,10 @@ export default function AliExpressProjectCard({ onOpen, ariaLabel, loadArtwork }
     <span className="aliexpress-project-card__surface" aria-hidden="true" />
     <span className="aliexpress-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
-        <img className="aliexpress-project-card__phones" src="/assets/maria/aliexpress-collections-cover.webp" alt="" draggable="false" />
-        <img className="aliexpress-project-card__bag" src="/assets/maria/aliexpress-bag.webp" alt="" draggable="false" />
-        <img className="aliexpress-project-card__heart" src="/assets/maria/aliexpress-heart.webp" alt="" draggable="false" />
-        <img className="aliexpress-project-card__sparkles" src="/assets/maria/aliexpress-sparkles.webp" alt="" draggable="false" />
+        <img className="aliexpress-project-card__phones" src="/assets/maria/aliexpress-collections-cover.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="aliexpress-project-card__bag" src="/assets/maria/aliexpress-bag.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="aliexpress-project-card__heart" src="/assets/maria/aliexpress-heart.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="aliexpress-project-card__sparkles" src="/assets/maria/aliexpress-sparkles.webp" alt="" draggable="false" loading="eager" decoding="sync" />
       </>}
     </span>
     <span className="aliexpress-project-card__footer">

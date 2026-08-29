@@ -14,9 +14,9 @@ export default function RaribleProjectCard({ onOpen, ariaLabel, loadArtwork }: R
     <span className="rarible-project-card__surface" aria-hidden="true" />
     <span className="rarible-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
-        <img className="rarible-project-card__ape" src="/assets/maria/rarible-ape.webp" alt="" draggable="false" />
-        <img className="rarible-project-card__cover" src="/assets/maria/rarible-charity-cover.webp" alt="" draggable="false" />
-        <img className="rarible-project-card__logo" src="/assets/maria/rarible-logo-hearts.webp" alt="" draggable="false" />
+        <img className="rarible-project-card__ape" src="/assets/maria/rarible-ape.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="rarible-project-card__cover" src="/assets/maria/rarible-charity-cover.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="rarible-project-card__logo" src="/assets/maria/rarible-logo-hearts.webp" alt="" draggable="false" loading="eager" decoding="sync" />
       </>}
     </span>
     <span className="rarible-project-card__footer">

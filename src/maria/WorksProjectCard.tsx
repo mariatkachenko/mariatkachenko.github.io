@@ -30,6 +30,8 @@ export default function WorksProjectCard({
           src={imageSrc}
           alt=""
           draggable="false"
+          loading="eager"
+          decoding="sync"
           style={{ objectPosition: imagePosition }}
         />
         : <span className="works-project-card__placeholder-art" aria-hidden="true" />}

@@ -1,12 +1,14 @@
 import type { Language } from './i18n'
 
 type MtsGameProjectCardProps = {
+  onOpen: () => void
+  ariaLabel: string
   language: Language
   loadArtwork: boolean
 }
 
-export default function MtsGameProjectCard({ language, loadArtwork }: MtsGameProjectCardProps) {
-  return <div className="mts-game-card">
+export default function MtsGameProjectCard({ onOpen, ariaLabel, language, loadArtwork }: MtsGameProjectCardProps) {
+  return <button className="mts-game-card" type="button" onClick={onOpen} aria-label={ariaLabel}>
     <span className="mts-game-card__surface" aria-hidden="true" />
     <span className="mts-game-card__artwork" aria-hidden="true">
       {loadArtwork && <><img
@@ -14,18 +16,24 @@ export default function MtsGameProjectCard({ language, loadArtwork }: MtsGamePro
         src="/assets/maria/mts-game-statue.webp"
         alt=""
         draggable="false"
+        loading="eager"
+        decoding="sync"
       />
       <img
         className="mts-game-card__girl"
         src="/assets/maria/mts-game-girl.webp"
         alt=""
         draggable="false"
+        loading="eager"
+        decoding="sync"
       />
       <img
         className="mts-game-card__phones"
         src="/assets/maria/mts-game-phones.webp"
         alt=""
         draggable="false"
+        loading="eager"
+        decoding="sync"
       /></>}
     </span>
     <span className="mts-game-card__footer">
@@ -40,5 +48,5 @@ export default function MtsGameProjectCard({ language, loadArtwork }: MtsGamePro
         <span className="mts-game-card__meta">{language === 'ru' ? 'МТС Финтех 2024' : 'MTS Fintech 2024'}</span>
       </span>
     </span>
-  </div>
+  </button>
 }
