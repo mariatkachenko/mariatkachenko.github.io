@@ -48,8 +48,8 @@ describe('Maria Tkachenko portfolio', () => {
     expect(handVariantForWorksPosition(6)).toBe('primary')
     expect(handVariantForWorksPosition(8.49)).toBe('primary')
     expect(handVariantForWorksPosition(8.51)).toBe('alternate')
-    expect(handVariantForWorksPosition(11.49)).toBe('alternate')
-    expect(handVariantForWorksPosition(11.51)).toBe('primary')
+    expect(handVariantForWorksPosition(9.49)).toBe('alternate')
+    expect(handVariantForWorksPosition(9.51)).toBe('primary')
   })
 
   it('renders the subpage home control as Comforter text with a decorative curved arrow', () => {
@@ -285,8 +285,8 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
-    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(14)
-    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(10)
+    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(10)
+    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(6)
     expect(carousel).toContainElement(cover)
     expect(container.querySelector('.maria-works-grid')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'На Главную' })).toBeInTheDocument()

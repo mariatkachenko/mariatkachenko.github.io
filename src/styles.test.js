@@ -309,7 +309,8 @@ describe('works responsive card deck', () => {
   it('keeps the MTS cover in the same opaque card shell as placeholders', () => {
     expect(styles).toContain('.mts-project-card{position:relative;box-sizing:border-box;width:100%;height:100%;container-type:inline-size;overflow:visible')
     expect(styles).toContain('.mts-project-card::before,.works-project-card::before{content:"";position:absolute;z-index:1;inset:0 0 calc(25% - var(--works-card-wall-overlap));height:auto;border-radius:11.111cqi 11.111cqi 0 0;background:var(--works-card-back);box-shadow:none')
-    expect(styles).toContain('.mts-project-card__artwork{position:absolute;z-index:2;inset:0;width:100%;height:100%;max-width:none;display:block;object-fit:contain;object-position:center bottom;image-rendering:-webkit-optimize-contrast;transform:none;transform-origin:50% 100%;pointer-events:none}')
+    expect(styles).toContain('.mts-project-card__artwork{position:absolute;z-index:2;inset:0;width:100%;height:100%;max-width:none;display:block;object-fit:contain;object-position:center bottom;image-rendering:-webkit-optimize-contrast;transform:translate3d(0,6%,0) scale(.84);transform-origin:50% 100%;transition:transform .72s cubic-bezier(.18,.76,.2,1);will-change:transform;pointer-events:none}')
+    expect(styles).toContain('.maria-works-deck-card.is-centered .mts-project-card__artwork{transform:translate3d(0,0,0) scale(1)}')
     expect(styles).toContain('.mts-project-card__media{left:-12%;right:-12%;top:-18%;height:134%;clip-path:inset(-100vh -100vw 12% -100vw);transform:none;transition:opacity .28s ease}')
     expect(styles).toContain('.maria-works-deck-card.is-centered .mts-project-card__media{transform:none}')
     expect(styles).toContain('.mts-flyout-overlay{position:fixed;z-index:39;inset:0;overflow:visible;pointer-events:none;isolation:isolate}')

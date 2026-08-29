@@ -18,14 +18,14 @@ import type { Language } from './i18n'
 import type { PresentationKind } from './PresentationModal'
 import useCarouselNavigationGuard from './useCarouselNavigationGuard'
 
-export const WORKS_CARD_COUNT = 14
-export const WORKS_RARIBLE_INDEX = 5
-export const WORKS_PROJECT_INDEX = 6
+export const WORKS_CARD_COUNT = 10
+export const WORKS_RARIBLE_INDEX = 3
+export const WORKS_PROJECT_INDEX = 4
 export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
-export const WORKS_MTS_PLACEHOLDER_INDEX = 8
-export const WORKS_TINNOTECH_INDEX = 9
-export const WORKS_WALLET_INDEX = 10
-export const WORKS_AUTOPAY_INDEX = 11
+export const WORKS_MTS_PLACEHOLDER_INDEX = 6
+export const WORKS_TINNOTECH_INDEX = 7
+export const WORKS_WALLET_INDEX = 8
+export const WORKS_AUTOPAY_INDEX = 9
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
 export const WORKS_WHEEL_STEP_PX = 220

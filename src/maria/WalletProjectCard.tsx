@@ -25,7 +25,7 @@ export default function WalletProjectCard({ language, loadArtwork }: WalletProje
       </span>
       <span className="wallet-project-card__copy">
         <strong className="wallet-project-card__title">{language === 'ru' ? 'Приложение для заказа еды' : 'Food ordering app'}</strong>
-        <span className="wallet-project-card__meta">{language === 'ru' ? 'aneExcuse, Дублин 2021' : 'aneExcuse, Dublin 2021'}</span>
+        <span className="wallet-project-card__meta">{language === 'ru' ? 'anyExcuse, Дублин 2021' : 'anyExcuse, Dublin 2021'}</span>
       </span>
     </span>
   </div>

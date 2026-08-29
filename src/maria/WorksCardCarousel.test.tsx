@@ -45,8 +45,8 @@ function renderReadyWorksCarousel(onOpen = vi.fn(), language: 'ru' | 'en' = 'ru'
 
 describe('continuous works row geometry', () => {
   it('wraps fractional positions and keeps a straight equal row', () => {
-    expect(WORKS_CARD_COUNT).toBe(14)
-    expect(WORKS_PROJECT_INDEX).toBe(6)
+    expect(WORKS_CARD_COUNT).toBe(10)
+    expect(WORKS_PROJECT_INDEX).toBe(4)
     expect(WORKS_INITIAL_POSITION).toBe(WORKS_PROJECT_INDEX)
     expect(WORKS_MOBILE_DRAG_STEP_PX).toBe(140)
     expect(worksDragStep(false)).toBe(150)
@@ -59,17 +59,17 @@ describe('continuous works row geometry', () => {
     expect(worksPointerCoordinate({ clientX: 20, clientY: 80 }, true)).toBe(80)
     expect(worksWheelDelta(10, 70, false, true)).toBe(70)
     expect(worksPatternOffset(0)).toEqual(worksPatternOffset(WORKS_CARD_COUNT))
-    expect(worksPatternOffset(3.5)).toEqual({ desktopX: 2.4, desktopY: 0, mobileX: 0.8, mobileY: 0 })
-    expect(worksPatternOffset(7)).toEqual({ desktopX: 0, desktopY: -0.8, mobileX: 0, mobileY: -1.8 })
-    expect(normalizeWorksPosition(-0.5)).toBe(13.5)
+    expect(worksPatternOffset(3.5)).toEqual({ desktopX: 1.942, desktopY: -0.47, mobileX: 0.647, mobileY: -1.058 })
+    expect(worksPatternOffset(7)).toEqual({ desktopX: -2.283, desktopY: -0.247, mobileX: -0.761, mobileY: -0.556 })
+    expect(normalizeWorksPosition(-0.5)).toBe(9.5)
     expect(continuousWorksOffset(0, 1.5)).toBe(-1.5)
-    expect(continuousWorksOffset(13, 0.5)).toBe(-1.5)
+    expect(continuousWorksOffset(13, 0.5)).toBe(2.5)
     expect(worksPositionAfterDelta(0, -300, 150)).toBe(2)
     expect(worksDragReleasePosition(6.375)).toBe(6.375)
-    expect(worksDragReleasePosition(14.25)).toBe(0.25)
-    expect(worksDragReleasePosition(6.375, 14, true)).toBe(6)
-    expect(worksDragReleasePosition(6.6, 14, true)).toBe(7)
-    expect(worksDragReleasePosition(13.7, 14, true)).toBe(0)
+    expect(worksDragReleasePosition(14.25)).toBe(4.25)
+    expect(worksDragReleasePosition(6.375, WORKS_CARD_COUNT, true)).toBe(6)
+    expect(worksDragReleasePosition(6.6, WORKS_CARD_COUNT, true)).toBe(7)
+    expect(worksDragReleasePosition(13.7, WORKS_CARD_COUNT, true)).toBe(4)
     expect(worksRowPose(0).rotateY).toBe(0)
     expect(worksRowPose(-1).rotateY).toBe(36)
     expect(worksRowPose(1).rotateY).toBe(-36)
@@ -90,11 +90,11 @@ describe('continuous works row geometry', () => {
     expect(worksDesktopRowX(-2)).toBe(-18.75)
     expect(worksDesktopRowX(2)).toBe(18.75)
     expect(worksRowPose(0).layer).toBeGreaterThan(worksRowPose(1).layer)
-    expect(mobileWorksLoopPose(0, 14)).toEqual({ y: 0, scale: 1, opacity: 1, layer: 20 })
-    expect(mobileWorksLoopPose(3.5, 14).y).toBeCloseTo(22)
-    expect(mobileWorksLoopPose(3.5, 14).scale).toBe(1)
-    expect(mobileWorksLoopPose(7, 14)).toEqual({ y: 0, scale: 1, opacity: 0.18, layer: 1 })
-    expect(mobileWorksLoopPose(-3.5, 14).y).toBeCloseTo(-22)
+    expect(mobileWorksLoopPose(0, WORKS_CARD_COUNT)).toEqual({ y: 0, scale: 1, opacity: 1, layer: 20 })
+    expect(mobileWorksLoopPose(3.5, WORKS_CARD_COUNT).y).toBeCloseTo(17.798)
+    expect(mobileWorksLoopPose(3.5, WORKS_CARD_COUNT).scale).toBe(1)
+    expect(mobileWorksLoopPose(5, WORKS_CARD_COUNT)).toEqual({ y: 0, scale: 1, opacity: 0.18, layer: 1 })
+    expect(mobileWorksLoopPose(-3.5, WORKS_CARD_COUNT).y).toBeCloseTo(-17.798)
     expect(mobileWorksDeckPose(0)).toEqual({ y: 0, scale: 1, layer: 20 })
     expect(mobileWorksDeckPose(-0.5)).toEqual({ y: -2.708, scale: 0.97, layer: 18 })
     expect(mobileWorksDeckPose(0.5)).toEqual({ y: 2.708, scale: 0.97, layer: 18 })
@@ -114,10 +114,10 @@ describe('continuous works row geometry', () => {
   })
 
   it('returns exactly five visible cards at integer and fractional positions', () => {
-    expect([...visibleWorksCardIndices(6)]).toEqual([4, 5, 6, 7, 8])
-    expect([...visibleWorksCardIndices(6.49)]).toEqual([4, 5, 6, 7, 8])
-    expect([...visibleWorksCardIndices(6.5)]).toEqual([5, 6, 7, 8, 9])
-    expect(visibleWorksCardIndices(13.8).size).toBe(5)
+    expect([...visibleWorksCardIndices(4)]).toEqual([2, 3, 4, 5, 6])
+    expect([...visibleWorksCardIndices(4.49)]).toEqual([2, 3, 4, 5, 6])
+    expect([...visibleWorksCardIndices(4.5)]).toEqual([3, 4, 5, 6, 7])
+    expect(visibleWorksCardIndices(9.8).size).toBe(5)
   })
 })
 
@@ -160,7 +160,7 @@ describe('WorksCardCarousel', () => {
       />)
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-      expect(onCenteredIndexChange).toHaveBeenLastCalledWith(6)
+      expect(onCenteredIndexChange).toHaveBeenLastCalledWith(4)
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(1)
       act(() => vi.advanceTimersByTime(600))
 
@@ -168,7 +168,7 @@ describe('WorksCardCarousel', () => {
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(1)
 
       fireEvent.wheel(carousel, { deltaX: 100, deltaY: 0 })
-      expect(onCenteredIndexChange).toHaveBeenLastCalledWith(7)
+      expect(onCenteredIndexChange).toHaveBeenLastCalledWith(5)
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(2)
     } finally {
       vi.useRealTimers()
@@ -183,16 +183,16 @@ describe('WorksCardCarousel', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       act(() => vi.advanceTimersByTime(600))
-      expect(carousel).toHaveAttribute('data-works-position', '6')
+      expect(carousel).toHaveAttribute('data-works-position', '4')
 
       act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS - 1))
-      expect(carousel).toHaveAttribute('data-works-position', '6')
+      expect(carousel).toHaveAttribute('data-works-position', '4')
 
       act(() => vi.advanceTimersByTime(1))
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
 
       act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS))
-      expect(carousel).toHaveAttribute('data-works-position', '8')
+      expect(carousel).toHaveAttribute('data-works-position', '6')
     } finally {
       vi.useRealTimers()
     }
@@ -211,13 +211,13 @@ describe('WorksCardCarousel', () => {
       fireEvent.pointerMove(carousel, { pointerId: 7, clientX: 120 })
       fireEvent.pointerUp(carousel, { pointerId: 7, clientX: 120 })
       act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS * 2))
-      expect(carousel).toHaveAttribute('data-works-position', '6')
+      expect(carousel).toHaveAttribute('data-works-position', '4')
 
       rerender(<WorksCardCarousel onOpen={vi.fn()} language="ru" paused={false} />)
       act(() => vi.advanceTimersByTime(WORKS_AUTOPLAY_MS - 1))
-      expect(carousel).toHaveAttribute('data-works-position', '6')
+      expect(carousel).toHaveAttribute('data-works-position', '4')
       act(() => vi.advanceTimersByTime(1))
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
     } finally {
       vi.useRealTimers()
     }
@@ -240,12 +240,12 @@ describe('WorksCardCarousel', () => {
       fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
       fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 420 })
       fireEvent.pointerMove(carousel, { pointerId: 1, clientX: 120 })
-      expect(carousel).toHaveAttribute('data-works-position', '6')
+      expect(carousel).toHaveAttribute('data-works-position', '4')
 
       act(() => vi.advanceTimersByTime(600))
       expect(carousel).not.toHaveClass('is-entering')
       fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
     } finally {
       vi.useRealTimers()
     }
@@ -261,19 +261,19 @@ describe('WorksCardCarousel', () => {
     const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-    expect(cards).toHaveLength(14)
+    expect(cards).toHaveLength(10)
     expect(cards[WORKS_PROJECT_INDEX]).toHaveClass('has-project', 'is-centered')
     expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
-    expect(carousel).toHaveAttribute('data-works-position', '6')
-    expect(cards[6]).toHaveAttribute('data-offset', '0')
-    expect(cards[7]).toHaveAttribute('data-offset', '1')
+    expect(carousel).toHaveAttribute('data-works-position', '4')
+    expect(cards[4]).toHaveAttribute('data-offset', '0')
+    expect(cards[5]).toHaveAttribute('data-offset', '1')
     expect(screen.queryByText('MTS Pay')).not.toBeInTheDocument()
     expect(screen.queryByText('Coming soon')).not.toBeInTheDocument()
-    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(10)
-    expect(container.querySelectorAll('.works-project-card')).toHaveLength(7)
-    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(7)
-    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(7)
-    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(7)
+    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(6)
+    expect(container.querySelectorAll('.works-project-card')).toHaveLength(3)
+    expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(3)
+    expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(3)
+    expect(container.querySelectorAll('.works-project-card__image')).toHaveLength(3)
     expect(cards[WORKS_RARIBLE_INDEX]).toHaveClass('has-rarible')
     expect(cards[WORKS_RARIBLE_INDEX].querySelector('.rarible-project-card')).not.toBeNull()
     expect(cards[WORKS_RARIBLE_INDEX].querySelectorAll('.rarible-project-card__cover')).toHaveLength(1)
@@ -295,6 +295,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_WALLET_INDEX].querySelector('.wallet-project-card')).not.toBeNull()
     expect(cards[WORKS_WALLET_INDEX]).toHaveClass('has-wallet')
     expect(cards[WORKS_WALLET_INDEX].querySelectorAll('.wallet-project-card__phones')).toHaveLength(0)
+    expect(screen.getByText('anyExcuse, Дублин 2021')).toBeInTheDocument()
     expect(cards[WORKS_AUTOPAY_INDEX]).toHaveClass('has-autopay')
     expect(cards[WORKS_AUTOPAY_INDEX].querySelector('.autopay-project-card')).not.toBeNull()
     expect(cards[WORKS_AUTOPAY_INDEX].querySelectorAll('.autopay-project-card__phones')).toHaveLength(0)
@@ -312,13 +313,13 @@ describe('WorksCardCarousel', () => {
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
     expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
     expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
-    expect(screen.getAllByText('Новый проект')).toHaveLength(8)
-    expect(screen.getAllByText('Скоро')).toHaveLength(8)
+    expect(screen.getAllByText('Новый проект')).toHaveLength(3)
+    expect(screen.getAllByText('Скоро')).toHaveLength(3)
     expect(container.querySelectorAll('.maria-works-deck-card:not(.is-hidden)')).toHaveLength(5)
-    expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(9)
+    expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(5)
     expect(container.querySelectorAll('.maria-works-deck-card__spine')).toHaveLength(0)
     expect(container.querySelectorAll('.maria-works-deck-card__pages')).toHaveLength(0)
-    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(7)
+    expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(3)
     expect(container.querySelectorAll('.rarible-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.aliexpress-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-game-card__file-icon')).toHaveLength(1)
@@ -338,9 +339,8 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX].querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.webp"]')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('img[src="/assets/maria/aliexpress-bag.webp"]')).not.toBeNull()
     expect(container.querySelectorAll('.works-project-card__breakout-artwork')).toHaveLength(0)
-    expect(cards[8].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[7].querySelector('.works-project-card__mts-flag')).toBeNull()
-    expect(cards[13].querySelector('.works-project-card__mts-flag')).toBeNull()
+    expect(cards[9].querySelector('.works-project-card__mts-flag')).toBeNull()
     expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-row-scale': '1' })
     expect(cards[WORKS_PROJECT_INDEX]).toHaveStyle({ '--works-card-brightness-light': '1' })
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveStyle({ '--works-card-brightness-light': '0.92' })
@@ -357,7 +357,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX + 2]).toHaveStyle({ '--works-card-mobile-lower-depth': '0.002' })
     expect(cards[0]).toHaveStyle({ '--works-row-scale': '1.1' })
     expect(cards[0]).toHaveStyle({
-      '--works-row-x': '-60.75vw',
+      '--works-row-x': '-39.75vw',
     })
     expect(cards[0].style.getPropertyValue('--works-loop-y-mobile')).not.toBe('')
     expect(cards[0].style.getPropertyValue('--works-loop-scale-mobile')).not.toBe('')
@@ -371,8 +371,8 @@ describe('WorksCardCarousel', () => {
       expect(card).toHaveStyle({ '--works-loop-scale-mobile': '1' })
     })
     expect(
-      Number.parseFloat(cards[6].style.getPropertyValue('--works-row-rotate-x-mobile'))
-      + Number.parseFloat(cards[6].style.getPropertyValue('--works-row-rotate-y')),
+      Number.parseFloat(cards[4].style.getPropertyValue('--works-row-rotate-x-mobile'))
+      + Number.parseFloat(cards[4].style.getPropertyValue('--works-row-rotate-y')),
     ).toBe(0)
   })
 
@@ -386,7 +386,7 @@ describe('WorksCardCarousel', () => {
     ])
     expect(images).toHaveLength(WORKS_CARD_COUNT - 7)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition-crisp.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(7)
+    expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(3)
     expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-bag.webp"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/aliexpress-collections-cover.webp"]')).toHaveLength(1)
@@ -453,8 +453,9 @@ describe('WorksCardCarousel', () => {
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
     expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
     expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
-    expect(screen.getAllByText('New project')).toHaveLength(8)
-    expect(screen.getAllByText('Coming soon')).toHaveLength(8)
+    expect(screen.getByText('anyExcuse, Dublin 2021')).toBeInTheDocument()
+    expect(screen.getAllByText('New project')).toHaveLength(3)
+    expect(screen.getAllByText('Coming soon')).toHaveLength(3)
   })
 
   it('prevents native card dragging', () => {
@@ -470,11 +471,11 @@ describe('WorksCardCarousel', () => {
 
     fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 420 })
     expect(fireEvent.pointerMove(carousel, { pointerId: 1, clientX: 95 })).toBe(false)
-    expect(carousel).toHaveAttribute('data-works-position', '8.167')
+    expect(carousel).toHaveAttribute('data-works-position', '6.167')
     expect(document.querySelectorAll('.maria-works-deck-card:not(.is-hidden)')).toHaveLength(5)
     fireEvent.pointerUp(carousel, { pointerId: 1, clientX: 95 })
-    expect(carousel).toHaveAttribute('data-works-position', '8')
-    expect(cards[8]).toHaveClass('is-centered')
+    expect(carousel).toHaveAttribute('data-works-position', '6')
+    expect(cards[6]).toHaveClass('is-centered')
     expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
   })
 
@@ -487,9 +488,9 @@ describe('WorksCardCarousel', () => {
 
     fireEvent.pointerDown(carousel, { pointerId: 2, clientY: 400 })
     expect(fireEvent.pointerMove(carousel, { pointerId: 2, clientY: 280 })).toBe(false)
-    expect(carousel).toHaveAttribute('data-works-position', '6.857')
+    expect(carousel).toHaveAttribute('data-works-position', '4.857')
     fireEvent.pointerUp(carousel, { pointerId: 2, clientY: 280 })
-    expect(carousel).toHaveAttribute('data-works-position', '7')
+    expect(carousel).toHaveAttribute('data-works-position', '5')
   })
 
   it('accumulates small horizontal trackpad deltas and follows the nearest visual center', () => {
@@ -500,30 +501,30 @@ describe('WorksCardCarousel', () => {
 
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.114')
+    expect(carousel).toHaveAttribute('data-works-position', '4.114')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.227')
+    expect(carousel).toHaveAttribute('data-works-position', '4.227')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.341')
+    expect(carousel).toHaveAttribute('data-works-position', '4.341')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.455')
+    expect(carousel).toHaveAttribute('data-works-position', '4.455')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.568')
+    expect(carousel).toHaveAttribute('data-works-position', '4.568')
     expect(project).not.toHaveClass('is-centered')
-    expect(cards[7]).toHaveClass('is-centered')
+    expect(cards[5]).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 1, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.573')
-    expect(cards[7]).toHaveClass('is-centered')
+    expect(carousel).toHaveAttribute('data-works-position', '4.573')
+    expect(cards[5]).toHaveClass('is-centered')
     expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
     fireEvent.wheel(carousel, { deltaX: -76, deltaY: 0 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.227')
+    expect(carousel).toHaveAttribute('data-works-position', '4.227')
     expect(project).toHaveClass('is-centered')
     fireEvent.wheel(carousel, { deltaX: 0, deltaY: 120 })
-    expect(carousel).toHaveAttribute('data-works-position', '6.227')
+    expect(carousel).toHaveAttribute('data-works-position', '4.227')
   })
 
   it('settles horizontal trackpad movement to the nearest card after input pauses', () => {
@@ -535,14 +536,14 @@ describe('WorksCardCarousel', () => {
       const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
 
       fireEvent.wheel(carousel, { deltaX: 120, deltaY: 0 })
-      expect(carousel).toHaveAttribute('data-works-position', '6.545')
+      expect(carousel).toHaveAttribute('data-works-position', '4.545')
       expect(carousel).toHaveClass('is-wheeling')
       act(() => vi.advanceTimersByTime(119))
-      expect(carousel).toHaveAttribute('data-works-position', '6.545')
+      expect(carousel).toHaveAttribute('data-works-position', '4.545')
       act(() => vi.advanceTimersByTime(1))
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
       expect(carousel).not.toHaveClass('is-wheeling')
-      expect(cards[7]).toHaveClass('is-centered')
+      expect(cards[5]).toHaveClass('is-centered')
     } finally {
       vi.useRealTimers()
     }
@@ -558,11 +559,11 @@ describe('WorksCardCarousel', () => {
       fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
       fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
       fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
 
       act(() => vi.advanceTimersByTime(120))
       fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
-      expect(carousel).toHaveAttribute('data-works-position', '8')
+      expect(carousel).toHaveAttribute('data-works-position', '6')
     } finally {
       vi.useRealTimers()
     }
@@ -576,12 +577,12 @@ describe('WorksCardCarousel', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
       fireEvent.wheel(carousel, { deltaX: 2, deltaY: 0 })
       fireEvent.wheel(carousel, { deltaX: 60, deltaY: 0 })
       fireEvent.wheel(carousel, { deltaX: 160, deltaY: 0 })
 
-      expect(carousel).toHaveAttribute('data-works-position', '8')
+      expect(carousel).toHaveAttribute('data-works-position', '6')
     } finally {
       vi.useRealTimers()
     }
@@ -625,10 +626,10 @@ describe('WorksCardCarousel', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       fireEvent.wheel(carousel, { deltaX: 0, deltaY: 120 })
-      expect(carousel).toHaveAttribute('data-works-position', '6.6')
+      expect(carousel).toHaveAttribute('data-works-position', '4.6')
       expect(carousel).toHaveClass('is-wheeling')
       act(() => vi.advanceTimersByTime(120))
-      expect(carousel).toHaveAttribute('data-works-position', '7')
+      expect(carousel).toHaveAttribute('data-works-position', '5')
       expect(carousel).not.toHaveClass('is-wheeling')
     } finally {
       vi.useRealTimers()

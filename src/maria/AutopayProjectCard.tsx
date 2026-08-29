@@ -23,8 +23,8 @@ export default function AutopayProjectCard({ language, loadArtwork }: AutopayPro
         </svg>
       </span>
       <span className="wallet-project-card__copy">
-        <strong className="wallet-project-card__title">{language === 'ru' ? 'Новый проект' : 'New project'}</strong>
-        <span className="wallet-project-card__meta">{language === 'ru' ? 'Скоро' : 'Coming soon'}</span>
+        <strong className="wallet-project-card__title">{language === 'ru' ? 'Редизайн автоплатежей' : 'Autopay redesign'}</strong>
+        <span className="wallet-project-card__meta">{language === 'ru' ? 'МТС Финтех 2025' : 'MTS Fintech 2025'}</span>
       </span>
     </span>
   </div>

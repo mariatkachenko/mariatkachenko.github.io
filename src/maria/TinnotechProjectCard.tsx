@@ -11,7 +11,7 @@ export default function TinnotechProjectCard({ language, loadArtwork }: Tinnotec
     <span className="tinnotech-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
         <img className="tinnotech-project-card__logo" src="/assets/maria/tinnotech-logo.webp" alt="" draggable="false" loading="eager" decoding="sync" />
-        <img className="tinnotech-project-card__phones" src="/assets/maria/tinnotech-phones.png" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="tinnotech-project-card__phones" src="/assets/maria/tinnotech-phones.webp" alt="" draggable="false" loading="eager" decoding="sync" />
         <img className="tinnotech-project-card__poll" src="/assets/maria/tinnotech-poll.webp" alt="" draggable="false" loading="eager" decoding="sync" />
         <img className="tinnotech-project-card__chat" src="/assets/maria/tinnotech-chat.webp" alt="" draggable="false" loading="eager" decoding="sync" />
       </>}
