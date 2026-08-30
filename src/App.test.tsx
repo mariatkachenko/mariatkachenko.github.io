@@ -486,9 +486,9 @@ describe('Maria Tkachenko portfolio', () => {
       const dialog = screen.getByRole('dialog', { name: 'Оплата по QR' })
       expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
       expect(dialog.querySelector(':scope > .mts-presentation')).toBeInTheDocument()
-      expect(screen.getByRole('img', { name: 'Слайд 1 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/03.png')
+      expect(screen.getByRole('img', { name: 'Слайд 1 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/03.jpg')
       fireEvent.click(screen.getByRole('button', { name: 'Следующий слайд' }))
-      expect(screen.getByRole('img', { name: 'Слайд 2 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/04.png')
+      expect(screen.getByRole('img', { name: 'Слайд 2 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/04.jpg')
       expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
     } finally {
       vi.useRealTimers()

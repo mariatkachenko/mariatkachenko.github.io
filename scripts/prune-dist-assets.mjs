@@ -55,6 +55,7 @@ const keepFiles = new Set([
   'maria/autopay-phones.webp',
   'maria/autopay-arrows.webp',
   'maria/autopay-timer.webp',
+  'maria/connection-phones.png',
   'maria/about-space-pattern.svg',
   'maria/astronaut-optimized.glb',
 ])
@@ -64,6 +65,8 @@ const keepDirectories = [
   'maria/mts-game-presentation/',
   'maria/rarible-presentation-numbered-webp/',
   'maria/aliexpress-presentation-numbered-webp/',
+  'maria/sbp-presentation/',
+  'maria/autopay-presentation/',
 ]
 
 async function filesBelow(directory, prefix = '') {

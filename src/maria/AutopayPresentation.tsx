@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Language } from './i18n'
 
 const SLIDE_IDS = ['29', '30', '31', '32', '33', '34', 'End'] as const
-const slideSource = (id: string) => `/assets/maria/autopay-presentation/${id}.png`
+const slideSource = (id: string) => `/assets/maria/autopay-presentation/${id}.jpg`
 
 type AutopayPresentationProps = {
   language: Language

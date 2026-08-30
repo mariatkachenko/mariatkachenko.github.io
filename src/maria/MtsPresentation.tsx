@@ -9,7 +9,7 @@ const SLIDE_IDS = [
 ] as const
 
 const DARK_SLIDES = new Set(['01', '29', '30', '31', '32', '36', '48'])
-const slideSource = (id: string) => `/assets/maria/mts-presentation-webp/${id === '48' ? '48.png' : `${id}.webp`}`
+const slideSource = (id: string) => `/assets/maria/mts-presentation-webp/${id === '48' ? '48.jpg' : `${id}.webp`}`
 
 type MtsPresentationProps = {
   language: Language
