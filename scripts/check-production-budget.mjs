@@ -6,7 +6,7 @@ const limits = {
   totalBytes: 30 * 1024 * 1024,
   javascriptBytes: 250 * 1024,
   stylesheetBytes: 96 * 1024,
-  fileCount: 150,
+  fileCount: 160,
 }
 
 async function filesBelow(directory) {

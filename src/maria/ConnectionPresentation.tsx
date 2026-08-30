@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Language } from './i18n'
 
 const SLIDE_IDS = ['36', '37', '38', '39', '40', 'End'] as const
-const slideSource = (id: string) => `/assets/maria/connection-presentation/${id}.png`
+const slideSource = (id: string) => `/assets/maria/connection-presentation/${id}.jpg`
 
 type ConnectionPresentationProps = {
   language: Language

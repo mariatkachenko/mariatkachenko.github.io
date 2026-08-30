@@ -28,6 +28,7 @@ const keepFiles = new Set([
   'maria/home-card-about-960.webp',
   'maria/home-card-about-1242.webp',
   'maria/works-vector-pattern.svg',
+  'maria/project-file-icon.svg',
   'maria/works-phone-hand.webp',
   'maria/works-phone-hand-lock.webp',
   'maria/works-placeholder-payments-a.webp',
@@ -68,6 +69,7 @@ const keepDirectories = [
   'maria/aliexpress-presentation-numbered-webp/',
   'maria/sbp-presentation/',
   'maria/autopay-presentation/',
+  'maria/connection-presentation/',
 ]
 
 async function filesBelow(directory, prefix = '') {
