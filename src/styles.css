@@ -242,7 +242,7 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .wallet-project-card__meta{overflow:hidden;color:rgba(23,44,61,.68);font-size:clamp(10px,.8vw,14px);line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
 .maria-works-deck-card.has-wallet.is-centered{z-index:111}
 .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__artwork{opacity:1}
-.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-46.5%,calc(1% - 7cqi),0) scale(.99)}
+.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-48.5%,calc(1% - 7cqi),0) scale(.99)}
 .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__drink{opacity:1;transform:translate3d(calc(12% + 7cqi),calc(1% - 7.875cqi),0) scaleX(-1) rotate(46deg) scale(2.9025)}
 .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__bottle{opacity:1;transform:translate3d(5%,calc(1% - 7.525cqi),0) rotate(-2deg) scale(1.4175)}
 .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__cart{opacity:1;transform:translate3d(calc(8% - 7cqi),calc(1% - .875cqi),0) rotate(10deg) scale(1.12875)}

@@ -20,7 +20,7 @@ export default function ConceptProject({ onOpen, language, loadArtwork }: Concep
     <span className="mts-project-card__media" aria-hidden="true">
       {loadArtwork && <img
         className="mts-project-card__artwork"
-        src="/assets/maria/mts-pay-card-composition-crisp.png"
+        src="/assets/maria/mts-pay-card-composition-crisp.webp"
         alt=""
         draggable="false"
         loading="eager"

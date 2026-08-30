@@ -21,7 +21,7 @@ export default function WorksProjectCard({
 }: WorksProjectCardProps) {
   const content = <>
     {mtsFlag && <span className="works-project-card__mts-flag" aria-hidden="true">
-      <img src="/assets/maria/mts-hanging-flag.png" alt="" draggable="false" />
+      <img src="/assets/maria/mts-hanging-flag.webp" alt="" draggable="false" />
     </span>}
     <div className="works-project-card__media">
       {imageSrc

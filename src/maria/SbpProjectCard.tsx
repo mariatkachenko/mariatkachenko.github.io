@@ -12,7 +12,7 @@ export default function SbpProjectCard({ onOpen, ariaLabel, language, loadArtwor
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="sbp-project-card__artwork" aria-hidden="true">
       {loadArtwork && (
-        <img className="sbp-project-card__phones" src="/assets/maria/sbp-phones.png" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="sbp-project-card__phones" src="/assets/maria/sbp-phones.webp" alt="" draggable="false" loading="eager" decoding="sync" />
       )}
     </span>
     <span className="wallet-project-card__footer">

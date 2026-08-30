@@ -574,7 +574,7 @@ describe('mobile works card artwork geometry', () => {
 
   it('keeps centered project artwork offsets relative to the card instead of the viewport', () => {
     expect(styles).toContain('.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__phones{transform:translate3d(-50%,calc(1% + 8.75cqi),0) scale(1.02)}')
-    expect(styles).toContain('.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-46.5%,calc(1% - 7cqi),0) scale(.99)}')
+    expect(styles).toContain('.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-48.5%,calc(1% - 7cqi),0) scale(.99)}')
     expect(styles).toContain('.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__arrows{opacity:1;transform:translate3d(-7%,calc(-9% + 10.5cqi - 13vh),0) rotate(-8deg) scale(1.03)}')
     expect(styles).toContain('.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__phones{transform:translate3d(-50%,calc(1% + 5.25cqi - 2vh),0) scale(1.02);animation:autopay-phones-enter .84s cubic-bezier(.16,.82,.18,1) both}')
     expect(styles).toContain('.autopay-project-card__phones{z-index:6;left:50%;top:-22%;width:95%;transform:translate3d(-50%,18%,0) scale(.42);transform-origin:50% 72%;transition:transform .84s cubic-bezier(.16,.82,.18,1)}')

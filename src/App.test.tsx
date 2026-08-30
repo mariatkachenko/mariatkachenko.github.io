@@ -266,7 +266,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(cover).toHaveClass('mts-project-card')
     expect(cover.querySelector('.works-project-card')).toBeNull()
     expect(cover.querySelector('.concept-cover')).toBeNull()
-    expect(cover.querySelector('.mts-project-card__artwork')).toHaveAttribute('src', '/assets/maria/mts-pay-card-composition-crisp.png')
+    expect(cover.querySelector('.mts-project-card__artwork')).toHaveAttribute('src', '/assets/maria/mts-pay-card-composition-crisp.webp')
     expect(cover.querySelector('.mts-project-card__media')).toContainElement(cover.querySelector('.mts-project-card__artwork'))
     expect(cover.querySelector('.mts-project-card__artwork')?.parentElement).toHaveClass('mts-project-card__media')
     expect(cover.querySelector('.mts-project-card__logo-flyout')).toBeNull()

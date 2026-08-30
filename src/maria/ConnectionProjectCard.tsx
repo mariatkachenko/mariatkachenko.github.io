@@ -12,7 +12,7 @@ export default function ConnectionProjectCard({ onOpen, ariaLabel, language, loa
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="connection-project-card__artwork" aria-hidden="true">
       {loadArtwork && (
-        <img className="connection-project-card__phones" src="/assets/maria/connection-phones.png" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="connection-project-card__phones" src="/assets/maria/connection-phones.webp" alt="" draggable="false" loading="eager" decoding="sync" />
       )}
     </span>
     <span className="wallet-project-card__footer">
