@@ -13,12 +13,13 @@ import RaribleProjectCard from './RaribleProjectCard'
 import TinnotechProjectCard from './TinnotechProjectCard'
 import WalletProjectCard from './WalletProjectCard'
 import AutopayProjectCard from './AutopayProjectCard'
+import SbpProjectCard from './SbpProjectCard'
 import WorksProjectCard from './WorksProjectCard'
 import type { Language } from './i18n'
 import type { PresentationKind } from './PresentationModal'
 import useCarouselNavigationGuard from './useCarouselNavigationGuard'
 
-export const WORKS_CARD_COUNT = 10
+export const WORKS_CARD_COUNT = 11
 export const WORKS_RARIBLE_INDEX = 3
 export const WORKS_PROJECT_INDEX = 4
 export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
@@ -26,6 +27,7 @@ export const WORKS_MTS_PLACEHOLDER_INDEX = 6
 export const WORKS_TINNOTECH_INDEX = 7
 export const WORKS_WALLET_INDEX = 8
 export const WORKS_AUTOPAY_INDEX = 9
+export const WORKS_SBP_INDEX = 10
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
 export const WORKS_WHEEL_STEP_PX = 220
@@ -402,6 +404,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       const tinnotechCard = index === WORKS_TINNOTECH_INDEX
       const walletCard = index === WORKS_WALLET_INDEX
       const autopayCard = index === WORKS_AUTOPAY_INDEX
+      const sbpCard = index === WORKS_SBP_INDEX
       const centered = index === centeredCardIndex
       const visible = visibleCardIndices.has(index)
       const genericCardIndex = index
@@ -409,7 +412,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         - (index > WORKS_MTS_PLACEHOLDER_INDEX ? 1 : 0)
       const coverIndex = genericCardIndex % WORKS_PLACEHOLDER_COVERS.length
       return <article
-        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${autopayCard ? ' has-autopay' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
+        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${autopayCard ? ' has-autopay' : ''}${sbpCard ? ' has-sbp' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
         aria-hidden={!visible}
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
@@ -456,6 +459,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
               ariaLabel={language === 'ru'
                 ? 'Открыть презентацию «Rarible Charity Program»'
                 : 'Open presentation “Rarible Charity Program”'}
+              language={language}
               loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
             />
             : aliexpressCard
@@ -464,6 +468,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»'
                   : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
+                language={language}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
               />
             : mtsGameCard
@@ -474,6 +479,15 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “Game pages on the MTS Payment website”'}
                 language={language}
                 loadArtwork={shouldLoadDeferredWorksArtwork(offset)}
+              />
+            : sbpCard
+              ? <SbpProjectCard
+                onOpen={() => onOpen('sbp')}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Оплата по QR»'
+                  : 'Open presentation “QR Payment”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
               />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {tinnotechCard

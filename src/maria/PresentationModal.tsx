@@ -5,8 +5,9 @@ import MtsPresentation from './MtsPresentation'
 import MtsGamePresentation from './MtsGamePresentation'
 import RariblePresentation from './RariblePresentation'
 import AliExpressPresentation from './AliExpressPresentation'
+import SbpPresentation from './SbpPresentation'
 
-export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress'
+export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress' | 'sbp'
 
 type PresentationModalProps = {
   project: PresentationKind | null
@@ -21,6 +22,8 @@ export default function PresentationModal({ project, onClose, language }: Presen
     ? 'Rarible Charity Program'
     : project === 'aliexpress'
       ? 'Collections Prototype - AliExpress DAU Hackathon'
+      : project === 'sbp'
+        ? (language === 'ru' ? 'Оплата по QR' : 'QR Payment')
       : project === 'mts-game'
         ? (language === 'ru' ? 'Страницы игр на сайте МТС Оплата' : 'Game pages on the MTS Payment website')
         : copy.presentation
@@ -72,6 +75,8 @@ export default function PresentationModal({ project, onClose, language }: Presen
         ? <MtsGamePresentation language={language} />
         : project === 'rarible'
           ? <RariblePresentation language={language} />
-          : <AliExpressPresentation language={language} />}
+          : project === 'aliexpress'
+            ? <AliExpressPresentation language={language} />
+            : <SbpPresentation language={language} />}
   </div>, document.body)
 }

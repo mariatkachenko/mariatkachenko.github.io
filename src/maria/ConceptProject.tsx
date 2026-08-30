@@ -36,7 +36,7 @@ export default function ConceptProject({ onOpen, language, loadArtwork }: Concep
       </span>
       <span className="mts-project-card__copy">
         <strong className="mts-project-card__title">
-          {language === 'ru' ? 'Редизайн модуля оплаты МТС Pay' : 'MTS Pay payment module redesign'}
+          {language === 'ru' ? 'МТС Pay редизайн' : 'MTS Pay Redesign'}
         </strong>
         <span className="mts-project-card__meta">
           {language === 'ru' ? 'МТС Финтех 2026' : 'MTS Fintech 2026'}

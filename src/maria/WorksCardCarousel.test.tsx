@@ -12,8 +12,10 @@ import WorksCardCarousel, {
   WORKS_PLACEHOLDER_COVERS,
   WORKS_PROJECT_INDEX,
   WORKS_RARIBLE_INDEX,
+  WORKS_SBP_INDEX,
   WORKS_TINNOTECH_INDEX,
   WORKS_WALLET_INDEX,
+  WORKS_WHEEL_SETTLE_DELAY_MS,
   WORKS_WHEEL_STEP_PX,
   continuousWorksOffset,
   mobileWorksDeckPose,
@@ -45,7 +47,7 @@ function renderReadyWorksCarousel(onOpen = vi.fn(), language: 'ru' | 'en' = 'ru'
 
 describe('continuous works row geometry', () => {
   it('wraps fractional positions and keeps a straight equal row', () => {
-    expect(WORKS_CARD_COUNT).toBe(10)
+    expect(WORKS_CARD_COUNT).toBe(11)
     expect(WORKS_PROJECT_INDEX).toBe(4)
     expect(WORKS_INITIAL_POSITION).toBe(WORKS_PROJECT_INDEX)
     expect(WORKS_MOBILE_DRAG_STEP_PX).toBe(140)
@@ -59,17 +61,17 @@ describe('continuous works row geometry', () => {
     expect(worksPointerCoordinate({ clientX: 20, clientY: 80 }, true)).toBe(80)
     expect(worksWheelDelta(10, 70, false, true)).toBe(70)
     expect(worksPatternOffset(0)).toEqual(worksPatternOffset(WORKS_CARD_COUNT))
-    expect(worksPatternOffset(3.5)).toEqual({ desktopX: 1.942, desktopY: -0.47, mobileX: 0.647, mobileY: -1.058 })
-    expect(worksPatternOffset(7)).toEqual({ desktopX: -2.283, desktopY: -0.247, mobileX: -0.761, mobileY: -0.556 })
-    expect(normalizeWorksPosition(-0.5)).toBe(9.5)
+    expect(worksPatternOffset(3.5)).toEqual({ desktopX: 2.183, desktopY: -0.332, mobileX: 0.728, mobileY: -0.748 })
+    expect(worksPatternOffset(7)).toEqual({ desktopX: -1.814, desktopY: -0.524, mobileX: -0.605, mobileY: -1.179 })
+    expect(normalizeWorksPosition(-0.5)).toBe(10.5)
     expect(continuousWorksOffset(0, 1.5)).toBe(-1.5)
-    expect(continuousWorksOffset(13, 0.5)).toBe(2.5)
+    expect(continuousWorksOffset(13, 0.5)).toBe(1.5)
     expect(worksPositionAfterDelta(0, -300, 150)).toBe(2)
     expect(worksDragReleasePosition(6.375)).toBe(6.375)
-    expect(worksDragReleasePosition(14.25)).toBe(4.25)
+    expect(worksDragReleasePosition(14.25)).toBe(3.25)
     expect(worksDragReleasePosition(6.375, WORKS_CARD_COUNT, true)).toBe(6)
     expect(worksDragReleasePosition(6.6, WORKS_CARD_COUNT, true)).toBe(7)
-    expect(worksDragReleasePosition(13.7, WORKS_CARD_COUNT, true)).toBe(4)
+    expect(worksDragReleasePosition(13.7, WORKS_CARD_COUNT, true)).toBe(3)
     expect(worksRowPose(0).rotateY).toBe(0)
     expect(worksRowPose(-1).rotateY).toBe(36)
     expect(worksRowPose(1).rotateY).toBe(-36)
@@ -91,10 +93,10 @@ describe('continuous works row geometry', () => {
     expect(worksDesktopRowX(2)).toBe(18.75)
     expect(worksRowPose(0).layer).toBeGreaterThan(worksRowPose(1).layer)
     expect(mobileWorksLoopPose(0, WORKS_CARD_COUNT)).toEqual({ y: 0, scale: 1, opacity: 1, layer: 20 })
-    expect(mobileWorksLoopPose(3.5, WORKS_CARD_COUNT).y).toBeCloseTo(17.798)
+    expect(mobileWorksLoopPose(3.5, WORKS_CARD_COUNT).y).toBeCloseTo(20.012)
     expect(mobileWorksLoopPose(3.5, WORKS_CARD_COUNT).scale).toBe(1)
-    expect(mobileWorksLoopPose(5, WORKS_CARD_COUNT)).toEqual({ y: 0, scale: 1, opacity: 0.18, layer: 1 })
-    expect(mobileWorksLoopPose(-3.5, WORKS_CARD_COUNT).y).toBeCloseTo(-17.798)
+    expect(mobileWorksLoopPose(5, WORKS_CARD_COUNT)).toEqual({ y: 6.198116250511461, scale: 1, opacity: 0.1966078808180561, layer: 1 })
+    expect(mobileWorksLoopPose(-3.5, WORKS_CARD_COUNT).y).toBeCloseTo(-20.012)
     expect(mobileWorksDeckPose(0)).toEqual({ y: 0, scale: 1, layer: 20 })
     expect(mobileWorksDeckPose(-0.5)).toEqual({ y: -2.708, scale: 0.97, layer: 18 })
     expect(mobileWorksDeckPose(0.5)).toEqual({ y: 2.708, scale: 0.97, layer: 18 })
@@ -261,7 +263,7 @@ describe('WorksCardCarousel', () => {
     const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-    expect(cards).toHaveLength(10)
+    expect(cards).toHaveLength(11)
     expect(cards[WORKS_PROJECT_INDEX]).toHaveClass('has-project', 'is-centered')
     expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
     expect(carousel).toHaveAttribute('data-works-position', '4')
@@ -299,6 +301,10 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_AUTOPAY_INDEX]).toHaveClass('has-autopay')
     expect(cards[WORKS_AUTOPAY_INDEX].querySelector('.autopay-project-card')).not.toBeNull()
     expect(cards[WORKS_AUTOPAY_INDEX].querySelectorAll('.autopay-project-card__phones')).toHaveLength(0)
+    expect(cards[WORKS_SBP_INDEX]).toHaveClass('has-sbp')
+    expect(cards[WORKS_SBP_INDEX].querySelector('.sbp-project-card')).not.toBeNull()
+    expect(cards[WORKS_SBP_INDEX].querySelector('.maria-works-deck-card__empty')).toBeNull()
+    expect(cards[WORKS_SBP_INDEX].querySelectorAll('.sbp-project-card__phones')).toHaveLength(0)
     expect(cards[WORKS_PROJECT_INDEX + 1]).toHaveClass('has-aliexpress')
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelector('.aliexpress-project-card')).not.toBeNull()
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__phones')).toHaveLength(1)
@@ -307,16 +313,16 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX + 1].querySelectorAll('.aliexpress-project-card__sparkles')).toHaveLength(1)
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.mts-project-card')).not.toBeNull()
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.works-project-card')).toBeNull()
-    expect(screen.getByText('Редизайн модуля оплаты МТС Pay')).toBeInTheDocument()
+    expect(screen.getByText('МТС Pay редизайн')).toBeInTheDocument()
     expect(screen.getByText('МТС Финтех 2026')).toBeInTheDocument()
-    expect(screen.getByText('Rarible Charity Program')).toBeInTheDocument()
+    expect(screen.getByText('Благотворительность Rarible')).toBeInTheDocument()
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
-    expect(screen.getByText('AliExpress Collections')).toBeInTheDocument()
+    expect(screen.getByText('Коллекции AliExpress')).toBeInTheDocument()
     expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
     expect(screen.getAllByText('Новый проект')).toHaveLength(3)
     expect(screen.getAllByText('Скоро')).toHaveLength(3)
     expect(container.querySelectorAll('.maria-works-deck-card:not(.is-hidden)')).toHaveLength(5)
-    expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(5)
+    expect(container.querySelectorAll('.maria-works-deck-card.is-hidden')).toHaveLength(6)
     expect(container.querySelectorAll('.maria-works-deck-card__spine')).toHaveLength(0)
     expect(container.querySelectorAll('.maria-works-deck-card__pages')).toHaveLength(0)
     expect(container.querySelectorAll('.works-project-card__file-icon')).toHaveLength(3)
@@ -325,6 +331,7 @@ describe('WorksCardCarousel', () => {
     expect(container.querySelectorAll('.mts-game-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.tinnotech-project-card__file-icon')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-project-card__file-icon')).toHaveLength(1)
+    expect(container.querySelectorAll('.sbp-project-card .wallet-project-card__file-icon')).toHaveLength(1)
     const mtsFlags = container.querySelectorAll('.works-project-card__mts-flag')
     expect(mtsFlags).toHaveLength(0)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-hanging-flag.png"]')).toHaveLength(0)
@@ -384,7 +391,7 @@ describe('WorksCardCarousel', () => {
     expect(WORKS_PLACEHOLDER_COVERS).toEqual([
       '/assets/maria/works-placeholder-payments-a.webp',
     ])
-    expect(images).toHaveLength(WORKS_CARD_COUNT - 7)
+    expect(images).toHaveLength(WORKS_CARD_COUNT - 8)
     expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-card-composition-crisp.png"]')).toHaveLength(1)
     expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-a.webp"]')).toHaveLength(3)
     expect(container.querySelectorAll('img[src="/assets/maria/works-placeholder-payments-b.png"]')).toHaveLength(0)
@@ -447,7 +454,7 @@ describe('WorksCardCarousel', () => {
   it('renders localized English project-card metadata', () => {
     render(<WorksCardCarousel onOpen={vi.fn()} language="en" />)
 
-    expect(screen.getByText('MTS Pay payment module redesign')).toBeInTheDocument()
+    expect(screen.getByText('MTS Pay Redesign')).toBeInTheDocument()
     expect(screen.getByText('MTS Fintech 2026')).toBeInTheDocument()
     expect(screen.getByText('Rarible Charity Program')).toBeInTheDocument()
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
@@ -692,6 +699,26 @@ describe('WorksCardCarousel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
     expect(onOpen).toHaveBeenCalledWith('aliexpress')
+  })
+
+  it('opens the QR payment presentation from its project card', () => {
+    const onOpen = vi.fn()
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={onOpen} language="ru" />)
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      for (let step = 0; step < 6; step += 1) {
+        fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+        act(() => vi.advanceTimersByTime(WORKS_WHEEL_SETTLE_DELAY_MS))
+      }
+
+      fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
+      expect(onOpen).toHaveBeenCalledWith('sbp')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('does not capture a desktop pointer before it becomes a drag', () => {

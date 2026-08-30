@@ -44,7 +44,7 @@ export default function MtsGameProjectCard({ onOpen, ariaLabel, language, loadAr
         </svg>
       </span>
       <span className="mts-game-card__copy">
-        <strong className="mts-game-card__title">{language === 'ru' ? 'Страницы игр на сайте МТС Оплата' : 'Game pages on the MTS Payment website'}</strong>
+        <strong className="mts-game-card__title">{language === 'ru' ? 'Игровые страницы' : 'Gaming Pages'}</strong>
         <span className="mts-game-card__meta">{language === 'ru' ? 'МТС Финтех 2024' : 'MTS Fintech 2024'}</span>
       </span>
     </span>

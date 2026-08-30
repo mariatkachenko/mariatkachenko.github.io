@@ -147,7 +147,8 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .maria-works-deck-card.has-wallet{--works-card-back:radial-gradient(circle at 18% 18%,#f9fdff 0 24%,transparent 48%),radial-gradient(circle at 76% 24%,#d9ebff 0 26%,transparent 54%),radial-gradient(circle at 72% 84%,#c9e8ff 0 30%,transparent 60%),#eef7ff;--works-card-footer:radial-gradient(circle at 16% 18%,#ffffff 0 30%,transparent 62%),#eaf4ff;--works-card-footer-edge:rgba(67,128,172,.18)}
 .maria-works-deck-card.has-wallet{--works-card-back:radial-gradient(circle at 18% 18%,#fffaf7 0 25%,transparent 52%),radial-gradient(circle at 78% 24%,#ffd9d0 0 28%,transparent 56%),radial-gradient(circle at 70% 84%,#ffc2b5 0 30%,transparent 62%),#fff0eb;--works-card-footer:radial-gradient(circle at 16% 18%,#fffdfb 0 30%,transparent 62%),radial-gradient(circle at 82% 78%,#ffe0d8 0 28%,transparent 60%),#fff4f0;--works-card-footer-edge:rgba(190,110,105,.2)}
 .maria-works-deck-card.has-wallet{--works-card-back:radial-gradient(circle at 18% 18%,#fffafd 0 22%,transparent 60%),radial-gradient(circle at 78% 24%,#ffe3ea 0 24%,transparent 64%),radial-gradient(circle at 70% 84%,#ffd7e0 0 26%,transparent 70%),#fff4f7;--works-card-footer:radial-gradient(circle at 16% 18%,#fffdfd 0 28%,transparent 68%),radial-gradient(circle at 82% 78%,#ffe8ee 0 24%,transparent 68%),#fff7f9;--works-card-footer-edge:rgba(190,110,135,.16)}
-.maria-works-deck-card.has-autopay{--works-card-back:radial-gradient(circle at 18% 18%,#f9fff1 0 23%,transparent 56%),radial-gradient(circle at 80% 24%,#e9ffd2 0 28%,transparent 58%),radial-gradient(circle at 70% 82%,#d9f4ff 0 30%,transparent 64%),#f5fbff;--works-card-footer:radial-gradient(circle at 16% 18%,#ffffff 0 30%,transparent 62%),radial-gradient(circle at 82% 78%,#e8f8ff 0 28%,transparent 60%),#f4fbff;--works-card-footer-edge:rgba(91,151,170,.18)}
+.maria-works-deck-card.has-autopay{--works-card-back:radial-gradient(circle at 18% 18%,#efffd9 0 24%,transparent 56%),radial-gradient(circle at 82% 24%,#bff45c 0 28%,transparent 60%),radial-gradient(circle at 70% 82%,#bfefff 0 30%,transparent 64%),#eaf8ee;--works-card-footer:radial-gradient(circle at 14% 18%,#fffef4 0 30%,transparent 62%),radial-gradient(circle at 84% 74%,#bce96e 0 30%,transparent 62%),linear-gradient(104deg,#fff8e8 0%,#eef8df 50%,#c8ef83 100%);--works-card-footer-edge:rgba(99,147,38,.22)}
+.maria-works-deck-card.has-sbp{--works-card-back:radial-gradient(circle at 16% 16%,#6f3f1f 0 22%,transparent 54%),radial-gradient(circle at 72% 20%,#51416f 0 26%,transparent 58%),radial-gradient(circle at 72% 82%,#9bd75e 0 28%,transparent 62%),#2b1d18;--works-card-footer:radial-gradient(circle at 12% 18%,#fff8ea 0 30%,transparent 62%),radial-gradient(circle at 84% 68%,#cbe98f 0 26%,transparent 58%),linear-gradient(105deg,#fff5e2 0%,#f3ead6 46%,#d8efae 100%);--works-card-footer-edge:rgba(112,86,48,.22)}
 .maria-works-deck-card.has-rarible .rarible-project-card,.maria-works-deck-card.has-mts-game .mts-game-card{color:#fff8fb}
 .maria-works-deck-card.has-tinnotech .tinnotech-project-card,.maria-works-deck-card.has-rarible .rarible-project-card,.maria-works-deck-card.has-mts-game .mts-game-card{color:#fff8fb}
 .maria-works-deck-card.has-tinnotech .tinnotech-project-card__meta,.maria-works-deck-card.has-rarible .rarible-project-card__meta,.maria-works-deck-card.has-mts-game .mts-game-card__meta{color:rgba(255,238,246,.72)}
@@ -221,10 +222,10 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .tinnotech-project-card__meta{overflow:hidden;color:rgba(255,238,246,.72);font-size:clamp(10px,.8vw,14px);line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
 .maria-works-deck-card.has-tinnotech.is-centered{z-index:111}
 .maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__artwork{opacity:1}
-.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__phones{transform:translate3d(-50%,calc(1% + 3vh),0) scale(.95)}
-.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__logo{opacity:1;transform:translate3d(-30%,calc(12% - 3.7vh),0) rotate(-1deg) scale(.675)}
-.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__poll{opacity:1;transform:translate3d(15%,calc(1% + 3.4vh),0) rotate(-6deg) scale(.99)}
-.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__chat{opacity:1;transform:translate3d(7%,calc(1% + .8vh),0) rotate(7deg) scale(.81)}
+.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__phones{transform:translate3d(-50%,calc(1% + 8.75cqi),0) scale(1.02)}
+.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__logo{opacity:1;transform:translate3d(-30%,calc(12% - 6.475cqi),0) rotate(-1deg) scale(.675)}
+.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__poll{opacity:1;transform:translate3d(15%,calc(1% + 5.95cqi),0) rotate(-6deg) scale(.99)}
+.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__chat{opacity:1;transform:translate3d(7%,calc(1% + 1.4cqi),0) rotate(7deg) scale(.81)}
 .wallet-project-card{position:relative;box-sizing:border-box;width:100%;height:100%;container-type:inline-size;overflow:visible;border:0;border-radius:inherit;background:transparent;color:#172c3d}
 .wallet-project-card__surface{position:absolute;z-index:1;inset:0 0 calc(25% - var(--works-card-wall-overlap));border-radius:11.111cqi 11.111cqi 0 0;background:var(--works-card-back);pointer-events:none}
 .wallet-project-card__artwork{position:absolute;z-index:2;inset:0 0 25%;overflow:visible;clip-path:inset(-100vh -100vw 0 -100vw);opacity:0;transition:opacity .28s ease;pointer-events:none}
@@ -239,21 +240,28 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .wallet-project-card__meta{overflow:hidden;color:rgba(23,44,61,.68);font-size:clamp(10px,.8vw,14px);line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
 .maria-works-deck-card.has-wallet.is-centered{z-index:111}
 .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__artwork{opacity:1}
-.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-46.5%,calc(1% - 7vh),0) scale(.93)}
-.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__drink{opacity:1;transform:translate3d(calc(12% + 4vh),calc(1% - 4.5vh),0) scaleX(-1) rotate(46deg) scale(2.9025)}
-.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__bottle{opacity:1;transform:translate3d(5%,calc(1% - 4.3vh),0) rotate(-2deg) scale(1.4175)}
-.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__cart{opacity:1;transform:translate3d(calc(8% - 4vh),calc(1% - .5vh),0) rotate(10deg) scale(1.12875)}
+.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-46.5%,calc(1% - 7cqi),0) scale(.99)}
+.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__drink{opacity:1;transform:translate3d(calc(12% + 7cqi),calc(1% - 7.875cqi),0) scaleX(-1) rotate(46deg) scale(2.9025)}
+.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__bottle{opacity:1;transform:translate3d(5%,calc(1% - 7.525cqi),0) rotate(-2deg) scale(1.4175)}
+.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__cart{opacity:1;transform:translate3d(calc(8% - 7cqi),calc(1% - .875cqi),0) rotate(10deg) scale(1.12875)}
 .autopay-project-card__artwork{position:absolute;z-index:2;inset:0 0 25%;overflow:visible;clip-path:inset(-100vh -100vw 0 -100vw);opacity:0;transition:opacity .28s ease;pointer-events:none}
 .autopay-project-card__phones,.autopay-project-card__arrows,.autopay-project-card__timer{position:absolute;display:block;max-width:none;height:auto;transform-origin:center;will-change:transform,opacity;pointer-events:none}
-.autopay-project-card__phones{z-index:6;left:50%;top:-22%;width:95%;transform:translate3d(-50%,8%,0) scale(.58);transition:transform .84s cubic-bezier(.16,.82,.18,1)}
+.autopay-project-card__phones{z-index:6;left:50%;top:-22%;width:95%;transform:translate3d(-50%,18%,0) scale(.42);transform-origin:50% 72%;transition:transform .84s cubic-bezier(.16,.82,.18,1)}
 .autopay-project-card__arrows{z-index:4;left:-8%;top:10%;width:30%;opacity:0;transform:translate3d(170%,25%,0) rotate(0deg) scale(.48);transition:transform .9s cubic-bezier(.16,.82,.18,1),opacity .28s ease}
 .autopay-project-card__timer{z-index:4;right:-8%;top:18%;width:31%;opacity:0;transform:translate3d(-170%,18%,0) rotate(0deg) scale(.48);transition:transform .9s cubic-bezier(.16,.82,.18,1),opacity .28s ease}
 .autopay-project-card .wallet-project-card__file-icon{background:#168cff}
 .maria-works-deck-card.has-autopay.is-centered{z-index:111}
 .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__artwork{opacity:1}
-.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__phones{transform:translate3d(-50%,-2%,0) scale(.94)}
-.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__arrows{opacity:1;transform:translate3d(6%,calc(-9% + 6vh),0) rotate(-8deg) scale(1.03)}
-.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__timer{opacity:1;transform:translate3d(-5%,-8%,0) rotate(8deg) scale(1.02)}
+.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__phones{transform:translate3d(-50%,calc(1% + 5.25cqi - 2vh),0) scale(1.02);animation:autopay-phones-enter .84s cubic-bezier(.16,.82,.18,1) both}
+.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__arrows{opacity:1;transform:translate3d(-7%,calc(-9% + 10.5cqi - 13vh),0) rotate(-8deg) scale(1.03)}
+.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__timer{opacity:1;transform:translate3d(3%,calc(-8% - 9.5vh),0) rotate(8deg) scale(1.02)}
+@keyframes autopay-phones-enter{0%{transform:translate3d(-50%,18%,0) scale(.42)}100%{transform:translate3d(-50%,calc(1% + 5.25cqi - 2vh),0) scale(1.02)}}
+.sbp-project-card{font:inherit;text-align:left;cursor:pointer;-webkit-appearance:none;appearance:none}
+.sbp-project-card__artwork{position:absolute;z-index:2;inset:0 0 25%;overflow:visible;clip-path:inset(-100vh -100vw 0 -100vw);opacity:0;transition:opacity .28s ease;pointer-events:none}
+.sbp-project-card__phones{position:absolute;z-index:6;left:50%;top:-26%;width:98%;max-width:none;height:auto;display:block;transform:translate3d(-50%,9%,0) scale(.58);transform-origin:50% 72%;transition:transform .84s cubic-bezier(.16,.82,.18,1);will-change:transform;pointer-events:none}
+.maria-works-deck-card.has-sbp.is-centered{z-index:111}
+.maria-works-deck-card.has-sbp.is-centered .sbp-project-card__artwork{opacity:1}
+.maria-works-deck-card.has-sbp.is-centered .sbp-project-card__phones{transform:translate3d(-50%,calc(1% + 3cqi),0) scale(1)}
 .rarible-project-card{position:relative;box-sizing:border-box;width:100%;height:100%;container-type:inline-size;overflow:visible;border:0;border-radius:inherit;background:transparent;color:#181217;text-align:left;cursor:pointer}
 .rarible-project-card__surface{position:absolute;z-index:1;inset:0 0 calc(25% - var(--works-card-wall-overlap));border-radius:11.111cqi 11.111cqi 0 0;background:var(--works-card-back);box-shadow:none;pointer-events:none}
 .rarible-project-card__artwork{position:absolute;z-index:2;inset:0 0 25%;overflow:visible;clip-path:inset(-100vh -100vw 0 -100vw);opacity:0;transition:opacity .28s ease;pointer-events:none}
@@ -270,8 +278,8 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .maria-works-deck-card.has-rarible.is-centered{z-index:112}
 .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__artwork{opacity:1}
 .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__cover{transform:translate3d(-50%,3%,0) scale(.96)}
-.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__ape{opacity:1;transform:translate3d(-14%,calc(5% - 4vh),0) rotate(-11deg) scale(.96)}
-.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__logo{opacity:1;transform:translate3d(16%,calc(1% - 5.5vh),0) rotate(11deg) scale(.96)}
+.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__ape{opacity:1;transform:translate3d(-14%,calc(5% - 7cqi),0) rotate(-11deg) scale(.96)}
+.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__logo{opacity:1;transform:translate3d(16%,calc(1% - 9.625cqi),0) rotate(11deg) scale(.96)}
 .aliexpress-project-card{position:relative;box-sizing:border-box;width:100%;height:100%;container-type:inline-size;overflow:visible;border:0;border-radius:inherit;background:transparent;color:#181217;text-align:left;padding:0;font:inherit;cursor:pointer}
 .aliexpress-project-card__surface{position:absolute;z-index:1;inset:0 0 calc(25% - var(--works-card-wall-overlap));border-radius:11.111cqi 11.111cqi 0 0;background:var(--works-card-back);box-shadow:none;pointer-events:none}
 .aliexpress-project-card__artwork{position:absolute;z-index:2;inset:0 0 25%;overflow:visible;clip-path:inset(-100vh -100vw 0 -100vw);opacity:0;transition:opacity .28s ease;pointer-events:none}
@@ -305,8 +313,8 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .maria-works-deck-card.has-aliexpress.is-centered{z-index:112}
 .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__artwork{opacity:1}
 .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__phones{transform:translate3d(-52%,3%,0) scale(1.06)}
-.maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__bag{opacity:1;transform:translate3d(-14%,calc(5% - 3vh),0) rotate(-14deg) scale(.96)}
-.maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__heart{opacity:1;transform:translate3d(24%,calc(5% - 3vh),0) rotate(13deg) scale(.96)}
+.maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__bag{opacity:1;transform:translate3d(-14%,calc(5% - 5.25cqi),0) rotate(-14deg) scale(.96)}
+.maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__heart{opacity:1;transform:translate3d(24%,calc(5% - 5.25cqi),0) rotate(13deg) scale(.96)}
 .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__sparkles{opacity:1;transform:translate3d(0,3%,0) rotate(12deg) scale(.96)}
 .works-corner-ribbon{position:absolute;z-index:9;right:-5%;top:-8%;width:48%;height:auto;display:block;overflow:visible;pointer-events:none;filter:drop-shadow(0 8px 9px rgba(73,25,67,.18))}
 .works-corner-ribbon__wrap{fill:none;stroke-linecap:round;stroke-dasharray:360;stroke-dashoffset:360;stroke-width:19;opacity:0}
@@ -416,11 +424,11 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
   .maria-home-portrait{height:76vh}.maria-home-portrait--light{inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:none}.maria-home-portrait--dark{transform:translate(-50%,-56%)}
       .maria-subpage{padding:112px 14px 86px}.maria-back{left:14px;top:87px;font-size:10px}.maria-works-hand{--works-hand-final-rotation:-90deg;--works-hand-x:0;--works-hand-y:0;bottom:-11vh;width:96vw;translate:-18.2% 0;animation:maria-works-hand-enter-mobile .52s cubic-bezier(.2,.8,.2,1) both}.maria-works-carousel{top:max(34vh,calc(env(safe-area-inset-top) + 132px));height:32vh;overflow:visible}.maria-works-deck-card{width:64vw;border-radius:11.111cqi;opacity:var(--works-loop-opacity-mobile);z-index:var(--works-loop-layer-mobile);transform:translate3d(-50%,calc(-50% + var(--works-loop-y-mobile)),0) scale(var(--works-loop-scale-mobile))}.maria-works-deck-card.is-hidden{opacity:0}.maria-works-deck-card .concept-cover{width:100%}.concept-cover{border-radius:11.111cqi}.concept-cover__title{font-size:24vw;bottom:62px}.concept-cover__open{font-size:0}.concept-cover__open b{width:32px;height:32px;font-size:16px}
   .maria-works-hand{bottom:-21vh;width:124vw}
-     .maria-works-deck-card{width:72vw;height:68vw;opacity:1;z-index:var(--works-deck-layer-mobile);transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile));transition:transform 1.25s cubic-bezier(.22,.62,.28,1),filter .2s ease}
+     .maria-works-deck-card{width:72vw;height:68vw;opacity:1;z-index:var(--works-deck-layer-mobile);transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile));transition:transform 1.25s cubic-bezier(.22,.62,.28,1),filter .2s ease}.maria-works-deck-card.has-project{width:72vw;height:68vw}
    .maria-works-page.is-scene-ready .maria-works-hand{animation-name:maria-works-hand-enter-mobile!important}.maria-works-carousel.is-entering:not(.is-entry-active) .maria-works-deck-card{transform:translate3d(-50%,calc(-50% + var(--works-entry-y-mobile) + var(--works-entry-lift-y)),0) scale(.94)}.maria-works-carousel.is-entering.is-entry-active .maria-works-deck-card{animation-name:maria-works-card-enter-mobile}
    @keyframes maria-works-card-enter-mobile{from{transform:translate3d(-50%,calc(-50% + var(--works-entry-y-mobile) + var(--works-entry-lift-y)),0) scale(.94)}to{transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile))}}
    .maria-works-carousel.is-dragging .maria-works-deck-card{transition:none}
-      .works-project-card__mts-flag{right:5%;width:66px}
+      .works-project-card__mts-flag{right:5%;width:66px}.maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__phones{transform:translate3d(-50%,calc(1% + 10.5cqi),0) scale(1.08)}.maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-46.5%,calc(1% - 5.25cqi),0) scale(1.04)}.maria-works-deck-card.has-autopay.is-centered .autopay-project-card__phones{transform:translate3d(-50%,calc(1% + 7cqi),0) scale(1.08)}
   .maria-hackathons-page .maria-model-pose{--model-pose-scale:var(--mobile-model-scale)!important}
   .maria-hackathons-porthole{width:var(--mobile-porthole-size)}
   .maria-orbit-carousel{pointer-events:auto}

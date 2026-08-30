@@ -1,10 +1,13 @@
+import type { Language } from './i18n'
+
 type AliExpressProjectCardProps = {
   onOpen: () => void
   ariaLabel: string
+  language: Language
   loadArtwork: boolean
 }
 
-export default function AliExpressProjectCard({ onOpen, ariaLabel, loadArtwork }: AliExpressProjectCardProps) {
+export default function AliExpressProjectCard({ onOpen, ariaLabel, language, loadArtwork }: AliExpressProjectCardProps) {
   return <button className="aliexpress-project-card" type="button" onClick={onOpen} aria-label={ariaLabel}>
     <span className="aliexpress-project-card__surface" aria-hidden="true" />
     <span className="aliexpress-project-card__artwork" aria-hidden="true">
@@ -23,7 +26,7 @@ export default function AliExpressProjectCard({ onOpen, ariaLabel, loadArtwork }
         </svg>
       </span>
       <span className="aliexpress-project-card__copy">
-        <strong className="aliexpress-project-card__title">AliExpress Collections</strong>
+        <strong className="aliexpress-project-card__title">{language === 'ru' ? 'Коллекции AliExpress' : 'AliExpress Collections'}</strong>
         <span className="aliexpress-project-card__meta">AliExpress DAU Hackathon</span>
       </span>
     </span>

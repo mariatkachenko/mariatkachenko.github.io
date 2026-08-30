@@ -49,7 +49,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(handVariantForWorksPosition(8.49)).toBe('primary')
     expect(handVariantForWorksPosition(8.51)).toBe('alternate')
     expect(handVariantForWorksPosition(9.49)).toBe('alternate')
-    expect(handVariantForWorksPosition(9.51)).toBe('primary')
+    expect(handVariantForWorksPosition(9.51)).toBe('alternate')
   })
 
   it('renders the subpage home control as Comforter text with a decorative curved arrow', () => {
@@ -285,7 +285,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
-    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(10)
+    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(11)
     expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(6)
     expect(carousel).toContainElement(cover)
     expect(container.querySelector('.maria-works-grid')).not.toBeInTheDocument()
@@ -449,6 +449,32 @@ describe('Maria Tkachenko portfolio', () => {
     )
     expect(dialog.querySelectorAll('.rarible-presentation__scroll img')).toHaveLength(12)
     expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+  })
+
+  it('opens QR Payment as a local stepped presentation in the same modal viewer', () => {
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<App />)
+      fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      act(() => vi.advanceTimersByTime(600))
+      for (let step = 0; step < 6; step += 1) {
+        fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+        act(() => vi.advanceTimersByTime(120))
+      }
+      fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
+
+      const dialog = screen.getByRole('dialog', { name: 'Оплата по QR' })
+      expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
+      expect(dialog.querySelector(':scope > .mts-presentation')).toBeInTheDocument()
+      expect(screen.getByRole('img', { name: 'Слайд 1 из 17' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/03.png')
+      fireEvent.click(screen.getByRole('button', { name: 'Следующий слайд' }))
+      expect(screen.getByRole('img', { name: 'Слайд 2 из 17' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/04.png')
+      expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('closes the presentation from every exit path and restores focus', () => {

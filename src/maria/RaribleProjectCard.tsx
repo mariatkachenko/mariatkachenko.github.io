@@ -1,10 +1,13 @@
+import type { Language } from './i18n'
+
 type RaribleProjectCardProps = {
   onOpen: () => void
   ariaLabel: string
+  language: Language
   loadArtwork: boolean
 }
 
-export default function RaribleProjectCard({ onOpen, ariaLabel, loadArtwork }: RaribleProjectCardProps) {
+export default function RaribleProjectCard({ onOpen, ariaLabel, language, loadArtwork }: RaribleProjectCardProps) {
   return <button
     className="rarible-project-card"
     type="button"
@@ -27,7 +30,7 @@ export default function RaribleProjectCard({ onOpen, ariaLabel, loadArtwork }: R
         </svg>
       </span>
       <span className="rarible-project-card__copy">
-        <strong className="rarible-project-card__title">Rarible Charity Program</strong>
+        <strong className="rarible-project-card__title">{language === 'ru' ? 'Благотворительность Rarible' : 'Rarible Charity Program'}</strong>
         <span className="rarible-project-card__meta">Phystech Business Solutions</span>
       </span>
     </span>
