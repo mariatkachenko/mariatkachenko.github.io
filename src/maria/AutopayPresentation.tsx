@@ -1,21 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Language } from './i18n'
 
-const SLIDE_IDS = [
-  '01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
-  '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-  '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
-  '31', '32', '33', '35', '36', '37', '38', '39', '48',
-] as const
+const SLIDE_IDS = ['29', '30', '31', '32', '33', '34', 'End'] as const
+const slideSource = (id: string) => `/assets/maria/autopay-presentation/${id}.png`
 
-const DARK_SLIDES = new Set(['01', '29', '30', '31', '32', '36', '48'])
-const slideSource = (id: string) => `/assets/maria/mts-presentation-webp/${id === '48' ? '48.png' : `${id}.webp`}`
-
-type MtsPresentationProps = {
+type AutopayPresentationProps = {
   language: Language
 }
 
-export default function MtsPresentation({ language }: MtsPresentationProps) {
+export default function AutopayPresentation({ language }: AutopayPresentationProps) {
   const [slideIndex, setSlideIndex] = useState(0)
   const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null)
   const [direction, setDirection] = useState<'forward' | 'back'>('forward')
@@ -26,18 +19,12 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
 
   const goToSlide = useCallback((nextIndex: number) => {
     if (nextIndex < 0 || nextIndex >= SLIDE_IDS.length || nextIndex === slideIndex) return
-
-    const isPush = DARK_SLIDES.has(SLIDE_IDS[slideIndex]) !== DARK_SLIDES.has(SLIDE_IDS[nextIndex])
-    const nextDirection = nextIndex > slideIndex ? 'forward' : 'back'
     if (clearTransitionRef.current !== null) window.clearTimeout(clearTransitionRef.current)
 
-    setDirection(nextDirection)
-    setOutgoingIndex(isPush ? slideIndex : null)
+    setDirection(nextIndex > slideIndex ? 'forward' : 'back')
+    setOutgoingIndex(slideIndex)
     setSlideIndex(nextIndex)
-
-    if (isPush) {
-      clearTransitionRef.current = window.setTimeout(() => setOutgoingIndex(null), 460)
-    }
+    clearTransitionRef.current = window.setTimeout(() => setOutgoingIndex(null), 460)
   }, [slideIndex])
 
   useEffect(() => () => {
@@ -71,30 +58,29 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
 
   const handleSlideClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect()
-    if (event.clientX < bounds.left + bounds.width / 2) goToSlide(slideIndex - 1)
-    else goToSlide(slideIndex + 1)
+    goToSlide(event.clientX < bounds.left + bounds.width / 2 ? slideIndex - 1 : slideIndex + 1)
   }
 
   const activeId = SLIDE_IDS[slideIndex]
   const outgoingId = outgoingIndex === null ? null : SLIDE_IDS[outgoingIndex]
 
-  return <section className={`mts-presentation mts-presentation--${DARK_SLIDES.has(activeId) ? 'dark' : 'light'}`} aria-label={copy.slide}>
+  return <section className="mts-presentation mts-presentation--light" aria-label={copy.slide}>
     <div className="mts-presentation__frame">
       <div className="mts-presentation__slides" aria-live="polite" onClick={handleSlideClick}>
-      {outgoingId && <img
-        className={`mts-presentation__slide mts-presentation__slide--outgoing is-${direction}`}
-        src={slideSource(outgoingId)}
-        alt=""
-        aria-hidden="true"
-        decoding="async"
-      />}
-      <img
-        className={`mts-presentation__slide mts-presentation__slide--active ${outgoingId ? `is-${direction}` : ''}`}
-        src={slideSource(activeId)}
-        alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
-        fetchPriority="high"
-        decoding="async"
-      />
+        {outgoingId && <img
+          className={`mts-presentation__slide mts-presentation__slide--outgoing is-${direction}`}
+          src={slideSource(outgoingId)}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+        />}
+        <img
+          className={`mts-presentation__slide mts-presentation__slide--active ${outgoingId ? `is-${direction}` : ''}`}
+          src={slideSource(activeId)}
+          alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
+          fetchPriority="high"
+          decoding="async"
+        />
       </div>
     </div>
     <div className="mts-presentation__controls">

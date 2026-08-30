@@ -5,9 +5,10 @@ import MtsPresentation from './MtsPresentation'
 import MtsGamePresentation from './MtsGamePresentation'
 import RariblePresentation from './RariblePresentation'
 import AliExpressPresentation from './AliExpressPresentation'
+import AutopayPresentation from './AutopayPresentation'
 import SbpPresentation from './SbpPresentation'
 
-export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress' | 'sbp'
+export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress' | 'sbp' | 'autopay'
 
 type PresentationModalProps = {
   project: PresentationKind | null
@@ -24,6 +25,8 @@ export default function PresentationModal({ project, onClose, language }: Presen
       ? 'Collections Prototype - AliExpress DAU Hackathon'
       : project === 'sbp'
         ? (language === 'ru' ? 'Оплата по QR' : 'QR Payment')
+      : project === 'autopay'
+        ? (language === 'ru' ? 'Автоплатежи МТС' : 'MTS Autopay')
       : project === 'mts-game'
         ? (language === 'ru' ? 'Страницы игр на сайте МТС Оплата' : 'Game pages on the MTS Payment website')
         : copy.presentation
@@ -77,6 +80,8 @@ export default function PresentationModal({ project, onClose, language }: Presen
           ? <RariblePresentation language={language} />
           : project === 'aliexpress'
             ? <AliExpressPresentation language={language} />
-            : <SbpPresentation language={language} />}
+            : project === 'autopay'
+              ? <AutopayPresentation language={language} />
+              : <SbpPresentation language={language} />}
   </div>, document.body)
 }

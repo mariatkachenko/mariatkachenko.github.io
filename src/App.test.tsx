@@ -13,7 +13,7 @@ import {
   orbitOffset,
   orbitPose,
 } from './maria/HackathonOrbitCarousel'
-import { handVariantForWorksPosition } from './maria/WorksCardCarousel'
+import { WORKS_CARD_COUNT, handVariantForWorksPosition } from './maria/WorksCardCarousel'
 import { routeTransitionDirection } from './router'
 
 beforeEach(() => {
@@ -45,11 +45,11 @@ describe('Maria Tkachenko portfolio', () => {
   })
 
   it('switches the works hand artwork in repeating groups of three carousel positions', () => {
-    expect(handVariantForWorksPosition(6)).toBe('primary')
-    expect(handVariantForWorksPosition(8.49)).toBe('primary')
-    expect(handVariantForWorksPosition(8.51)).toBe('alternate')
-    expect(handVariantForWorksPosition(9.49)).toBe('alternate')
-    expect(handVariantForWorksPosition(9.51)).toBe('alternate')
+    expect(handVariantForWorksPosition(0)).toBe('primary')
+    expect(handVariantForWorksPosition(2.49)).toBe('primary')
+    expect(handVariantForWorksPosition(2.51)).toBe('alternate')
+    expect(handVariantForWorksPosition(5.49)).toBe('alternate')
+    expect(handVariantForWorksPosition(5.51)).toBe('primary')
   })
 
   it('renders the subpage home control as Comforter text with a decorative curved arrow', () => {
@@ -285,8 +285,8 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
-    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(11)
-    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(6)
+    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)
+    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(3)
     expect(carousel).toContainElement(cover)
     expect(container.querySelector('.maria-works-grid')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'На Главную' })).toBeInTheDocument()
@@ -417,8 +417,16 @@ describe('Maria Tkachenko portfolio', () => {
   })
 
   it('opens Rarible as one vertically scrolling canvas in the same modal viewer', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
+    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+    act(() => vi.advanceTimersByTime(600))
+    for (let step = 0; step < 5; step += 1) {
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      act(() => vi.advanceTimersByTime(120))
+    }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Rarible Charity Program»' }))
 
     const dialog = screen.getByRole('dialog', { name: 'Rarible Charity Program' })
@@ -433,11 +441,22 @@ describe('Maria Tkachenko portfolio', () => {
     expect(dialog.querySelectorAll('.rarible-presentation__scroll img')).toHaveLength(13)
     expect(screen.getByRole('button', { name: 'Закрыть презентацию' })).toBeInTheDocument()
     expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('opens AliExpress as one vertically scrolling canvas in the same modal viewer', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
+    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+    act(() => vi.advanceTimersByTime(600))
+    for (let step = 0; step < 4; step += 1) {
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      act(() => vi.advanceTimersByTime(120))
+    }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
 
     const dialog = screen.getByRole('dialog', { name: 'Collections Prototype - AliExpress DAU Hackathon' })
@@ -449,6 +468,9 @@ describe('Maria Tkachenko portfolio', () => {
     )
     expect(dialog.querySelectorAll('.rarible-presentation__scroll img')).toHaveLength(12)
     expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('opens QR Payment as a local stepped presentation in the same modal viewer', () => {
@@ -459,18 +481,14 @@ describe('Maria Tkachenko portfolio', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       act(() => vi.advanceTimersByTime(600))
-      for (let step = 0; step < 6; step += 1) {
-        fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
-        act(() => vi.advanceTimersByTime(120))
-      }
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
 
       const dialog = screen.getByRole('dialog', { name: 'Оплата по QR' })
       expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
       expect(dialog.querySelector(':scope > .mts-presentation')).toBeInTheDocument()
-      expect(screen.getByRole('img', { name: 'Слайд 1 из 17' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/03.png')
+      expect(screen.getByRole('img', { name: 'Слайд 1 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/03.png')
       fireEvent.click(screen.getByRole('button', { name: 'Следующий слайд' }))
-      expect(screen.getByRole('img', { name: 'Слайд 2 из 17' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/04.png')
+      expect(screen.getByRole('img', { name: 'Слайд 2 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/04.png')
       expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
     } finally {
       vi.useRealTimers()

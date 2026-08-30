@@ -1,12 +1,14 @@
 import type { Language } from './i18n'
 
 type AutopayProjectCardProps = {
+  onOpen: () => void
+  ariaLabel: string
   language: Language
   loadArtwork: boolean
 }
 
-export default function AutopayProjectCard({ language, loadArtwork }: AutopayProjectCardProps) {
-  return <div className="wallet-project-card autopay-project-card">
+export default function AutopayProjectCard({ onOpen, ariaLabel, language, loadArtwork }: AutopayProjectCardProps) {
+  return <button className="wallet-project-card autopay-project-card" type="button" onClick={onOpen} aria-label={ariaLabel}>
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="autopay-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
@@ -27,5 +29,5 @@ export default function AutopayProjectCard({ language, loadArtwork }: AutopayPro
         <span className="wallet-project-card__meta">{language === 'ru' ? 'МТС Финтех 2025' : 'MTS Fintech 2025'}</span>
       </span>
     </span>
-  </div>
+  </button>
 }
