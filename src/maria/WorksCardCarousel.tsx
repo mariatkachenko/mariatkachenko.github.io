@@ -248,6 +248,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     || centeredCardIndex === WORKS_MTS_PLACEHOLDER_INDEX
     || centeredCardIndex === WORKS_SBP_INDEX
     || centeredCardIndex === WORKS_AUTOPAY_INDEX
+    || centeredCardIndex === WORKS_CONNECTION_INDEX
 
   useEffect(() => {
     if (!entryReady) return
@@ -428,7 +429,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         data-layer={pose.layer}
         key={index}
         style={{
-          '--works-row-scale': projectCard ? 1 : 1.1,
+          '--works-row-scale': 1.1,
           '--works-row-x': `${worksDesktopRowX(pose.x)}vw`,
           '--works-row-rotate-y': `${pose.rotateY}deg`,
           '--works-entry-x': `${compact(offset * 1.4)}vw`,
@@ -507,13 +508,20 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 language={language}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
               />
+            : connectionCard
+              ? <ConnectionProjectCard
+                onOpen={() => onOpen('connection')}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Пополнение баланса»'
+                  : 'Open presentation “Balance top-up”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+              />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {tinnotechCard
                 ? <TinnotechProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : walletCard
                 ? <WalletProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
-              : connectionCard
-                ? <ConnectionProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : <WorksProjectCard
                 title={language === 'ru' ? 'Новый проект' : 'New project'}
                 meta={language === 'ru' ? 'Скоро' : 'Coming soon'}

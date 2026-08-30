@@ -286,7 +286,7 @@ describe('Maria Tkachenko portfolio', () => {
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
     expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)
-    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(3)
+    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(2)
     expect(carousel).toContainElement(cover)
     expect(container.querySelector('.maria-works-grid')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'На Главную' })).toBeInTheDocument()

@@ -1,12 +1,14 @@
 import type { Language } from './i18n'
 
 type ConnectionProjectCardProps = {
+  onOpen: () => void
+  ariaLabel: string
   language: Language
   loadArtwork: boolean
 }
 
-export default function ConnectionProjectCard({ language, loadArtwork }: ConnectionProjectCardProps) {
-  return <div className="wallet-project-card connection-project-card">
+export default function ConnectionProjectCard({ onOpen, ariaLabel, language, loadArtwork }: ConnectionProjectCardProps) {
+  return <button className="wallet-project-card connection-project-card" type="button" onClick={onOpen} aria-label={ariaLabel}>
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="connection-project-card__artwork" aria-hidden="true">
       {loadArtwork && (
@@ -25,5 +27,5 @@ export default function ConnectionProjectCard({ language, loadArtwork }: Connect
         <span className="wallet-project-card__meta">{language === 'ru' ? 'МТС Финтех 2026' : 'MTS Fintech 2026'}</span>
       </span>
     </span>
-  </div>
+  </button>
 }
