@@ -248,7 +248,7 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .autopay-project-card__phones{z-index:6;left:50%;top:-22%;width:95%;transform:translate3d(-50%,8%,0) scale(.58);transition:transform .84s cubic-bezier(.16,.82,.18,1)}
 .autopay-project-card__arrows{z-index:4;left:-8%;top:10%;width:30%;opacity:0;transform:translate3d(170%,25%,0) rotate(0deg) scale(.48);transition:transform .9s cubic-bezier(.16,.82,.18,1),opacity .28s ease}
 .autopay-project-card__timer{z-index:4;right:-8%;top:18%;width:31%;opacity:0;transform:translate3d(-170%,18%,0) rotate(0deg) scale(.48);transition:transform .9s cubic-bezier(.16,.82,.18,1),opacity .28s ease}
-.autopay-project-card .wallet-project-card__file-icon{background:#78d900}
+.autopay-project-card .wallet-project-card__file-icon{background:#168cff}
 .maria-works-deck-card.has-autopay.is-centered{z-index:111}
 .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__artwork{opacity:1}
 .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__phones{transform:translate3d(-50%,-2%,0) scale(.94)}
@@ -421,8 +421,6 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
    @keyframes maria-works-card-enter-mobile{from{transform:translate3d(-50%,calc(-50% + var(--works-entry-y-mobile) + var(--works-entry-lift-y)),0) scale(.94)}to{transform:translate3d(-50%,calc(-50% + var(--works-deck-y-mobile)),0) scale(var(--works-deck-scale-mobile))}}
    .maria-works-carousel.is-dragging .maria-works-deck-card{transition:none}
       .works-project-card__mts-flag{right:5%;width:66px}
-      .mts-game-card__girl{left:-15%;top:-2%;width:56%}.mts-game-card__statue{right:-21%;top:-14%;width:65%}.mts-game-card__phones{left:50%;top:-24%;width:92%}.maria-works-deck-card.has-mts-game.is-centered .mts-game-card__phones{transform:translate3d(-50%,-2%,0) scale(.94)}
-      .rarible-project-card__cover{top:-35%;width:84%}.rarible-project-card__ape{left:-5%;top:14%;width:44%}.rarible-project-card__logo{right:-4%;top:43%;width:39%}.maria-works-deck-card.has-rarible.is-centered .rarible-project-card__cover{transform:translate3d(-50%,3%,0) scale(.93)}
   .maria-hackathons-page .maria-model-pose{--model-pose-scale:var(--mobile-model-scale)!important}
   .maria-hackathons-porthole{width:var(--mobile-porthole-size)}
   .maria-orbit-carousel{pointer-events:auto}

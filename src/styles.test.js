@@ -547,6 +547,21 @@ describe('works centered MTS flyout layers', () => {
   })
 })
 
+describe('mobile works card artwork geometry', () => {
+  it('uses the desktop artwork positions on mobile instead of separate mobile offsets', () => {
+    expect(styles).toContain('.mts-game-card__girl{position:absolute;z-index:6;left:-16%;top:-5%;width:62%;')
+    expect(styles).toContain('.mts-game-card__statue{position:absolute;z-index:3;right:-24%;top:-19%;width:71%;')
+    expect(styles).toContain('.mts-game-card__phones{position:absolute;z-index:5;left:50%;top:-26%;width:96%;')
+    expect(styles).toContain('.rarible-project-card__ape{position:absolute;z-index:6;left:-7%;top:13%;width:47%;')
+    expect(styles).toContain('.rarible-project-card__logo{position:absolute;z-index:6;right:-5%;top:42%;width:42%;')
+    expect(styles).not.toContain('.mts-game-card__girl{left:-15%;top:-2%;width:56%}')
+    expect(styles).not.toContain('.mts-game-card__statue{right:-21%;top:-14%;width:65%}')
+    expect(styles).not.toContain('.mts-game-card__phones{left:50%;top:-24%;width:92%}')
+    expect(styles).not.toContain('.rarible-project-card__ape{left:-5%;top:14%;width:44%}')
+    expect(styles).not.toContain('.rarible-project-card__logo{right:-4%;top:43%;width:39%}')
+  })
+})
+
 describe('hackathon orbit placeholders', () => {
   it('styles decorative cards without pointer interaction', () => {
     expect(styles).toContain('.maria-orbit-carousel{position:absolute;inset:0;overflow:hidden;pointer-events:auto;touch-action:none;overscroll-behavior-x:contain;')
