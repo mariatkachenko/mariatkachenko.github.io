@@ -12,8 +12,8 @@ export default function AutopayProjectCard({ onOpen, ariaLabel, language, loadAr
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="autopay-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
-        <img className="autopay-project-card__arrows" src="/assets/maria/autopay-arrows.png" alt="" draggable="false" loading="eager" decoding="sync" />
-        <img className="autopay-project-card__timer" src="/assets/maria/autopay-timer.png" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="autopay-project-card__arrows" src="/assets/maria/autopay-arrows.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="autopay-project-card__timer" src="/assets/maria/autopay-timer.webp" alt="" draggable="false" loading="eager" decoding="sync" />
         <img className="autopay-project-card__phones" src="/assets/maria/autopay-phones.webp" alt="" draggable="false" loading="eager" decoding="sync" />
       </>}
     </span>
