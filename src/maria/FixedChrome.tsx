@@ -15,8 +15,8 @@ export default function FixedChrome({ theme, onThemeChange, language, onLanguage
         <span className="maria-avatar" aria-hidden="true"><img src="/assets/maria/portrait-lossless.webp" alt="" /></span>
         <h1>{copy.name}</h1>
       </div>
-      <a href="mailto:mery.tkachenko@gmail.com">mery.tkachenko@gmail.com</a>
-      <div className="maria-meta"><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@marykllj</a><span>Moscow</span></div>
+      <a href="mailto:mery.tkachenko@gmail.com">CV Notion</a>
+      <div className="maria-meta"><span>Москва</span><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@marykllj</a></div>
       <a className="maria-contact" href="mailto:mery.tkachenko@gmail.com">{copy.contact} <span aria-hidden="true">↗</span></a>
     </header>
     <footer className="maria-controls maria-fixed-bottom">

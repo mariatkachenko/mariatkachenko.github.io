@@ -94,9 +94,11 @@ describe('Maria Tkachenko portfolio', () => {
   it('renders the identity and contact navigation', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 1, name: 'Мария Ткаченко' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'mery.tkachenko@gmail.com' })).toHaveAttribute('href', 'mailto:mery.tkachenko@gmail.com')
-    expect(screen.getByText('@marykllj')).toBeInTheDocument()
-    expect(screen.getByText('Moscow')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'CV Notion' })).toHaveAttribute('href', 'mailto:mery.tkachenko@gmail.com')
+    const meta = screen.getByText('Москва').closest<HTMLElement>('.maria-meta')
+    expect(meta).not.toBeNull()
+    expect(Array.from(meta!.children).map((item) => item.textContent)).toEqual(['Москва', '@marykllj'])
+    expect(within(meta!).getByRole('link', { name: '@marykllj' })).toHaveAttribute('href', 'https://t.me/marykllj')
     expect(screen.getByRole('link', { name: /Связаться/ })).toBeInTheDocument()
   })
 
