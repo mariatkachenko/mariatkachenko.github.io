@@ -94,7 +94,10 @@ describe('Maria Tkachenko portfolio', () => {
   it('renders the identity and contact navigation', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 1, name: 'Мария Ткаченко' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'CV Notion' })).toHaveAttribute('href', 'mailto:mery.tkachenko@gmail.com')
+    const cvLink = screen.getByRole('link', { name: 'CV Notion' })
+    expect(cvLink).toHaveAttribute('href', 'https://marykllj.notion.site/89f5a1082f494a0ea0c5c362a32a808c')
+    expect(cvLink).toHaveAttribute('target', '_blank')
+    expect(cvLink).toHaveAttribute('rel', 'noreferrer')
     const meta = screen.getByText('Москва').closest<HTMLElement>('.maria-meta')
     expect(meta).not.toBeNull()
     expect(Array.from(meta!.children).map((item) => item.textContent)).toEqual(['Москва', '@marykllj'])

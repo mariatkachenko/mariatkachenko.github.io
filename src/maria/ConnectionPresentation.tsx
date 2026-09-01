@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Language } from './i18n'
+import useSlidePinchZoom from './useSlidePinchZoom'
 
 const SLIDE_IDS = ['36', '37', '38', '39', '40', 'End'] as const
 const slideSource = (id: string) => `/assets/maria/connection-presentation/${id}.jpg`
@@ -63,10 +64,15 @@ export default function ConnectionPresentation({ language }: ConnectionPresentat
 
   const activeId = SLIDE_IDS[slideIndex]
   const outgoingId = outgoingIndex === null ? null : SLIDE_IDS[outgoingIndex]
+  const pinchZoom = useSlidePinchZoom(activeId)
 
   return <section className="mts-presentation mts-presentation--light" aria-label={copy.slide}>
     <div className="mts-presentation__frame">
-      <div className="mts-presentation__slides" aria-live="polite" onClick={handleSlideClick}>
+      <div className={`mts-presentation__slides${pinchZoom.isZoomed ? ' is-zoomed' : ''}`} aria-live="polite" onClick={(event) => {
+        if (pinchZoom.consumePinchClick()) return
+        if (pinchZoom.isZoomed) return
+        handleSlideClick(event)
+      }} {...pinchZoom.touchHandlers}>
         {outgoingId && <img
           className={`mts-presentation__slide mts-presentation__slide--outgoing is-${direction}`}
           src={slideSource(outgoingId)}
@@ -80,6 +86,7 @@ export default function ConnectionPresentation({ language }: ConnectionPresentat
           alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
           fetchPriority="high"
           decoding="async"
+          style={pinchZoom.activeSlideStyle}
         />
       </div>
     </div>

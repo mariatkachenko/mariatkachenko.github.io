@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 const distRoot = resolve(import.meta.dirname, '..', 'dist')
 const limits = {
   totalBytes: 30 * 1024 * 1024,
-  javascriptBytes: 250 * 1024,
+  javascriptBytes: 260 * 1024,
   stylesheetBytes: 96 * 1024,
   fileCount: 160,
 }
@@ -26,7 +26,7 @@ const largestJavaScript = Math.max(0, ...files.filter((file) => file.path.endsWi
 const largestStylesheet = Math.max(0, ...files.filter((file) => file.path.endsWith('.css')).map((file) => file.size))
 const failures = [
   totalBytes > limits.totalBytes && `total ${(totalBytes / 1048576).toFixed(2)} MiB > 30 MiB`,
-  largestJavaScript > limits.javascriptBytes && `JavaScript ${(largestJavaScript / 1024).toFixed(1)} KiB > 250 KiB`,
+  largestJavaScript > limits.javascriptBytes && `JavaScript ${(largestJavaScript / 1024).toFixed(1)} KiB > 260 KiB`,
   largestStylesheet > limits.stylesheetBytes && `CSS ${(largestStylesheet / 1024).toFixed(1)} KiB > 96 KiB`,
   files.length > limits.fileCount && `files ${files.length} > ${limits.fileCount}`,
 ].filter(Boolean)

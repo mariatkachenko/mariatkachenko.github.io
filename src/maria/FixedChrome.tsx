@@ -15,7 +15,7 @@ export default function FixedChrome({ theme, onThemeChange, language, onLanguage
         <span className="maria-avatar" aria-hidden="true"><img src="/assets/maria/portrait-lossless.webp" alt="" /></span>
         <h1>{copy.name}</h1>
       </div>
-      <a href="mailto:mery.tkachenko@gmail.com">CV Notion</a>
+      <a href="https://marykllj.notion.site/89f5a1082f494a0ea0c5c362a32a808c" target="_blank" rel="noreferrer">CV Notion</a>
       <div className="maria-meta"><span>Москва</span><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@marykllj</a></div>
       <a className="maria-contact" href="mailto:mery.tkachenko@gmail.com">{copy.contact} <span aria-hidden="true">↗</span></a>
     </header>
