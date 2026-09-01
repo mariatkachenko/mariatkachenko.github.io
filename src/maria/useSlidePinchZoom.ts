@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type TouchEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 
 const MIN_SCALE = 1
 const MAX_SCALE = 3
@@ -9,93 +9,123 @@ type ZoomState = {
   y: number
 }
 
-type PinchGesture = {
+type PinchState = {
   distance: number
   centerX: number
   centerY: number
-  start: ZoomState
-}
-
-function touchDistance(touches: React.TouchList) {
-  const first = touches[0]
-  const second = touches[1]
-  return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY)
-}
-
-function touchCenter(touches: React.TouchList) {
-  const first = touches[0]
-  const second = touches[1]
-  return {
-    x: (first.clientX + second.clientX) / 2,
-    y: (first.clientY + second.clientY) / 2,
-  }
+  zoom: ZoomState
 }
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value))
 }
 
+function distance(first: PointerEvent, second: PointerEvent) {
+  return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY)
+}
+
+function center(first: PointerEvent, second: PointerEvent) {
+  return {
+    x: (first.clientX + second.clientX) / 2,
+    y: (first.clientY + second.clientY) / 2,
+  }
+}
+
 export default function useSlidePinchZoom(resetKey: unknown) {
   const [zoom, setZoom] = useState<ZoomState>({ scale: 1, x: 0, y: 0 })
-  const gestureRef = useRef<PinchGesture | null>(null)
-  const pinchedRef = useRef(false)
+  const pointersRef = useRef(new Map<number, PointerEvent>())
+  const pinchRef = useRef<PinchState | null>(null)
+  const suppressClickRef = useRef(false)
+  const suppressClickTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
     setZoom({ scale: 1, x: 0, y: 0 })
-    gestureRef.current = null
-    pinchedRef.current = false
+    pointersRef.current.clear()
+    pinchRef.current = null
+    suppressClickRef.current = false
+    if (suppressClickTimerRef.current !== null) window.clearTimeout(suppressClickTimerRef.current)
+    suppressClickTimerRef.current = null
   }, [resetKey])
 
-  const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
-    if (event.touches.length !== 2) return
-    const center = touchCenter(event.touches)
-    gestureRef.current = {
-      distance: touchDistance(event.touches),
-      centerX: center.x,
-      centerY: center.y,
-      start: zoom,
+  const beginPinch = () => {
+    const pointers = Array.from(pointersRef.current.values())
+    if (pointers.length < 2) return
+    const [first, second] = pointers
+    const pinchCenter = center(first, second)
+    pinchRef.current = {
+      distance: distance(first, second),
+      centerX: pinchCenter.x,
+      centerY: pinchCenter.y,
+      zoom,
     }
-    pinchedRef.current = true
+    suppressClickRef.current = true
   }
 
-  const onTouchMove = (event: TouchEvent<HTMLDivElement>) => {
-    const gesture = gestureRef.current
-    if (!gesture || event.touches.length !== 2) return
+  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'touch') return
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    pointersRef.current.set(event.pointerId, event.nativeEvent)
+    if (pointersRef.current.size === 2) {
+      event.preventDefault()
+      event.stopPropagation()
+      beginPinch()
+    }
+  }
+
+  const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'touch' || !pointersRef.current.has(event.pointerId)) return
+    pointersRef.current.set(event.pointerId, event.nativeEvent)
+    const pointers = Array.from(pointersRef.current.values())
+    const pinch = pinchRef.current
+    if (!pinch || pointers.length < 2) return
+
     event.preventDefault()
-    const center = touchCenter(event.touches)
-    const nextScale = clamp(gesture.start.scale * (touchDistance(event.touches) / gesture.distance), MIN_SCALE, MAX_SCALE)
+    event.stopPropagation()
+
+    const [first, second] = pointers
+    const pinchCenter = center(first, second)
+    const nextScale = clamp(pinch.zoom.scale * distance(first, second) / pinch.distance, MIN_SCALE, MAX_SCALE)
     setZoom({
       scale: nextScale,
-      x: gesture.start.x + center.x - gesture.centerX,
-      y: gesture.start.y + center.y - gesture.centerY,
+      x: pinch.zoom.x + pinchCenter.x - pinch.centerX,
+      y: pinch.zoom.y + pinchCenter.y - pinch.centerY,
     })
   }
 
-  const onTouchEnd = () => {
-    if (!gestureRef.current) return
-    gestureRef.current = null
+  const onPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'touch') return
+    pointersRef.current.delete(event.pointerId)
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+    if (pointersRef.current.size < 2) pinchRef.current = null
     setZoom((current) => current.scale <= 1.03 ? { scale: 1, x: 0, y: 0 } : current)
-    window.setTimeout(() => {
-      pinchedRef.current = false
-    }, 0)
+    if (suppressClickTimerRef.current !== null) window.clearTimeout(suppressClickTimerRef.current)
+    suppressClickTimerRef.current = window.setTimeout(() => {
+      suppressClickRef.current = false
+      suppressClickTimerRef.current = null
+    }, 420)
   }
 
-  const consumePinchClick = () => {
-    if (!pinchedRef.current) return false
-    pinchedRef.current = false
+  const consumeClick = () => {
+    if (!suppressClickRef.current) return false
+    suppressClickRef.current = false
     return true
   }
 
-  const activeSlideStyle = zoom.scale === 1
+  const zoomStyle = zoom.scale === 1
     ? undefined
     : {
       transform: `translate3d(${zoom.x}px,${zoom.y}px,0) scale(${zoom.scale})`,
     } satisfies CSSProperties
 
   return {
-    touchHandlers: { onTouchStart, onTouchMove, onTouchEnd, onTouchCancel: onTouchEnd },
-    activeSlideStyle,
     isZoomed: zoom.scale > 1,
-    consumePinchClick,
+    consumeClick,
+    zoomStyle,
+    pointerHandlers: {
+      onPointerDown,
+      onPointerMove,
+      onPointerUp,
+      onPointerCancel: onPointerUp,
+    },
   }
 }

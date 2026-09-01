@@ -82,11 +82,15 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
 
   return <section className={`mts-presentation mts-presentation--${DARK_SLIDES.has(activeId) ? 'dark' : 'light'}`} aria-label={copy.slide}>
     <div className="mts-presentation__frame">
-      <div className={`mts-presentation__slides${pinchZoom.isZoomed ? ' is-zoomed' : ''}`} aria-live="polite" onClick={(event) => {
-        if (pinchZoom.consumePinchClick()) return
-        if (pinchZoom.isZoomed) return
-        handleSlideClick(event)
-      }} {...pinchZoom.touchHandlers}>
+      <div
+        className={`mts-presentation__slides${pinchZoom.isZoomed ? ' is-zoomed' : ''}`}
+        aria-live="polite"
+        onClick={(event) => {
+          if (pinchZoom.consumeClick() || pinchZoom.isZoomed) return
+          handleSlideClick(event)
+        }}
+        {...pinchZoom.pointerHandlers}
+      >
       {outgoingId && <img
         className={`mts-presentation__slide mts-presentation__slide--outgoing is-${direction}`}
         src={slideSource(outgoingId)}
@@ -94,14 +98,18 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
         aria-hidden="true"
         decoding="async"
       />}
-      <img
+      <div
         className={`mts-presentation__slide mts-presentation__slide--active ${outgoingId ? `is-${direction}` : ''}`}
-        src={slideSource(activeId)}
-        alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
-        fetchPriority="high"
-        decoding="async"
-        style={pinchZoom.activeSlideStyle}
-      />
+      >
+        <img
+          className="mts-presentation__slide-image"
+          src={slideSource(activeId)}
+          alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
+          fetchPriority="high"
+          decoding="async"
+          style={pinchZoom.zoomStyle}
+        />
+      </div>
       </div>
     </div>
     <div className="mts-presentation__controls">
