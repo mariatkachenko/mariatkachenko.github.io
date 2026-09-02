@@ -138,7 +138,7 @@ describe('shared chrome typography and grid', () => {
     expect(styles).toContain('.maria-avatar{width:42px;height:42px;overflow:hidden;border-radius:12px}')
     expect(styles).toContain('.maria-contact{grid-column:5;display:flex;align-items:center;gap:3px;padding:10px 0;border:0;background:transparent;')
     expect(styles).toContain('.maria-contact span{position:relative;top:-.16em;font-size:1.15em;line-height:1}')
-    expect(styles).toContain('.maria-controls{--maria-control-active-bg:#160d19;--maria-control-active-fg:#faf3f6;position:fixed;z-index:40;left:16px;right:16px;bottom:16px;')
+    expect(styles).toContain('.maria-controls{--maria-control-active-bg:#160d19;--maria-control-active-fg:#faf3f6;--maria-control-visual-version:2;position:fixed;z-index:40;left:16px;right:16px;bottom:16px;')
     expect(styles).toContain('.theme-dark .maria-controls{--maria-control-active-bg:#faf3f6;--maria-control-active-fg:#160d19}')
     expect(styles).toContain('font-size:17px;view-transition-name:fixed-controls')
     expect(styles).toContain('.maria-languages button,.maria-theme button{position:relative;isolation:isolate;color:currentColor;opacity:1;cursor:pointer}')
