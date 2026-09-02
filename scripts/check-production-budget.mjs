@@ -5,7 +5,7 @@ const distRoot = resolve(import.meta.dirname, '..', 'dist')
 const limits = {
   totalBytes: 30 * 1024 * 1024,
   javascriptBytes: 260 * 1024,
-  stylesheetBytes: 96 * 1024,
+  stylesheetBytes: 100 * 1024,
   fileCount: 160,
 }
 

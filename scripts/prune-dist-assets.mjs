@@ -12,8 +12,6 @@ const keepFiles = new Set([
   'grain/fonts/instrument-serif-italic.ttf',
   'grain/grain-texture-1440.webp',
   'maria/portrait-lossless.webp',
-  'maria/theme-sun-lossless.webp',
-  'maria/theme-moon-lossless.webp',
   'maria/theme-active-bg.svg',
   'maria/theme-sun.svg',
   'maria/theme-moon.svg',
