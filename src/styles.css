@@ -465,13 +465,17 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
       .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__ape{transform:translate3d(-14%,calc(5% - 7cqi + 4vh),0) rotate(-11deg) scale(.96)}
       .maria-works-deck-card.has-rarible.is-centered .rarible-project-card__logo{transform:translate3d(16%,calc(1% - 9.625cqi + 4vh),0) rotate(11deg) scale(.96)}
       .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__phones{transform:translate3d(-52%,calc(3% + 1.5vh),0) scale(1.18);animation:none}
-      .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__heart{transform:translate3d(15%,calc(5% - 5.25cqi),0) rotate(13deg) scale(1.16)}
+      .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__bag{transform:translate3d(-14%,calc(5% - 5.25cqi + 1vh),0) rotate(-14deg) scale(1.04)}
+      .maria-works-deck-card.has-aliexpress.is-centered .aliexpress-project-card__heart{transform:translate3d(15%,calc(5% - 5.25cqi + 1vh),0) rotate(13deg) scale(1.22)}
       .maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__phones{transform:translate3d(-50%,calc(1% + 10.5cqi + 7vh),0) scale(1.18);animation:none}
       .maria-works-deck-card.has-tinnotech.is-centered .tinnotech-project-card__logo{transform:translate3d(-30%,calc(12% - 6.475cqi + 2vh),0) rotate(-1deg) scale(.675)}
-      .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-50%,calc(1% - 5.25cqi + 4.75vh),0) scale(1.12);animation:none}
+      .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__phones{transform:translate3d(-51.5%,calc(1% - 5.25cqi + 6.75vh),0) scale(1.12);animation:none}
+      .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__drink{transform:translate3d(calc(9% + 7cqi),calc(1% - 7.875cqi + 2vh),0) scaleX(-1) rotate(31deg) scale(2.9025)}
+      .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__bottle{transform:translate3d(2%,calc(1% - 7.525cqi - 2vh),0) rotate(-2deg) scale(1.4175)}
+      .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__cart{transform:translate3d(calc(11% - 7cqi),calc(1% - .875cqi),0) rotate(10deg) scale(1.12875)}
       .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__phones{transform:translate3d(-50%,calc(1% + 5.25cqi + 9vh),0) scale(1.36);animation:none}
-      .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__arrows{transform:translate3d(-7%,calc(-9% + 10.5cqi - 11.5vh),0) rotate(-8deg) scale(1.03)}
-      .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__timer{transform:translate3d(3%,calc(-8% - 8vh),0) rotate(8deg) scale(1.02)}
+      .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__arrows{transform:translate3d(-7%,calc(-9% + 10.5cqi - 11.5vh),0) rotate(7deg) scale(1.03)}
+      .maria-works-deck-card.has-autopay.is-centered .autopay-project-card__timer{transform:translate3d(3%,calc(-8% - 9vh),0) rotate(8deg) scale(1.02)}
       .maria-works-deck-card.has-sbp.is-centered .sbp-project-card__phones{transform:translate3d(-50%,calc(1% + .25cqi + 10.5vh),0) scale(1.26);animation:none}
       .maria-works-deck-card.has-connection.is-centered .connection-project-card__phones{transform:translate3d(calc(-49% - .25vh),calc(3% + 1.25cqi + 10.5vh),0) scale(1.38);animation:none}
   .maria-hackathons-page .maria-model-pose{--model-pose-scale:var(--mobile-model-scale)!important}
