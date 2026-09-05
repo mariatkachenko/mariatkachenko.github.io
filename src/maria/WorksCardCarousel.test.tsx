@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import WorksCardCarousel, {
   WORKS_CARD_COUNT,
+  WORKS_CARD_OPEN_DELAY_MS,
   WORKS_AUTOPLAY_MS,
   WORKS_AUTOPAY_INDEX,
   WORKS_ALIEXPRESS_INDEX,
@@ -704,17 +705,32 @@ describe('WorksCardCarousel', () => {
 
   it('opens MTS Pay on click but suppresses a click after drag', () => {
     const onOpen = vi.fn()
-    renderReadyWorksCarousel(onOpen)
-    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
-    const project = screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' })
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={onOpen} language="ru" />)
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+      const cards = document.querySelectorAll<HTMLElement>('.maria-works-deck-card')
+      const project = screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' })
 
-    fireEvent.click(project)
-    expect(onOpen).toHaveBeenCalledTimes(1)
+      fireEvent.click(project)
+      expect(onOpen).not.toHaveBeenCalled()
+      expect(cards[WORKS_PROJECT_INDEX]).toHaveClass('is-press-opening')
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS - 1))
+      expect(onOpen).not.toHaveBeenCalled()
+      expect(cards[WORKS_PROJECT_INDEX]).toHaveClass('is-press-opening')
+      act(() => vi.advanceTimersByTime(1))
+      expect(onOpen).toHaveBeenCalledTimes(1)
+      expect(cards[WORKS_PROJECT_INDEX]).not.toHaveClass('is-press-opening')
 
-    fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 300 })
-    fireEvent.pointerUp(carousel, { pointerId: 1, clientX: 100 })
-    fireEvent.click(project)
-    expect(onOpen).toHaveBeenCalledTimes(1)
+      fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 300 })
+      fireEvent.pointerUp(carousel, { pointerId: 1, clientX: 100 })
+      fireEvent.click(project)
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
+      expect(onOpen).toHaveBeenCalledTimes(1)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('opens the AliExpress vertical presentation from its project card', () => {
@@ -731,6 +747,7 @@ describe('WorksCardCarousel', () => {
       }
 
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
       expect(onOpen).toHaveBeenCalledWith('aliexpress')
     } finally {
       vi.useRealTimers()
@@ -747,6 +764,7 @@ describe('WorksCardCarousel', () => {
       act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
       expect(carousel).toHaveClass('has-clickable-center')
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
       expect(onOpen).toHaveBeenCalledWith('sbp')
     } finally {
       vi.useRealTimers()

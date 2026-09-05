@@ -3,7 +3,10 @@ import type { Language } from './i18n'
 import useSlidePinchZoom from './useSlidePinchZoom'
 
 const SLIDE_IDS = ['29', '30', '31', '32', '33', '34', 'End'] as const
-const slideSource = (id: string) => `/assets/maria/autopay-presentation/${id}.jpg`
+const WEBP_SLIDES = new Set(['30', '32', '33', '34'])
+
+const slideSource = (id: string) =>
+  `/assets/maria/autopay-presentation/${id}.${WEBP_SLIDES.has(id) ? 'webp' : 'jpg'}`
 
 type AutopayPresentationProps = {
   language: Language

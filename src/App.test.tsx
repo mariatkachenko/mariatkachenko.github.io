@@ -13,7 +13,7 @@ import {
   orbitOffset,
   orbitPose,
 } from './maria/HackathonOrbitCarousel'
-import { WORKS_CARD_COUNT, handVariantForWorksPosition } from './maria/WorksCardCarousel'
+import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS, handVariantForWorksPosition } from './maria/WorksCardCarousel'
 import { routeTransitionDirection } from './router'
 
 beforeEach(() => {
@@ -394,9 +394,12 @@ describe('Maria Tkachenko portfolio', () => {
   })
 
   it('opens the local MTS presentation in a modal viewer', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' }))
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
     expect(screen.getByRole('dialog', { name: 'Презентация «МТС Финтех. Концепт»' })).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Слайд 1 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation-webp/01.webp')
@@ -419,6 +422,9 @@ describe('Maria Tkachenko portfolio', () => {
     expect(screen.getByRole('dialog').querySelector(':scope > .presentation-modal__close')).toBeInTheDocument()
     expect(screen.queryByTitle('Презентация «МТС Финтех. Концепт»')).not.toBeInTheDocument()
     expect(document.body.style.overflow).toBe('hidden')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('opens Rarible as one vertically scrolling canvas in the same modal viewer', () => {
@@ -433,6 +439,7 @@ describe('Maria Tkachenko portfolio', () => {
       act(() => vi.advanceTimersByTime(120))
     }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Rarible Charity Program»' }))
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
     const dialog = screen.getByRole('dialog', { name: 'Rarible Charity Program' })
     expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
@@ -463,6 +470,7 @@ describe('Maria Tkachenko portfolio', () => {
       act(() => vi.advanceTimersByTime(120))
     }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
     const dialog = screen.getByRole('dialog', { name: 'Collections Prototype - AliExpress DAU Hackathon' })
     expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
@@ -487,6 +495,7 @@ describe('Maria Tkachenko portfolio', () => {
 
       act(() => vi.advanceTimersByTime(600))
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
       const dialog = screen.getByRole('dialog', { name: 'Оплата по QR' })
       expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
@@ -501,23 +510,31 @@ describe('Maria Tkachenko portfolio', () => {
   })
 
   it('closes the presentation from every exit path and restores focus', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
     const cover = screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' })
 
     fireEvent.click(cover)
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
     fireEvent.click(screen.getByRole('button', { name: 'Закрыть презентацию' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(document.body.style.overflow).toBe('')
     expect(cover).toHaveFocus()
 
     fireEvent.click(cover)
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     fireEvent.click(cover)
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
     fireEvent.mouseDown(screen.getByRole('dialog'))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('uses the supplied illustrated artwork for both home cards', () => {

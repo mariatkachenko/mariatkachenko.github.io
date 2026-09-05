@@ -3,7 +3,9 @@ import type { Language } from './i18n'
 import useSlidePinchZoom from './useSlidePinchZoom'
 
 const SLIDE_IDS = ['28', '29', '30', 'End'] as const
-const slideSource = (id: string) => `/assets/maria/mts-game-presentation/${id === 'End' ? 'End.jpg' : `${id}.webp`}`
+const slideSource = (id: string) => `/assets/maria/mts-game-presentation/${
+  id === 'End' ? 'End.jpg' : `${id}.webp`
+}`
 
 type MtsGamePresentationProps = {
   language: Language

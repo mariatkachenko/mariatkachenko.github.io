@@ -38,6 +38,7 @@ export const WORKS_INITIAL_POSITION = WORKS_PROJECT_INDEX
 export const WORKS_ENTRY_DURATION_MS = 600
 export const WORKS_AUTOPLAY_MS = 4800
 export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
+export const WORKS_CARD_OPEN_DELAY_MS = 240
 export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
 export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
 export const WORKS_PLACEHOLDER_COVERS = [
@@ -223,6 +224,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const [wheeling, setWheeling] = useState(false)
   const [isEntering, setIsEntering] = useState(true)
   const [interactionVersion, setInteractionVersion] = useState(0)
+  const [pressOpeningIndex, setPressOpeningIndex] = useState<number | null>(null)
   const pointerOrigin = useRef<{
     coordinate: number
     position: number
@@ -232,6 +234,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   } | null>(null)
   const suppressClick = useRef(false)
   const wheelSettleTimer = useRef<number | null>(null)
+  const openTimer = useRef<number | null>(null)
   const wheelGesture = useRef<{
     position: number
     delta: number
@@ -261,6 +264,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   useEffect(() => () => {
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    if (openTimer.current !== null) window.clearTimeout(openTimer.current)
   }, [])
 
   useEffect(() => {
@@ -269,9 +273,24 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     wheelSettleTimer.current = null
     wheelGesture.current = null
     pointerOrigin.current = null
+    setPressOpeningIndex(null)
     setWheeling(false)
     setDragging(false)
   }, [paused])
+
+  const openAfterPressAnimation = (project: PresentationKind, index: number) => {
+    if (openTimer.current !== null) window.clearTimeout(openTimer.current)
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      onOpen(project)
+      return
+    }
+    setPressOpeningIndex(index)
+    openTimer.current = window.setTimeout(() => {
+      onOpen(project)
+      setPressOpeningIndex(null)
+      openTimer.current = null
+    }, WORKS_CARD_OPEN_DELAY_MS)
+  }
 
   useEffect(() => {
     onPositionChange?.(position)
@@ -422,7 +441,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         - (index > WORKS_MTS_PLACEHOLDER_INDEX ? 1 : 0)
       const coverIndex = genericCardIndex % WORKS_PLACEHOLDER_COVERS.length
       return <article
-        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${autopayCard ? ' has-autopay' : ''}${sbpCard ? ' has-sbp' : ''}${connectionCard ? ' has-connection' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
+        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${autopayCard ? ' has-autopay' : ''}${sbpCard ? ' has-sbp' : ''}${connectionCard ? ' has-connection' : ''}${centered ? ' is-centered' : ''}${pressOpeningIndex === index ? ' is-press-opening' : ''}${visible ? '' : ' is-hidden'}`}
         aria-hidden={!visible}
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
@@ -459,13 +478,13 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       >
         {projectCard
           ? <ConceptProject
-            onOpen={() => onOpen('mts')}
+            onOpen={() => openAfterPressAnimation('mts', index)}
             language={language}
             loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
           />
           : raribleCard
             ? <RaribleProjectCard
-              onOpen={() => onOpen('rarible')}
+              onOpen={() => openAfterPressAnimation('rarible', index)}
               ariaLabel={language === 'ru'
                 ? 'Открыть презентацию «Rarible Charity Program»'
                 : 'Open presentation “Rarible Charity Program”'}
@@ -474,7 +493,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
             />
             : aliexpressCard
               ? <AliExpressProjectCard
-                onOpen={() => onOpen('aliexpress')}
+                onOpen={() => openAfterPressAnimation('aliexpress', index)}
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»'
                   : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
@@ -483,7 +502,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
               />
             : mtsGameCard
               ? <MtsGameProjectCard
-                onOpen={() => onOpen('mts-game')}
+                onOpen={() => openAfterPressAnimation('mts-game', index)}
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Страницы игр на сайте МТС Оплата»'
                   : 'Open presentation “Game pages on the MTS Payment website”'}
@@ -492,7 +511,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
               />
             : sbpCard
               ? <SbpProjectCard
-                onOpen={() => onOpen('sbp')}
+                onOpen={() => openAfterPressAnimation('sbp', index)}
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Оплата по QR»'
                   : 'Open presentation “QR Payment”'}
@@ -501,7 +520,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
               />
             : autopayCard
               ? <AutopayProjectCard
-                onOpen={() => onOpen('autopay')}
+                onOpen={() => openAfterPressAnimation('autopay', index)}
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Автоплатежи МТС»'
                   : 'Open presentation “MTS Autopay”'}
@@ -510,7 +529,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
               />
             : connectionCard
               ? <ConnectionProjectCard
-                onOpen={() => onOpen('connection')}
+                onOpen={() => openAfterPressAnimation('connection', index)}
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Пополнение баланса»'
                   : 'Open presentation “Balance top-up”'}
