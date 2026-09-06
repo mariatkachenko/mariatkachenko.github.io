@@ -1,16 +1,26 @@
 import { useEffect } from 'react'
 
-const interactiveSelector = 'a[href],button:not([disabled]),[role="button"],[tabindex]:not([tabindex="-1"])'
-export const INTERACTION_SOUND_STYLE = '8-bit-terminal' as const
+export type InteractionSoundKind = 'navigate' | 'toggle' | 'open' | 'close'
 
-function findInteractiveTarget(target: EventTarget | null) {
+const soundSelector = '[data-interaction-sound]'
+export const INTERACTION_SOUND_STYLE = 'soft-spray' as const
+
+function findSoundTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) return null
-  const interactive = target.closest<HTMLElement>(interactiveSelector)
-  return interactive?.getAttribute('aria-disabled') === 'true' ? null : interactive
+  const interactive = target.closest<HTMLElement>(soundSelector)
+  if (!interactive || interactive.getAttribute('aria-disabled') === 'true') return null
+  if (interactive.hasAttribute('disabled') || interactive.getAttribute('aria-pressed') === 'true') return null
+  return interactive
+}
+
+export function interactionSoundKind(target: EventTarget | null): InteractionSoundKind | null {
+  const interactive = findSoundTarget(target)
+  const kind = interactive?.dataset.interactionSound
+  return kind === 'navigate' || kind === 'toggle' || kind === 'open' || kind === 'close' ? kind : null
 }
 
 export function isInteractiveSoundTarget(target: EventTarget | null) {
-  return findInteractiveTarget(target) !== null
+  return interactionSoundKind(target) !== null
 }
 
 export default function InteractionSounds() {
@@ -21,79 +31,54 @@ export default function InteractionSounds() {
     if (!AudioContextClass) return
 
     let audioContext: AudioContext | null = null
-    let lastHoverAt = 0
 
     const ensureContext = () => {
       audioContext ??= new AudioContextClass()
       return audioContext
     }
 
-    const playTone = (kind: 'hover' | 'click') => {
+    const playSpray = (kind: InteractionSoundKind) => {
       const context = ensureContext()
       const sound = () => {
         const now = context.currentTime
-        const oscillator = context.createOscillator()
-        const gain = context.createGain()
-        const filter = context.createBiquadFilter()
-        const duration = kind === 'hover' ? 0.038 : 0.088
-        const volume = kind === 'hover' ? 0.012 : 0.019
+        const duration = kind === 'navigate' ? 0.12 : kind === 'open' ? 0.1 : 0.065
+        const peak = kind === 'navigate' || kind === 'open' ? 0.014 : 0.009
+        const buffer = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate)
+        const noise = buffer.getChannelData(0)
 
-        oscillator.type = 'square'
-        if (kind === 'hover') {
-          oscillator.frequency.setValueAtTime(980, now)
-          oscillator.frequency.setValueAtTime(1240, now + 0.018)
-        } else {
-          oscillator.frequency.setValueAtTime(440, now)
-          oscillator.frequency.setValueAtTime(660, now + 0.028)
-          oscillator.frequency.setValueAtTime(880, now + 0.056)
+        for (let index = 0; index < noise.length; index += 1) {
+          const fade = 1 - index / noise.length
+          noise[index] = (Math.random() * 2 - 1) * fade
         }
-        filter.type = 'lowpass'
-        filter.frequency.setValueAtTime(2600, now)
+
+        const source = context.createBufferSource()
+        const filter = context.createBiquadFilter()
+        const gain = context.createGain()
+        source.buffer = buffer
+        filter.type = 'bandpass'
+        filter.frequency.setValueAtTime(kind === 'close' ? 1050 : 1450, now)
         filter.Q.setValueAtTime(0.7, now)
         gain.gain.setValueAtTime(0.0001, now)
-        gain.gain.exponentialRampToValueAtTime(volume, now + 0.004)
+        gain.gain.exponentialRampToValueAtTime(peak, now + 0.008)
         gain.gain.exponentialRampToValueAtTime(0.0001, now + duration)
-        oscillator.connect(filter)
+        source.connect(filter)
         filter.connect(gain)
         gain.connect(context.destination)
-        oscillator.start(now)
-        oscillator.stop(now + duration)
+        source.start(now)
+        source.stop(now + duration)
       }
 
       if (context.state === 'suspended') void context.resume().then(sound).catch(() => undefined)
       else sound()
     }
 
-    const unlockAudio = () => {
-      const context = ensureContext()
-      if (context.state === 'suspended') void context.resume().catch(() => undefined)
-    }
-
-    const handlePointerOver = (event: PointerEvent) => {
-      const target = findInteractiveTarget(event.target)
-      if (!target) return
-      const previous = findInteractiveTarget(event.relatedTarget)
-      if (target === previous || performance.now() - lastHoverAt < 45) return
-      lastHoverAt = performance.now()
-      playTone('hover')
-    }
-
-    const handleFocusIn = (event: FocusEvent) => {
-      if (findInteractiveTarget(event.target)) playTone('hover')
-    }
-
     const handleClick = (event: MouseEvent) => {
-      if (findInteractiveTarget(event.target)) playTone('click')
+      const kind = interactionSoundKind(event.target)
+      if (kind) playSpray(kind)
     }
 
-    window.addEventListener('pointerdown', unlockAudio, { passive: true })
-    window.addEventListener('pointerover', handlePointerOver, { passive: true })
-    window.addEventListener('focusin', handleFocusIn)
     window.addEventListener('click', handleClick)
     return () => {
-      window.removeEventListener('pointerdown', unlockAudio)
-      window.removeEventListener('pointerover', handlePointerOver)
-      window.removeEventListener('focusin', handleFocusIn)
       window.removeEventListener('click', handleClick)
       if (audioContext) void audioContext.close()
     }

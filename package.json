@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "postbuild": "cp dist/index.html dist/404.html && touch dist/.nojekyll",
+    "postbuild": "node scripts/prune-dist-assets.mjs && cp dist/index.html dist/404.html && touch dist/.nojekyll && node scripts/check-production-budget.mjs",
     "test": "vitest"
   },
   "dependencies": {

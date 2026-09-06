@@ -5,7 +5,7 @@ import { frameIndexForProgress, frameIndexAfterDirection, nextFrameIndex, SCROLL
 import { cameraOrbitForPointer } from './maria/ModelBackground'
 import { MODEL_FLOAT_AMPLITUDE_PX, MODEL_FLOAT_DURATION_SECONDS, MODEL_POSE_SCALE, MODEL_POSE_TILT_DEGREES } from './maria/InteractiveBackground'
 import { SHIMMER_MAX_PARTICLE_SIZE, SHIMMER_PARTICLE_SHAPE, shouldEmitShimmer } from './maria/ShimmerTrail'
-import { INTERACTION_SOUND_STYLE, isInteractiveSoundTarget } from './maria/InteractionSounds'
+import { INTERACTION_SOUND_STYLE, interactionSoundKind, isInteractiveSoundTarget } from './maria/InteractionSounds'
 import {
   activeIndexAfterSwipe,
   cardSizeScale,
@@ -13,7 +13,7 @@ import {
   orbitOffset,
   orbitPose,
 } from './maria/HackathonOrbitCarousel'
-import { handVariantForWorksPosition } from './maria/WorksCardCarousel'
+import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS, handVariantForWorksPosition } from './maria/WorksCardCarousel'
 import { routeTransitionDirection } from './router'
 
 beforeEach(() => {
@@ -45,11 +45,11 @@ describe('Maria Tkachenko portfolio', () => {
   })
 
   it('switches the works hand artwork in repeating groups of three carousel positions', () => {
-    expect(handVariantForWorksPosition(6)).toBe('primary')
-    expect(handVariantForWorksPosition(8.49)).toBe('primary')
-    expect(handVariantForWorksPosition(8.51)).toBe('alternate')
-    expect(handVariantForWorksPosition(11.49)).toBe('alternate')
-    expect(handVariantForWorksPosition(11.51)).toBe('primary')
+    expect(handVariantForWorksPosition(0)).toBe('primary')
+    expect(handVariantForWorksPosition(2.49)).toBe('primary')
+    expect(handVariantForWorksPosition(2.51)).toBe('alternate')
+    expect(handVariantForWorksPosition(5.49)).toBe('alternate')
+    expect(handVariantForWorksPosition(5.51)).toBe('primary')
   })
 
   it('renders the subpage home control as Comforter text with a decorative curved arrow', () => {
@@ -76,11 +76,13 @@ describe('Maria Tkachenko portfolio', () => {
 
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
     expect(app.querySelector('.maria-route-content')).toHaveClass('maria-route-content--forward')
+    expect(app.querySelector('.maria-works-card-transition')).not.toBeInTheDocument()
     expect(app.querySelector('.maria-route-content .maria-header')).not.toBeInTheDocument()
     expect(app.querySelector('.maria-route-content .maria-controls')).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'На Главную' }))
     expect(app.querySelector('.maria-route-content')).toHaveClass('maria-route-content--back')
+    expect(app.querySelector('.maria-works-card-transition')).not.toBeInTheDocument()
   })
 
   it('uses the portfolio title and favicon', () => {
@@ -91,11 +93,16 @@ describe('Maria Tkachenko portfolio', () => {
 
   it('renders the identity and contact navigation', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { level: 1, name: 'Мария Ткаченко' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'mery.tkachenko@gmail.com' })).toHaveAttribute('href', 'mailto:mery.tkachenko@gmail.com')
-    expect(screen.getByText('@marykllj')).toBeInTheDocument()
-    expect(screen.getByText('Moscow')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Связаться/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'МАРИЯ ТКАЧЕНКО' })).toBeInTheDocument()
+    const cvLink = screen.getByRole('link', { name: 'CV NOTION' })
+    expect(cvLink).toHaveAttribute('href', 'https://marykllj.notion.site/89f5a1082f494a0ea0c5c362a32a808c')
+    expect(cvLink).toHaveAttribute('target', '_blank')
+    expect(cvLink).toHaveAttribute('rel', 'noreferrer')
+    const meta = screen.getByText('МОСКВА').closest<HTMLElement>('.maria-meta')
+    expect(meta).not.toBeNull()
+    expect(Array.from(meta!.children).map((item) => item.textContent)).toEqual(['МОСКВА', '@MARYKLLJ'])
+    expect(within(meta!).getByRole('link', { name: '@MARYKLLJ' })).toHaveAttribute('href', 'https://t.me/marykllj')
+    expect(screen.getByRole('link', { name: /СВЯЗАТЬСЯ/ })).toBeInTheDocument()
   })
 
   it('renders language controls and portfolio entries', () => {
@@ -110,16 +117,21 @@ describe('Maria Tkachenko portfolio', () => {
     expect(document.querySelector('.maria-card__edge-blur')).not.toBeInTheDocument()
     expect(document.querySelector('.maria-card__motion-blur')).not.toBeInTheDocument()
     expect(document.querySelector('.maria-light-rays')).not.toBeInTheDocument()
-    expect(isInteractiveSoundTarget(screen.getByRole('link', { name: 'Работы' }))).toBe(true)
+    const worksLink = screen.getByRole('link', { name: 'Работы' })
+    expect(isInteractiveSoundTarget(worksLink)).toBe(true)
+    expect(interactionSoundKind(worksLink)).toBe('navigate')
+    expect(isInteractiveSoundTarget(screen.getByRole('link', { name: 'CV NOTION' }))).toBe(false)
+    expect(isInteractiveSoundTarget(screen.getByRole('button', { name: 'Русский' }))).toBe(false)
+    expect(interactionSoundKind(screen.getByRole('button', { name: 'English' }))).toBe('toggle')
     expect(isInteractiveSoundTarget(document.createElement('div'))).toBe(false)
-    expect(INTERACTION_SOUND_STYLE).toBe('8-bit-terminal')
+    expect(INTERACTION_SOUND_STYLE).toBe('soft-spray')
   })
 
   it('switches the complete interface to English and keeps it across pages', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: 'English' }))
-    expect(screen.getByRole('heading', { level: 1, name: 'Maria Tkachenko' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Contact' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'MARIA TKACHENKO' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'CONTACT' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Works' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'About Me' })).toBeInTheDocument()
     expect(screen.getByText('Work tasks, hackathons and projects')).toBeInTheDocument()
@@ -134,14 +146,16 @@ describe('Maria Tkachenko portfolio', () => {
     const { container } = render(<App />)
     const lightThemeButton = screen.getByRole('button', { name: 'Светлая тема' })
     const darkThemeButton = screen.getByRole('button', { name: 'Тёмная тема' })
-    expect(lightThemeButton.querySelector('img')).toHaveAttribute('src', '/assets/maria/theme-sun.png')
+    expect(lightThemeButton.querySelector('img')).toHaveAttribute('src', '/assets/maria/theme-sun.svg')
     expect(lightThemeButton.querySelector('img')).toHaveAttribute('alt', '')
-    expect(darkThemeButton.querySelector('img')).toHaveAttribute('src', '/assets/maria/theme-moon.png')
+    expect(darkThemeButton.querySelector('img')).toHaveAttribute('src', '/assets/maria/theme-moon.svg')
     expect(darkThemeButton.querySelector('img')).toHaveAttribute('alt', '')
     expect(container.querySelector('.maria-app')).toHaveClass('theme-light')
+    expect(container.querySelector('.maria-home-portrait--dark')).not.toHaveAttribute('src')
     fireEvent.click(darkThemeButton)
     expect(container.querySelector('.maria-app')).toHaveClass('theme-dark')
     expect(document.documentElement).toHaveAttribute('data-theme', 'dark')
+    expect(container.querySelector('.maria-home-portrait--dark')).toHaveAttribute('src', '/assets/maria/home-portrait-dark-2400.webp')
     fireEvent.click(lightThemeButton)
     expect(container.querySelector('.maria-app')).toHaveClass('theme-light')
     expect(document.documentElement).toHaveAttribute('data-theme', 'light')
@@ -151,8 +165,9 @@ describe('Maria Tkachenko portfolio', () => {
     const { container } = render(<App />)
     expect(container.querySelector('model-viewer.maria-model-viewer')).not.toBeInTheDocument()
     expect(container.querySelector('.maria-model-float')).not.toBeInTheDocument()
-    expect(container.querySelector('.maria-home-portrait--light')).toHaveAttribute('src', '/assets/maria/home-portrait-light.png')
-    expect(container.querySelector('.maria-home-portrait--dark')).toHaveAttribute('src', '/assets/maria/home-portrait-dark.png')
+    expect(container.querySelector('.maria-home-portrait--light')).toHaveAttribute('src', '/assets/maria/home-portrait-light-3840.webp')
+    expect(container.querySelector('.maria-home-portrait--light')).toHaveAttribute('srcset', expect.stringContaining('home-portrait-light-1280.webp'))
+    expect(container.querySelector('.maria-home-portrait--dark')).not.toHaveAttribute('src')
     expect(MODEL_FLOAT_DURATION_SECONDS).toBe(4.2)
     expect(MODEL_FLOAT_AMPLITUDE_PX).toBe(11)
     expect(MODEL_POSE_SCALE).toBe(1.06)
@@ -216,12 +231,11 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelector('.maria-scroll-stop')).not.toBeInTheDocument()
   })
 
-  it('keeps the works scene live while the native route transition is running', async () => {
-    let finishTransition!: () => void
-    const finished = new Promise<void>((resolve) => { finishTransition = resolve })
+  it('starts the works scene immediately without the native snapshot transition', () => {
+    vi.useFakeTimers()
     const startViewTransition = vi.fn((update: () => void | Promise<void>) => {
       void update()
-      return { finished }
+      return { finished: Promise.resolve() }
     })
     Object.defineProperty(document, 'startViewTransition', {
       value: startViewTransition,
@@ -232,20 +246,23 @@ describe('Maria Tkachenko portfolio', () => {
       const { container } = render(<App />)
       fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
 
-      expect(container.querySelector('.maria-works-page')).not.toHaveClass('is-scene-ready')
+      expect(startViewTransition).not.toHaveBeenCalled()
+      expect(container.querySelector('.maria-works-page')).toHaveClass('is-scene-ready')
       expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entering')
-      expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entry-active')
+      expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entry-active')
       expect(container.querySelector('.mts-flyout-overlay')).toBeInTheDocument()
-      expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
+      expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
 
-      finishTransition()
-      await finished
+      act(() => vi.advanceTimersByTime(600))
+      expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entering')
+      expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
     } finally {
       Object.defineProperty(document, 'startViewTransition', {
         value: undefined,
         writable: true,
         configurable: true,
       })
+      vi.useRealTimers()
     }
   })
 
@@ -259,27 +276,27 @@ describe('Maria Tkachenko portfolio', () => {
     expect(cover).toHaveClass('mts-project-card')
     expect(cover.querySelector('.works-project-card')).toBeNull()
     expect(cover.querySelector('.concept-cover')).toBeNull()
-    expect(cover.querySelector('.mts-project-card__artwork')).toHaveAttribute('src', '/assets/maria/mts-live-triptych.png')
+    expect(cover.querySelector('.mts-project-card__artwork')).toHaveAttribute('src', '/assets/maria/mts-pay-card-composition-crisp.webp')
     expect(cover.querySelector('.mts-project-card__media')).toContainElement(cover.querySelector('.mts-project-card__artwork'))
     expect(cover.querySelector('.mts-project-card__artwork')?.parentElement).toHaveClass('mts-project-card__media')
     expect(cover.querySelector('.mts-project-card__logo-flyout')).toBeNull()
     expect(cover.querySelector('.mts-project-card__butterfly-flyout')).toBeNull()
-    expect(container.querySelector('.mts-flyout-overlay__logo')).toHaveAttribute('src', '/assets/maria/mts-pay-logo-flyout.png')
-    expect(container.querySelector('.mts-flyout-overlay__butterfly')).toHaveAttribute('src', '/assets/maria/mts-pay-butterfly-flyout.png')
-    expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
+    expect(container.querySelector('.mts-flyout-overlay__logo')).toHaveAttribute('src', '/assets/maria/mts-pay-logo-flyout.webp')
+    expect(container.querySelector('.mts-flyout-overlay__butterfly')).toHaveAttribute('src', '/assets/maria/mts-pay-butterfly-flyout.webp')
+    expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
     expect(Array.from(cover.children).map((node) => node.className)).toEqual([
       'mts-project-card__media',
       'mts-project-card__footer',
     ])
     const hand = container.querySelector<HTMLImageElement>('.maria-works-hand img')
-    expect(hand).toHaveAttribute('src', '/assets/maria/works-phone-hand.png')
+    expect(hand).toHaveAttribute('src', '/assets/maria/works-phone-hand.webp')
     expect(hand).toHaveAttribute('alt', '')
     expect(hand).toHaveAttribute('aria-hidden', 'true')
-    expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.png"]')).toBeInTheDocument()
+    expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
-    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(14)
-    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(11)
+    expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)
+    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(2)
     expect(carousel).toContainElement(cover)
     expect(container.querySelector('.maria-works-grid')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'На Главную' })).toBeInTheDocument()
@@ -382,17 +399,20 @@ describe('Maria Tkachenko portfolio', () => {
   })
 
   it('opens the local MTS presentation in a modal viewer', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' }))
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
     expect(screen.getByRole('dialog', { name: 'Презентация «МТС Финтех. Концепт»' })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'Слайд 1 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation/01.png')
+    expect(screen.getByRole('img', { name: 'Слайд 1 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation-webp/01.webp')
     expect(screen.getByRole('button', { name: 'Предыдущий слайд' })).toBeDisabled()
     fireEvent.click(screen.getByRole('button', { name: 'Следующий слайд' }))
-    expect(screen.getByRole('img', { name: 'Слайд 2 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation/02.png')
+    expect(screen.getByRole('img', { name: 'Слайд 2 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation-webp/02.webp')
     fireEvent.keyDown(window, { key: 'ArrowRight' })
-    expect(screen.getByRole('img', { name: 'Слайд 3 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation/03.png')
+    expect(screen.getByRole('img', { name: 'Слайд 3 из 39' })).toHaveAttribute('src', '/assets/maria/mts-presentation-webp/03.webp')
     const slideArea = screen.getByRole('dialog').querySelector('.mts-presentation__slides') as HTMLDivElement
     Object.defineProperty(slideArea, 'getBoundingClientRect', { value: () => ({ left: 0, width: 100 }) })
     fireEvent.click(slideArea, { clientX: 1 })
@@ -407,12 +427,24 @@ describe('Maria Tkachenko portfolio', () => {
     expect(screen.getByRole('dialog').querySelector(':scope > .presentation-modal__close')).toBeInTheDocument()
     expect(screen.queryByTitle('Презентация «МТС Финтех. Концепт»')).not.toBeInTheDocument()
     expect(document.body.style.overflow).toBe('hidden')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('opens Rarible as one vertically scrolling canvas in the same modal viewer', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
+    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+    act(() => vi.advanceTimersByTime(600))
+    for (let step = 0; step < 5; step += 1) {
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      act(() => vi.advanceTimersByTime(120))
+    }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Rarible Charity Program»' }))
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
     const dialog = screen.getByRole('dialog', { name: 'Rarible Charity Program' })
     expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
@@ -420,56 +452,102 @@ describe('Maria Tkachenko portfolio', () => {
     expect(dialog.querySelector('.rarible-presentation__scroll')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Rarible Charity Program' })).toHaveAttribute(
       'src',
-      '/assets/maria/rarible-presentation-numbered/00.png',
+      '/assets/maria/rarible-presentation-numbered-webp/00.webp',
     )
     expect(dialog.querySelector('.mts-presentation')).not.toBeInTheDocument()
     expect(dialog.querySelectorAll('.rarible-presentation__scroll img')).toHaveLength(13)
     expect(screen.getByRole('button', { name: 'Закрыть презентацию' })).toBeInTheDocument()
     expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('opens AliExpress as one vertically scrolling canvas in the same modal viewer', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
+    const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+    act(() => vi.advanceTimersByTime(600))
+    for (let step = 0; step < 4; step += 1) {
+      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      act(() => vi.advanceTimersByTime(120))
+    }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
     const dialog = screen.getByRole('dialog', { name: 'Collections Prototype - AliExpress DAU Hackathon' })
     expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
     expect(dialog.querySelector(':scope > .rarible-presentation')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Collections Prototype - AliExpress DAU Hackathon' })).toHaveAttribute(
       'src',
-      '/assets/maria/aliexpress-presentation-numbered/01.png',
+      '/assets/maria/aliexpress-presentation-numbered-webp/01.webp',
     )
     expect(dialog.querySelectorAll('.rarible-presentation__scroll img')).toHaveLength(12)
     expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('opens QR Payment as a local stepped presentation in the same modal viewer', () => {
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<App />)
+      fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      act(() => vi.advanceTimersByTime(600))
+      fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
+
+      const dialog = screen.getByRole('dialog', { name: 'Оплата по QR' })
+      expect(dialog).toHaveClass('presentation-modal', 'presentation-modal--dimmed')
+      expect(dialog.querySelector(':scope > .mts-presentation')).toBeInTheDocument()
+      expect(screen.getByRole('img', { name: 'Слайд 1 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/03.jpg')
+      fireEvent.click(screen.getByRole('button', { name: 'Следующий слайд' }))
+      expect(screen.getByRole('img', { name: 'Слайд 2 из 18' })).toHaveAttribute('src', '/assets/maria/sbp-presentation/04.jpg')
+      expect(container.querySelector('.maria-app')).toHaveAttribute('inert')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('closes the presentation from every exit path and restores focus', () => {
+    vi.useFakeTimers()
+    try {
     const { container } = render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Работы' }))
     const cover = screen.getByRole('button', { name: 'Открыть презентацию «МТС Финтех. Концепт»' })
 
     fireEvent.click(cover)
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
     fireEvent.click(screen.getByRole('button', { name: 'Закрыть презентацию' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(document.body.style.overflow).toBe('')
     expect(cover).toHaveFocus()
 
     fireEvent.click(cover)
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     fireEvent.click(cover)
+    act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
     fireEvent.mouseDown(screen.getByRole('dialog'))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('uses the supplied illustrated artwork for both home cards', () => {
     const { container } = render(<App />)
     const artwork = container.querySelectorAll<HTMLImageElement>('.maria-card__art')
     expect(artwork).toHaveLength(2)
-    expect(artwork[0]).toHaveAttribute('src', '/assets/maria/home-card-works.png')
-    expect(artwork[1]).toHaveAttribute('src', '/assets/maria/home-card-about.png')
+    expect(artwork[0]).toHaveAttribute('src', '/assets/maria/home-card-works-1239.webp')
+    expect(artwork[1]).toHaveAttribute('src', '/assets/maria/home-card-about-1242.webp')
     expect(container.querySelectorAll('.maria-card__label')).toHaveLength(2)
     expect(container.querySelector('.maria-symbol-rail')).not.toBeInTheDocument()
     expect(container.querySelector('.maria-diary')).not.toBeInTheDocument()

@@ -6,13 +6,31 @@
     <meta name="theme-color" content="#12121c" />
     <meta name="description" content="Портфолио UI/UX-дизайнера Марии Ткаченко" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/assets/maria/mts-pay-logo-flyout.png" as="image" fetchpriority="high" />
-    <link rel="preload" href="/assets/maria/mts-pay-butterfly-flyout.png" as="image" fetchpriority="high" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script>
+      if (window.location.pathname.replace(/\/+$/, '') === '/works') {
+        ['/assets/maria/mts-pay-logo-flyout.webp', '/assets/maria/mts-pay-butterfly-flyout.webp'].forEach((href) => {
+          const preload = document.createElement('link')
+          preload.rel = 'preload'
+          preload.as = 'image'
+          preload.href = href
+          preload.fetchPriority = 'high'
+          document.head.append(preload)
+        })
+      }
+      if (window.location.pathname.replace(/\/+$/, '') === '/hackathons') {
+        const modelViewer = document.createElement('script')
+        modelViewer.type = 'module'
+        modelViewer.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js'
+        modelViewer.dataset.modelViewerLoader = 'true'
+        document.head.append(modelViewer)
+      }
+    </script>
     <title>Maria Tkachenko Portfolio</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

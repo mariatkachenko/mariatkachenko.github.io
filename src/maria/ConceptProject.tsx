@@ -3,13 +3,15 @@ import { copyFor, type Language } from './i18n'
 type ConceptProjectProps = {
   onOpen: () => void
   language: Language
+  loadArtwork: boolean
 }
 
-export default function ConceptProject({ onOpen, language }: ConceptProjectProps) {
+export default function ConceptProject({ onOpen, language, loadArtwork }: ConceptProjectProps) {
   const copy = copyFor(language)
   return <button
     type="button"
     className="mts-project-card"
+    data-interaction-sound="open"
     aria-label={copy.openPresentation}
     onClick={(event) => {
       event.currentTarget.focus()
@@ -17,12 +19,14 @@ export default function ConceptProject({ onOpen, language }: ConceptProjectProps
     }}
   >
     <span className="mts-project-card__media" aria-hidden="true">
-      <img
+      {loadArtwork && <img
         className="mts-project-card__artwork"
-        src="/assets/maria/mts-live-triptych.png"
+        src="/assets/maria/mts-pay-card-composition-crisp.webp"
         alt=""
         draggable="false"
-      />
+        loading="eager"
+        decoding="sync"
+      />}
     </span>
     <span className="mts-project-card__footer">
       <span className="mts-project-card__file-icon" aria-hidden="true">
@@ -33,10 +37,10 @@ export default function ConceptProject({ onOpen, language }: ConceptProjectProps
       </span>
       <span className="mts-project-card__copy">
         <strong className="mts-project-card__title">
-          {language === 'ru' ? 'Концепт v3 — Преза' : 'Concept v3 — Presentation'}
+          {language === 'ru' ? 'МТС Pay редизайн' : 'MTS Pay Redesign'}
         </strong>
         <span className="mts-project-card__meta">
-          {language === 'ru' ? 'Проект · МТС Финтех' : 'Project · MTS Fintech'}
+          {language === 'ru' ? 'МТС Финтех 2026' : 'MTS Fintech 2026'}
         </span>
       </span>
     </span>

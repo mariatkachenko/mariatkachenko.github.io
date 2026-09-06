@@ -1,5 +1,17 @@
 import { createElement, useEffect, useRef } from 'react'
 
+const MODEL_VIEWER_SCRIPT = 'https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js'
+
+export function loadModelViewer() {
+  if (window.customElements?.get('model-viewer')) return
+  if (document.querySelector('script[data-model-viewer-loader="true"]')) return
+  const script = document.createElement('script')
+  script.type = 'module'
+  script.src = MODEL_VIEWER_SCRIPT
+  script.dataset.modelViewerLoader = 'true'
+  document.head.append(script)
+}
+
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
 export function cameraOrbitForPointer(normalizedX: number, normalizedY: number) {
@@ -12,6 +24,8 @@ export function cameraOrbitForPointer(normalizedX: number, normalizedY: number) 
 
 export default function ModelBackground() {
   const modelRef = useRef<HTMLElement>(null)
+
+  useEffect(() => loadModelViewer(), [])
 
   useEffect(() => {
     const model = modelRef.current

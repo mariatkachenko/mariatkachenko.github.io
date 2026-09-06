@@ -2,8 +2,8 @@ export type Language = 'ru' | 'en'
 
 const copy = {
   ru: {
-    name: 'Мария Ткаченко',
-    contact: 'Связаться',
+    name: 'МАРИЯ ТКАЧЕНКО',
+    contact: 'СВЯЗАТЬСЯ',
     homeWorks: 'Работы',
     homeAbout: 'Обо мне',
     works: 'Рабочие задачи',
@@ -24,8 +24,8 @@ const copy = {
     projectNote: 'Концепт и командная работа',
   },
   en: {
-    name: 'Maria Tkachenko',
-    contact: 'Contact',
+    name: 'MARIA TKACHENKO',
+    contact: 'CONTACT',
     homeWorks: 'Works',
     homeAbout: 'About Me',
     works: 'Work Projects',

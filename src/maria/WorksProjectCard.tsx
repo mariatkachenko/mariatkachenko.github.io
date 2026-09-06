@@ -21,7 +21,7 @@ export default function WorksProjectCard({
 }: WorksProjectCardProps) {
   const content = <>
     {mtsFlag && <span className="works-project-card__mts-flag" aria-hidden="true">
-      <img src="/assets/maria/mts-hanging-flag.png" alt="" draggable="false" />
+      <img src="/assets/maria/mts-hanging-flag.webp" alt="" draggable="false" />
     </span>}
     <div className="works-project-card__media">
       {imageSrc
@@ -30,6 +30,8 @@ export default function WorksProjectCard({
           src={imageSrc}
           alt=""
           draggable="false"
+          loading="eager"
+          decoding="sync"
           style={{ objectPosition: imagePosition }}
         />
         : <span className="works-project-card__placeholder-art" aria-hidden="true" />}
@@ -50,6 +52,6 @@ export default function WorksProjectCard({
 
   const className = `works-project-card${placeholder ? ' is-placeholder' : ''}`
   return onOpen
-    ? <button className={className} type="button" onClick={onOpen} aria-label={ariaLabel}>{content}</button>
+    ? <button className={className} type="button" data-interaction-sound="open" onClick={onOpen} aria-label={ariaLabel}>{content}</button>
     : <div className={className}>{content}</div>
 }

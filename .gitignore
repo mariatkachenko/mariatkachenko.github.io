@@ -5,4 +5,4 @@ dist/
 work/
 *.tsbuildinfo
 .DS_Store
-
+.tmp-swift-cache/

@@ -1,16 +1,22 @@
+import type { Language } from './i18n'
+
 type AliExpressProjectCardProps = {
   onOpen: () => void
   ariaLabel: string
+  language: Language
+  loadArtwork: boolean
 }
 
-export default function AliExpressProjectCard({ onOpen, ariaLabel }: AliExpressProjectCardProps) {
-  return <button className="aliexpress-project-card" type="button" onClick={onOpen} aria-label={ariaLabel}>
+export default function AliExpressProjectCard({ onOpen, ariaLabel, language, loadArtwork }: AliExpressProjectCardProps) {
+  return <button className="aliexpress-project-card" type="button" data-interaction-sound="open" onClick={onOpen} aria-label={ariaLabel}>
     <span className="aliexpress-project-card__surface" aria-hidden="true" />
     <span className="aliexpress-project-card__artwork" aria-hidden="true">
-      <img className="aliexpress-project-card__phones" src="/assets/maria/aliexpress-collections-cover.png" alt="" draggable="false" />
-      <img className="aliexpress-project-card__bag" src="/assets/maria/aliexpress-bag.png" alt="" draggable="false" />
-      <img className="aliexpress-project-card__heart" src="/assets/maria/aliexpress-heart.png" alt="" draggable="false" />
-      <img className="aliexpress-project-card__sparkles" src="/assets/maria/aliexpress-sparkles.png" alt="" draggable="false" />
+      {loadArtwork && <>
+        <img className="aliexpress-project-card__phones" src="/assets/maria/aliexpress-collections-cover.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="aliexpress-project-card__bag" src="/assets/maria/aliexpress-bag.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="aliexpress-project-card__heart" src="/assets/maria/aliexpress-heart.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="aliexpress-project-card__sparkles" src="/assets/maria/aliexpress-sparkles.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+      </>}
     </span>
     <span className="aliexpress-project-card__footer">
       <span className="aliexpress-project-card__file-icon" aria-hidden="true">
@@ -20,7 +26,7 @@ export default function AliExpressProjectCard({ onOpen, ariaLabel }: AliExpressP
         </svg>
       </span>
       <span className="aliexpress-project-card__copy">
-        <strong className="aliexpress-project-card__title">AliExpress Collections</strong>
+        <strong className="aliexpress-project-card__title">{language === 'ru' ? 'Подборки AliExpress' : 'AliExpress Collections'}</strong>
         <span className="aliexpress-project-card__meta">AliExpress DAU Hackathon</span>
       </span>
     </span>

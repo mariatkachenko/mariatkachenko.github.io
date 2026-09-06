@@ -1,7 +1,20 @@
 import { useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type UIEvent as ReactUIEvent } from 'react'
 import type { Language } from './i18n'
 
-const ALIEXPRESS_CANVAS_IMAGES = Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, '0'))
+const ALIEXPRESS_CANVAS_IMAGES = [
+  { src: '01', width: 1449, height: 891 },
+  { src: '02', width: 1449, height: 911 },
+  { src: '03', width: 1449, height: 909 },
+  { src: '04', width: 1449, height: 698 },
+  { src: '05', width: 1449, height: 612 },
+  { src: '06', width: 1449, height: 269 },
+  { src: '07', width: 1449, height: 1036 },
+  { src: '08', width: 2160, height: 2216 },
+  { src: '09', width: 1449, height: 1569 },
+  { src: '10', width: 1449, height: 891 },
+  { src: '11', width: 1449, height: 1929 },
+  { src: '12', width: 1449, height: 1049 },
+] as const
 
 export default function AliExpressPresentation({ language }: { language: Language }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -68,12 +81,15 @@ export default function AliExpressPresentation({ language }: { language: Languag
       onScroll={updateScrollHint}
     >
       {ALIEXPRESS_CANVAS_IMAGES.map((image, index) => <img
-        key={image}
-        src={`/assets/maria/aliexpress-presentation-numbered/${image}.png`}
+        key={image.src}
+        src={`/assets/maria/aliexpress-presentation-numbered-webp/${image.src}.webp`}
         alt={index === 0 ? 'Collections Prototype - AliExpress DAU Hackathon' : ''}
         aria-hidden={index === 0 ? undefined : true}
         loading={index < 2 ? 'eager' : 'lazy'}
         fetchPriority={index === 0 ? 'high' : 'auto'}
+        decoding="async"
+        width={image.width}
+        height={image.height}
         draggable="false"
       />)}
     </div>

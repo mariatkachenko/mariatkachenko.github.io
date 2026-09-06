@@ -1,20 +1,27 @@
+import type { Language } from './i18n'
+
 type RaribleProjectCardProps = {
   onOpen: () => void
   ariaLabel: string
+  language: Language
+  loadArtwork: boolean
 }
 
-export default function RaribleProjectCard({ onOpen, ariaLabel }: RaribleProjectCardProps) {
+export default function RaribleProjectCard({ onOpen, ariaLabel, language, loadArtwork }: RaribleProjectCardProps) {
   return <button
     className="rarible-project-card"
     type="button"
+    data-interaction-sound="open"
     onClick={onOpen}
     aria-label={ariaLabel}
   >
     <span className="rarible-project-card__surface" aria-hidden="true" />
     <span className="rarible-project-card__artwork" aria-hidden="true">
-      <img className="rarible-project-card__ape" src="/assets/maria/rarible-ape.png" alt="" draggable="false" />
-      <img className="rarible-project-card__cover" src="/assets/maria/rarible-charity-cover.png" alt="" draggable="false" />
-      <img className="rarible-project-card__logo" src="/assets/maria/rarible-logo-hearts.png" alt="" draggable="false" />
+      {loadArtwork && <>
+        <img className="rarible-project-card__ape" src="/assets/maria/rarible-ape.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="rarible-project-card__cover" src="/assets/maria/rarible-charity-cover.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+        <img className="rarible-project-card__logo" src="/assets/maria/rarible-logo-hearts.webp" alt="" draggable="false" loading="eager" decoding="sync" />
+      </>}
     </span>
     <span className="rarible-project-card__footer">
       <span className="rarible-project-card__file-icon" aria-hidden="true">
@@ -24,7 +31,7 @@ export default function RaribleProjectCard({ onOpen, ariaLabel }: RaribleProject
         </svg>
       </span>
       <span className="rarible-project-card__copy">
-        <strong className="rarible-project-card__title">Rarible Charity Program</strong>
+        <strong className="rarible-project-card__title">{language === 'ru' ? 'Пожертвования с Rarible' : 'Rarible Charity Program'}</strong>
         <span className="rarible-project-card__meta">Phystech Business Solutions</span>
       </span>
     </span>

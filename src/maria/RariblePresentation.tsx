@@ -89,11 +89,12 @@ export default function RariblePresentation({ language }: { language: Language }
     >
       {RARIBLE_CANVAS_IMAGES.map((image, index) => <img
         key={image.src}
-        src={`/assets/maria/rarible-presentation-numbered/${image.src}`}
+        src={`/assets/maria/rarible-presentation-numbered-webp/${image.src.replace('.png', '.webp')}`}
         alt={index === 0 ? 'Rarible Charity Program' : ''}
         aria-hidden={index === 0 ? undefined : true}
         loading={index < 2 ? 'eager' : 'lazy'}
         fetchPriority={index === 0 ? 'high' : 'auto'}
+        decoding="async"
         width={image.width}
         height={image.height}
         draggable="false"

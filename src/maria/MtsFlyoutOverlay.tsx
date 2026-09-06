@@ -14,7 +14,7 @@ export default function MtsFlyoutOverlay({ activation, visible }: MtsFlyoutOverl
   >
     <img
       className="mts-flyout-overlay__logo"
-      src="/assets/maria/mts-pay-logo-flyout.png"
+      src="/assets/maria/mts-pay-logo-flyout.webp"
       alt=""
       loading="eager"
       decoding="sync"
@@ -23,7 +23,7 @@ export default function MtsFlyoutOverlay({ activation, visible }: MtsFlyoutOverl
     />
     <img
       className="mts-flyout-overlay__butterfly"
-      src="/assets/maria/mts-pay-butterfly-flyout.png"
+      src="/assets/maria/mts-pay-butterfly-flyout.webp"
       alt=""
       loading="eager"
       decoding="sync"

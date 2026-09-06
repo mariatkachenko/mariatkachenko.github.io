@@ -12,19 +12,19 @@ export default function FixedChrome({ theme, onThemeChange, language, onLanguage
   return <>
     <header className="maria-header maria-fixed-top">
       <div className="maria-identity">
-        <span className="maria-avatar" aria-hidden="true"><img src="/assets/maria/portrait.png" alt="" /></span>
+        <span className="maria-avatar" aria-hidden="true"><img src="/assets/maria/portrait-lossless.webp" alt="" /></span>
         <h1>{copy.name}</h1>
       </div>
-      <a href="mailto:mery.tkachenko@gmail.com">mery.tkachenko@gmail.com</a>
-      <div className="maria-meta"><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@marykllj</a><span>Moscow</span></div>
+      <a href="https://marykllj.notion.site/89f5a1082f494a0ea0c5c362a32a808c" target="_blank" rel="noreferrer">CV NOTION</a>
+      <div className="maria-meta"><span>МОСКВА</span><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@MARYKLLJ</a></div>
       <a className="maria-contact" href="mailto:mery.tkachenko@gmail.com">{copy.contact} <span aria-hidden="true">↗</span></a>
     </header>
     <footer className="maria-controls maria-fixed-bottom">
-      <div className="maria-languages"><button type="button" aria-label="Русский" aria-pressed={language === 'ru'} className={language === 'ru' ? 'is-active' : ''} onClick={() => onLanguageChange('ru')}>RU</button><span>|</span><button type="button" aria-label="English" aria-pressed={language === 'en'} className={language === 'en' ? 'is-active' : ''} onClick={() => onLanguageChange('en')}>EN</button></div>
+      <div className="maria-languages"><button type="button" data-interaction-sound="toggle" aria-label="Русский" aria-pressed={language === 'ru'} className={language === 'ru' ? 'is-active' : ''} onClick={() => onLanguageChange('ru')}>RU</button><span>|</span><button type="button" data-interaction-sound="toggle" aria-label="English" aria-pressed={language === 'en'} className={language === 'en' ? 'is-active' : ''} onClick={() => onLanguageChange('en')}>EN</button></div>
       <div className="maria-theme" aria-label={copy.theme}>
-        <button type="button" className={theme === 'light' ? 'is-active' : ''} aria-label={copy.lightTheme} aria-pressed={theme === 'light'} onClick={() => onThemeChange('light')}><img src="/assets/maria/theme-sun.png" alt="" /></button>
+        <button type="button" data-interaction-sound="toggle" className={theme === 'light' ? 'is-active' : ''} aria-label={copy.lightTheme} aria-pressed={theme === 'light'} onClick={() => onThemeChange('light')}><img src="/assets/maria/theme-sun.svg" alt="" /></button>
         <span aria-hidden="true">|</span>
-        <button type="button" className={theme === 'dark' ? 'is-active' : ''} aria-label={copy.darkTheme} aria-pressed={theme === 'dark'} onClick={() => onThemeChange('dark')}><img src="/assets/maria/theme-moon.png" alt="" /></button>
+        <button type="button" data-interaction-sound="toggle" className={theme === 'dark' ? 'is-active' : ''} aria-label={copy.darkTheme} aria-pressed={theme === 'dark'} onClick={() => onThemeChange('dark')}><img src="/assets/maria/theme-moon.svg" alt="" /></button>
       </div>
     </footer>
   </>

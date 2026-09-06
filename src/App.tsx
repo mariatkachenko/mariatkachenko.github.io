@@ -77,7 +77,7 @@ export default function App() {
         ? <WorksPage language={language} />
         : path === '/hackathons'
           ? <HackathonsPage language={language} />
-          : <PortfolioPage language={language} />}
+          : <PortfolioPage language={language} theme={theme} />}
     </div>
   </div>
 }

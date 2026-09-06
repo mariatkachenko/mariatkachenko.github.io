@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Language } from './i18n'
+import useSlidePinchZoom from './useSlidePinchZoom'
 
 const SLIDE_IDS = [
   '01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
@@ -9,7 +10,7 @@ const SLIDE_IDS = [
 ] as const
 
 const DARK_SLIDES = new Set(['01', '29', '30', '31', '32', '36', '48'])
-const slideSource = (id: string) => `/assets/maria/mts-presentation/${id}.png`
+const slideSource = (id: string) => `/assets/maria/mts-presentation-webp/${id === '48' ? '48.jpg' : `${id}.webp`}`
 
 type MtsPresentationProps = {
   language: Language
@@ -50,6 +51,7 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
       if (!id) return
       const image = new Image()
       image.src = slideSource(id)
+      void image.decode?.().catch(() => undefined)
     })
   }, [slideIndex])
 
@@ -76,21 +78,39 @@ export default function MtsPresentation({ language }: MtsPresentationProps) {
 
   const activeId = SLIDE_IDS[slideIndex]
   const outgoingId = outgoingIndex === null ? null : SLIDE_IDS[outgoingIndex]
+  const pinchZoom = useSlidePinchZoom(activeId)
 
   return <section className={`mts-presentation mts-presentation--${DARK_SLIDES.has(activeId) ? 'dark' : 'light'}`} aria-label={copy.slide}>
-    <div className="mts-presentation__slides" aria-live="polite" onClick={handleSlideClick}>
+    <div className="mts-presentation__frame">
+      <div
+        className={`mts-presentation__slides${pinchZoom.isZoomed ? ' is-zoomed' : ''}`}
+        aria-live="polite"
+        onClick={(event) => {
+          if (pinchZoom.consumeClick() || pinchZoom.isZoomed) return
+          handleSlideClick(event)
+        }}
+        {...pinchZoom.pointerHandlers}
+      >
       {outgoingId && <img
         className={`mts-presentation__slide mts-presentation__slide--outgoing is-${direction}`}
         src={slideSource(outgoingId)}
         alt=""
         aria-hidden="true"
+        decoding="async"
       />}
-      <img
+      <div
         className={`mts-presentation__slide mts-presentation__slide--active ${outgoingId ? `is-${direction}` : ''}`}
-        src={slideSource(activeId)}
-        alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
-        fetchPriority="high"
-      />
+      >
+        <img
+          className="mts-presentation__slide-image"
+          src={slideSource(activeId)}
+          alt={`${copy.slide} ${slideIndex + 1} ${copy.of} ${SLIDE_IDS.length}`}
+          fetchPriority="high"
+          decoding="async"
+          style={pinchZoom.zoomStyle}
+        />
+      </div>
+      </div>
     </div>
     <div className="mts-presentation__controls">
       <button type="button" aria-label={copy.previous} disabled={slideIndex === 0} onClick={() => goToSlide(slideIndex - 1)}>←</button>

@@ -16,8 +16,8 @@ describe('MtsFlyoutOverlay', () => {
     expect(overlay).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelectorAll('.mts-flyout-overlay__logo')).toHaveLength(1)
     expect(container.querySelectorAll('.mts-flyout-overlay__butterfly')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.png"]')).toHaveLength(1)
-    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.png"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-logo-flyout.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('img[src="/assets/maria/mts-pay-butterfly-flyout.webp"]')).toHaveLength(1)
     container.querySelectorAll('img').forEach((image) => {
       expect(image).toHaveAttribute('loading', 'eager')
       expect(image).toHaveAttribute('decoding', 'sync')

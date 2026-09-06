@@ -821,7 +821,6 @@ skater.mp4
 hover-portrait.png
 hover-portrait-dark.png
 works-background.webp
-works-graffiti-pattern.jpg
 about-space-pattern.png
 scroll/frame-001.webp ... frame-016.webp
 ```

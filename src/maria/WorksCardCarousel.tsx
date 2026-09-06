@@ -10,31 +10,39 @@ import ConceptProject from './ConceptProject'
 import AliExpressProjectCard from './AliExpressProjectCard'
 import MtsGameProjectCard from './MtsGameProjectCard'
 import RaribleProjectCard from './RaribleProjectCard'
-import WorksGraficoFlyout from './WorksGraficoFlyout'
+import TinnotechProjectCard from './TinnotechProjectCard'
+import WalletProjectCard from './WalletProjectCard'
+import AutopayProjectCard from './AutopayProjectCard'
+import SbpProjectCard from './SbpProjectCard'
+import ConnectionProjectCard from './ConnectionProjectCard'
 import WorksProjectCard from './WorksProjectCard'
 import type { Language } from './i18n'
 import type { PresentationKind } from './PresentationModal'
 import useCarouselNavigationGuard from './useCarouselNavigationGuard'
 
-export const WORKS_CARD_COUNT = 14
-export const WORKS_RARIBLE_INDEX = 5
-export const WORKS_PROJECT_INDEX = 6
-export const WORKS_ALIEXPRESS_INDEX = WORKS_PROJECT_INDEX + 1
+export const WORKS_CARD_COUNT = 9
+export const WORKS_PROJECT_INDEX = 1
+export const WORKS_AUTOPAY_INDEX = 2
+export const WORKS_CONNECTION_INDEX = 3
+export const WORKS_TINNOTECH_INDEX = 4
+export const WORKS_ALIEXPRESS_INDEX = 5
+export const WORKS_RARIBLE_INDEX = 6
+export const WORKS_WALLET_INDEX = 7
 export const WORKS_MTS_PLACEHOLDER_INDEX = 8
-export const WORKS_GRAFICO_INDEX = WORKS_PROJECT_INDEX + 3
+export const WORKS_SBP_INDEX = 0
 export const WORKS_DRAG_STEP_PX = 150
 export const WORKS_MOBILE_DRAG_STEP_PX = 140
 export const WORKS_WHEEL_STEP_PX = 220
 export const WORKS_MOBILE_WHEEL_STEP_PX = 200
 export const WORKS_INITIAL_POSITION = WORKS_PROJECT_INDEX
 export const WORKS_ENTRY_DURATION_MS = 600
-export const WORKS_AUTOPLAY_MS = 4200
+export const WORKS_AUTOPLAY_MS = 4800
 export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
+export const WORKS_CARD_OPEN_DELAY_MS = 240
 export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
 export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
 export const WORKS_PLACEHOLDER_COVERS = [
-  '/assets/maria/works-placeholder-payments-a.png',
-  '/assets/maria/works-placeholder-payments-b.png',
+  '/assets/maria/works-placeholder-payments-a.webp',
 ] as const
 
 const WORKS_PLACEHOLDER_COVER_POSITIONS = ['center', 'center'] as const
@@ -144,6 +152,14 @@ export function visibleWorksCardIndices(position: number, count = WORKS_CARD_COU
   ))
 }
 
+export function shouldLoadDeferredWorksArtwork(offset: number) {
+  return Math.abs(offset) <= 1
+}
+
+export function shouldLoadVisibleWorksArtwork(offset: number) {
+  return Math.abs(offset) <= 2
+}
+
 export type MobileWorksLoopPose = {
   y: number
   scale: number
@@ -196,15 +212,19 @@ type WorksCardCarouselProps = {
   onOpen: (project: PresentationKind) => void
   onPositionChange?: (position: number) => void
   onCenteredIndexChange?: (index: number) => void
+  entryReady?: boolean
+  onEntryComplete?: () => void
+  paused?: boolean
   language: Language
 }
 
-export default function WorksCardCarousel({ onOpen, onPositionChange, onCenteredIndexChange, language }: WorksCardCarouselProps) {
+export default function WorksCardCarousel({ onOpen, onPositionChange, onCenteredIndexChange, entryReady = true, onEntryComplete, paused = false, language }: WorksCardCarouselProps) {
   const [position, setPosition] = useState(WORKS_INITIAL_POSITION)
   const [dragging, setDragging] = useState(false)
   const [wheeling, setWheeling] = useState(false)
   const [isEntering, setIsEntering] = useState(true)
   const [interactionVersion, setInteractionVersion] = useState(0)
+  const [pressOpeningIndex, setPressOpeningIndex] = useState<number | null>(null)
   const pointerOrigin = useRef<{
     coordinate: number
     position: number
@@ -214,6 +234,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   } | null>(null)
   const suppressClick = useRef(false)
   const wheelSettleTimer = useRef<number | null>(null)
+  const openTimer = useRef<number | null>(null)
   const wheelGesture = useRef<{
     position: number
     delta: number
@@ -224,15 +245,52 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   useCarouselNavigationGuard(carouselElement)
   const visibleCardIndices = visibleWorksCardIndices(position)
   const centeredCardIndex = normalizeWorksPosition(Math.round(position))
+  const centeredCardIsOpenable = centeredCardIndex === WORKS_PROJECT_INDEX
+    || centeredCardIndex === WORKS_RARIBLE_INDEX
+    || centeredCardIndex === WORKS_ALIEXPRESS_INDEX
+    || centeredCardIndex === WORKS_MTS_PLACEHOLDER_INDEX
+    || centeredCardIndex === WORKS_SBP_INDEX
+    || centeredCardIndex === WORKS_AUTOPAY_INDEX
+    || centeredCardIndex === WORKS_CONNECTION_INDEX
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setIsEntering(false), WORKS_ENTRY_DURATION_MS)
+    if (!entryReady) return
+    const timer = window.setTimeout(() => {
+      setIsEntering(false)
+      onEntryComplete?.()
+    }, WORKS_ENTRY_DURATION_MS)
     return () => window.clearTimeout(timer)
-  }, [])
+  }, [entryReady, onEntryComplete])
 
   useEffect(() => () => {
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    if (openTimer.current !== null) window.clearTimeout(openTimer.current)
   }, [])
+
+  useEffect(() => {
+    if (!paused) return
+    if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    wheelSettleTimer.current = null
+    wheelGesture.current = null
+    pointerOrigin.current = null
+    setPressOpeningIndex(null)
+    setWheeling(false)
+    setDragging(false)
+  }, [paused])
+
+  const openAfterPressAnimation = (project: PresentationKind, index: number) => {
+    if (openTimer.current !== null) window.clearTimeout(openTimer.current)
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      onOpen(project)
+      return
+    }
+    setPressOpeningIndex(index)
+    openTimer.current = window.setTimeout(() => {
+      onOpen(project)
+      setPressOpeningIndex(null)
+      openTimer.current = null
+    }, WORKS_CARD_OPEN_DELAY_MS)
+  }
 
   useEffect(() => {
     onPositionChange?.(position)
@@ -243,16 +301,16 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }, [centeredCardIndex, onCenteredIndexChange])
 
   useEffect(() => {
-    if (isEntering || dragging) return
+    if (isEntering || dragging || paused) return
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
     const timer = window.setInterval(() => {
       setPosition((current) => normalizeWorksPosition(Math.round(current) + 1))
     }, WORKS_AUTOPLAY_MS)
     return () => window.clearInterval(timer)
-  }, [dragging, interactionVersion, isEntering])
+  }, [dragging, interactionVersion, isEntering, paused])
 
   const beginDrag = (event: ReactPointerEvent<HTMLElement>) => {
-    if (isEntering) return
+    if (isEntering || paused) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     wheelGesture.current = null
     setWheeling(false)
@@ -307,7 +365,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }
 
   const handleWheel = (event: ReactWheelEvent<HTMLElement>) => {
-    if (isEntering) return
+    if (isEntering || paused) return
     const isMobile = window.matchMedia?.('(max-width: 600px)').matches ?? false
     const delta = worksWheelDelta(event.deltaX, event.deltaY, event.shiftKey, isMobile)
     if (delta === 0) return
@@ -341,7 +399,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   return <section
     ref={carouselElement}
-    className={`maria-works-carousel${dragging ? ' is-dragging' : ''}${wheeling ? ' is-wheeling' : ''}${isEntering ? ' is-entering' : ''}`}
+    className={`maria-works-carousel${centeredCardIsOpenable ? ' has-clickable-center' : ''}${dragging ? ' is-dragging' : ''}${wheeling ? ' is-wheeling' : ''}${isEntering ? ' is-entering' : ''}${isEntering && entryReady ? ' is-entry-active' : ''}`}
     aria-label={language === 'ru' ? 'Карусель рабочих проектов' : 'Work project carousel'}
     data-works-position={Number(position.toFixed(3))}
     onPointerDown={beginDrag}
@@ -368,8 +426,14 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       const entryDistance = Math.abs(offset)
       const entryLift = entryDistance >= 1.5 ? -3 : entryDistance >= 0.5 ? -1 : 0
       const projectCard = index === WORKS_PROJECT_INDEX
+      const mtsGameCard = index === WORKS_MTS_PLACEHOLDER_INDEX
       const raribleCard = index === WORKS_RARIBLE_INDEX
       const aliexpressCard = index === WORKS_ALIEXPRESS_INDEX
+      const tinnotechCard = index === WORKS_TINNOTECH_INDEX
+      const walletCard = index === WORKS_WALLET_INDEX
+      const autopayCard = index === WORKS_AUTOPAY_INDEX
+      const sbpCard = index === WORKS_SBP_INDEX
+      const connectionCard = index === WORKS_CONNECTION_INDEX
       const centered = index === centeredCardIndex
       const visible = visibleCardIndices.has(index)
       const genericCardIndex = index
@@ -377,7 +441,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         - (index > WORKS_MTS_PLACEHOLDER_INDEX ? 1 : 0)
       const coverIndex = genericCardIndex % WORKS_PLACEHOLDER_COVERS.length
       return <article
-        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${centered ? ' is-centered' : ''}${visible ? '' : ' is-hidden'}`}
+        className={`maria-works-deck-card${projectCard ? ' has-project' : ' is-empty'}${index === WORKS_MTS_PLACEHOLDER_INDEX ? ' has-mts-game' : ''}${raribleCard ? ' has-rarible' : ''}${aliexpressCard ? ' has-aliexpress' : ''}${tinnotechCard ? ' has-tinnotech' : ''}${walletCard ? ' has-wallet' : ''}${autopayCard ? ' has-autopay' : ''}${sbpCard ? ' has-sbp' : ''}${connectionCard ? ' has-connection' : ''}${centered ? ' is-centered' : ''}${pressOpeningIndex === index ? ' is-press-opening' : ''}${visible ? '' : ' is-hidden'}`}
         aria-hidden={!visible}
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
@@ -390,13 +454,13 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
           '--works-entry-x': `${compact(offset * 1.4)}vw`,
           '--works-entry-lift-y': `${entryLift}vh`,
           '--works-entry-rotate-y': `${offset === 0 ? 0 : -Math.sign(offset) * 10}deg`,
-          '--works-entry-y-mobile': `${compact(Math.sign(offset) * Math.min(2, Math.abs(offset)) * 1.6)}vh`,
+          '--works-entry-y-mobile': `${compact(Math.sign(offset) * Math.min(2, Math.abs(offset)) * 1.6)}dvh`,
           '--works-row-rotate-x-mobile': `${-pose.rotateY}deg`,
-          '--works-loop-y-mobile': `${compact(mobileLoopPose.y)}vh`,
+          '--works-loop-y-mobile': `${compact(mobileLoopPose.y)}dvh`,
           '--works-loop-scale-mobile': compact(mobileLoopPose.scale),
           '--works-loop-opacity-mobile': compact(mobileLoopPose.opacity),
           '--works-loop-layer-mobile': mobileLoopPose.layer,
-          '--works-deck-y-mobile': `${mobileDeckPose.y}vh`,
+          '--works-deck-y-mobile': `${mobileDeckPose.y}dvh`,
           '--works-deck-scale-mobile': mobileDeckPose.scale,
           '--works-deck-layer-mobile': mobileDeckPose.layer,
           '--works-row-layer': pose.layer,
@@ -413,24 +477,70 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         } as CSSProperties}
       >
         {projectCard
-          ? <ConceptProject onOpen={() => onOpen('mts')} language={language} />
+          ? <ConceptProject
+            onOpen={() => openAfterPressAnimation('mts', index)}
+            language={language}
+            loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+          />
           : raribleCard
             ? <RaribleProjectCard
-              onOpen={() => onOpen('rarible')}
+              onOpen={() => openAfterPressAnimation('rarible', index)}
               ariaLabel={language === 'ru'
                 ? 'Открыть презентацию «Rarible Charity Program»'
                 : 'Open presentation “Rarible Charity Program”'}
+              language={language}
+              loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
             />
             : aliexpressCard
               ? <AliExpressProjectCard
-                onOpen={() => onOpen('aliexpress')}
+                onOpen={() => openAfterPressAnimation('aliexpress', index)}
                 ariaLabel={language === 'ru'
                   ? 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»'
                   : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+              />
+            : mtsGameCard
+              ? <MtsGameProjectCard
+                onOpen={() => openAfterPressAnimation('mts-game', index)}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Страницы игр на сайте МТС Оплата»'
+                  : 'Open presentation “Game pages on the MTS Payment website”'}
+                language={language}
+                loadArtwork={shouldLoadDeferredWorksArtwork(offset)}
+              />
+            : sbpCard
+              ? <SbpProjectCard
+                onOpen={() => openAfterPressAnimation('sbp', index)}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Оплата по QR»'
+                  : 'Open presentation “QR Payment”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+              />
+            : autopayCard
+              ? <AutopayProjectCard
+                onOpen={() => openAfterPressAnimation('autopay', index)}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Автоплатежи МТС»'
+                  : 'Open presentation “MTS Autopay”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+              />
+            : connectionCard
+              ? <ConnectionProjectCard
+                onOpen={() => openAfterPressAnimation('connection', index)}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Пополнение баланса»'
+                  : 'Open presentation “Balance top-up”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
               />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
-            {index === WORKS_MTS_PLACEHOLDER_INDEX
-              ? <MtsGameProjectCard language={language} />
+            {tinnotechCard
+                ? <TinnotechProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
+              : walletCard
+                ? <WalletProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : <WorksProjectCard
                 title={language === 'ru' ? 'Новый проект' : 'New project'}
                 meta={language === 'ru' ? 'Скоро' : 'Coming soon'}
@@ -438,7 +548,6 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 imagePosition={WORKS_PLACEHOLDER_COVER_POSITIONS[coverIndex]}
                 placeholder
               />}
-            {index === WORKS_GRAFICO_INDEX && <WorksGraficoFlyout active={centered} />}
           </div>}
       </article>
     })}

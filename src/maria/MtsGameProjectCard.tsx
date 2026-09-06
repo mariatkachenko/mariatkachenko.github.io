@@ -1,31 +1,40 @@
 import type { Language } from './i18n'
 
 type MtsGameProjectCardProps = {
+  onOpen: () => void
+  ariaLabel: string
   language: Language
+  loadArtwork: boolean
 }
 
-export default function MtsGameProjectCard({ language }: MtsGameProjectCardProps) {
-  return <div className="mts-game-card">
+export default function MtsGameProjectCard({ onOpen, ariaLabel, language, loadArtwork }: MtsGameProjectCardProps) {
+  return <button className="mts-game-card" type="button" data-interaction-sound="open" onClick={onOpen} aria-label={ariaLabel}>
     <span className="mts-game-card__surface" aria-hidden="true" />
     <span className="mts-game-card__artwork" aria-hidden="true">
-      <img
+      {loadArtwork && <><img
         className="mts-game-card__statue"
-        src="/assets/maria/mts-game-statue.png"
+        src="/assets/maria/mts-game-statue.webp"
         alt=""
         draggable="false"
+        loading="eager"
+        decoding="sync"
       />
       <img
         className="mts-game-card__girl"
-        src="/assets/maria/mts-game-girl.png"
+        src="/assets/maria/mts-game-girl.webp"
         alt=""
         draggable="false"
+        loading="eager"
+        decoding="sync"
       />
       <img
         className="mts-game-card__phones"
-        src="/assets/maria/mts-game-phones.png"
+        src="/assets/maria/mts-game-phones.webp"
         alt=""
         draggable="false"
-      />
+        loading="eager"
+        decoding="sync"
+      /></>}
     </span>
     <span className="mts-game-card__footer">
       <span className="mts-game-card__file-icon" aria-hidden="true">
@@ -35,9 +44,9 @@ export default function MtsGameProjectCard({ language }: MtsGameProjectCardProps
         </svg>
       </span>
       <span className="mts-game-card__copy">
-        <strong className="mts-game-card__title">{language === 'ru' ? 'Новый проект' : 'New project'}</strong>
-        <span className="mts-game-card__meta">{language === 'ru' ? 'Скоро' : 'Coming soon'}</span>
+        <strong className="mts-game-card__title">{language === 'ru' ? 'Игровые страницы' : 'Gaming Pages'}</strong>
+        <span className="mts-game-card__meta">{language === 'ru' ? 'МТС Финтех 2024' : 'MTS Fintech 2024'}</span>
       </span>
     </span>
-  </div>
+  </button>
 }

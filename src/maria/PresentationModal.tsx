@@ -2,10 +2,14 @@ import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { copyFor, type Language } from './i18n'
 import MtsPresentation from './MtsPresentation'
+import MtsGamePresentation from './MtsGamePresentation'
 import RariblePresentation from './RariblePresentation'
 import AliExpressPresentation from './AliExpressPresentation'
+import AutopayPresentation from './AutopayPresentation'
+import ConnectionPresentation from './ConnectionPresentation'
+import SbpPresentation from './SbpPresentation'
 
-export type PresentationKind = 'mts' | 'rarible' | 'aliexpress'
+export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress' | 'sbp' | 'autopay' | 'connection'
 
 type PresentationModalProps = {
   project: PresentationKind | null
@@ -20,7 +24,15 @@ export default function PresentationModal({ project, onClose, language }: Presen
     ? 'Rarible Charity Program'
     : project === 'aliexpress'
       ? 'Collections Prototype - AliExpress DAU Hackathon'
-      : copy.presentation
+      : project === 'sbp'
+        ? (language === 'ru' ? 'Оплата по QR' : 'QR Payment')
+      : project === 'autopay'
+        ? (language === 'ru' ? 'Автоплатежи МТС' : 'MTS Autopay')
+      : project === 'connection'
+        ? (language === 'ru' ? 'Пополнение баланса' : 'Balance top-up')
+      : project === 'mts-game'
+        ? (language === 'ru' ? 'Страницы игр на сайте МТС Оплата' : 'Game pages on the MTS Payment website')
+        : copy.presentation
 
   useEffect(() => {
     if (!project) return
@@ -62,11 +74,19 @@ export default function PresentationModal({ project, onClose, language }: Presen
       if (event.target === event.currentTarget) onClose()
     }}
   >
-    <button ref={closeRef} className="presentation-modal__close" type="button" onClick={onClose} aria-label={copy.closePresentation}>×</button>
+    <button ref={closeRef} className="presentation-modal__close" type="button" data-interaction-sound="close" onClick={onClose} aria-label={copy.closePresentation}>×</button>
     {project === 'mts'
       ? <MtsPresentation language={language} />
-      : project === 'rarible'
-        ? <RariblePresentation language={language} />
-        : <AliExpressPresentation language={language} />}
+      : project === 'mts-game'
+        ? <MtsGamePresentation language={language} />
+        : project === 'rarible'
+          ? <RariblePresentation language={language} />
+          : project === 'aliexpress'
+            ? <AliExpressPresentation language={language} />
+            : project === 'autopay'
+              ? <AutopayPresentation language={language} />
+              : project === 'connection'
+                ? <ConnectionPresentation language={language} />
+              : <SbpPresentation language={language} />}
   </div>, document.body)
 }
