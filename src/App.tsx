@@ -8,6 +8,10 @@ import InteractionSounds from './maria/InteractionSounds'
 import type { Language } from './maria/i18n'
 
 const themeSwitchTokens = new WeakMap<Element, number>()
+const THEME_COLORS = {
+  light: '#c8c8ca',
+  dark: '#05070d',
+} as const
 
 export function beginAtomicThemeSwitch(
   root: HTMLElement,
@@ -48,6 +52,13 @@ export default function App() {
   }, [language])
 
   useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme
+    const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    if (themeColor) themeColor.content = THEME_COLORS[theme]
+  }, [theme])
+
+  useEffect(() => {
     document.title = 'Maria Tkachenko Portfolio'
     let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
     if (!favicon) {
@@ -62,7 +73,6 @@ export default function App() {
   const changeTheme = (nextTheme: 'light' | 'dark') => {
     if (nextTheme === theme) return
     beginAtomicThemeSwitch(document.documentElement)
-    document.documentElement.dataset.theme = nextTheme
     setTheme(nextTheme)
   }
 

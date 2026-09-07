@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useCallback,
   useRef,
   useState,
   type CSSProperties,
@@ -208,6 +209,19 @@ export function worksWheelDelta(deltaX: number, deltaY: number, shiftKey: boolea
   return shiftKey ? deltaY : 0
 }
 
+export function worksCarouselCardAtPoint(carousel: HTMLElement, x: number, y: number) {
+  const element = document.elementFromPoint?.(x, y)
+  if (!element) return false
+  const card = element.closest?.('.maria-works-deck-card:not(.is-hidden)')
+  return Boolean(card && carousel.contains(card))
+}
+
+export function worksCarouselEventTargetsCard(carousel: HTMLElement, target: EventTarget | null) {
+  if (!(target instanceof Element)) return false
+  const card = target.closest('.maria-works-deck-card:not(.is-hidden)')
+  return Boolean(card && carousel.contains(card))
+}
+
 type WorksCardCarouselProps = {
   onOpen: (project: PresentationKind) => void
   onPositionChange?: (position: number) => void
@@ -242,7 +256,10 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     tailSeen: boolean
   } | null>(null)
   const carouselElement = useRef<HTMLElement | null>(null)
-  useCarouselNavigationGuard(carouselElement)
+  const hitTestVisibleCard = useCallback((carousel: HTMLElement, x: number, y: number, event: Event) => (
+    worksCarouselEventTargetsCard(carousel, event.target) || worksCarouselCardAtPoint(carousel, x, y)
+  ), [])
+  useCarouselNavigationGuard(carouselElement, hitTestVisibleCard)
   const visibleCardIndices = visibleWorksCardIndices(position)
   const centeredCardIndex = normalizeWorksPosition(Math.round(position))
   const centeredCardIsOpenable = centeredCardIndex === WORKS_PROJECT_INDEX
@@ -311,6 +328,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   const beginDrag = (event: ReactPointerEvent<HTMLElement>) => {
     if (isEntering || paused) return
+    if (!worksCarouselEventTargetsCard(event.currentTarget, event.target)) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     wheelGesture.current = null
     setWheeling(false)
@@ -366,6 +384,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   const handleWheel = (event: ReactWheelEvent<HTMLElement>) => {
     if (isEntering || paused) return
+    if (!worksCarouselEventTargetsCard(event.currentTarget, event.target)) return
     const isMobile = window.matchMedia?.('(max-width: 600px)').matches ?? false
     const delta = worksWheelDelta(event.deltaX, event.deltaY, event.shiftKey, isMobile)
     if (delta === 0) return

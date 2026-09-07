@@ -48,6 +48,16 @@ function renderReadyWorksCarousel(onOpen = vi.fn(), language: 'ru' | 'en' = 'ru'
   return result
 }
 
+function currentCenteredWorksCard() {
+  const card = document.querySelector<HTMLElement>('.maria-works-deck-card.is-centered')
+  if (!card) throw new Error('Expected a centered works card')
+  return card
+}
+
+function wheelCenteredWorksCard(init: WheelEventInit) {
+  return fireEvent.wheel(currentCenteredWorksCard(), init)
+}
+
 describe('continuous works row geometry', () => {
   it('wraps fractional positions and keeps a straight equal row', () => {
     expect(WORKS_CARD_COUNT).toBe(9)
@@ -177,10 +187,10 @@ describe('WorksCardCarousel', () => {
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(1)
       act(() => vi.advanceTimersByTime(600))
 
-      fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 25, deltaY: 0 })
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(1)
 
-      fireEvent.wheel(carousel, { deltaX: 100, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 100, deltaY: 0 })
       expect(onCenteredIndexChange).toHaveBeenLastCalledWith(WORKS_AUTOPAY_INDEX)
       expect(onCenteredIndexChange).toHaveBeenCalledTimes(2)
     } finally {
@@ -219,7 +229,7 @@ describe('WorksCardCarousel', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       rerender(<WorksCardCarousel onOpen={vi.fn()} language="ru" paused />)
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       fireEvent.pointerDown(carousel, { pointerId: 7, clientX: 420 })
       fireEvent.pointerMove(carousel, { pointerId: 7, clientX: 120 })
       fireEvent.pointerUp(carousel, { pointerId: 7, clientX: 120 })
@@ -250,14 +260,14 @@ describe('WorksCardCarousel', () => {
       expect(cards[WORKS_MTS_PLACEHOLDER_INDEX]).toHaveStyle({ '--works-entry-index': '2' })
       expect(cards[WORKS_MTS_PLACEHOLDER_INDEX]).toHaveStyle({ '--works-entry-lift-y': '-3vh' })
 
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 420 })
       fireEvent.pointerMove(carousel, { pointerId: 1, clientX: 120 })
       expect(carousel).toHaveAttribute('data-works-position', '1')
 
       act(() => vi.advanceTimersByTime(600))
       expect(carousel).not.toHaveClass('is-entering')
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       expect(carousel).toHaveAttribute('data-works-position', '2')
     } finally {
       vi.useRealTimers()
@@ -336,9 +346,9 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_PROJECT_INDEX].querySelector('.works-project-card')).toBeNull()
     expect(screen.getByText('МТС Pay редизайн')).toBeInTheDocument()
     expect(screen.getAllByText('МТС Финтех 2026').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('Благотворительность Rarible')).toBeInTheDocument()
+    expect(screen.getByText('Пожертвования с Rarible')).toBeInTheDocument()
     expect(screen.getByText('Phystech Business Solutions')).toBeInTheDocument()
-    expect(screen.getByText('Коллекции AliExpress')).toBeInTheDocument()
+    expect(screen.getByText('Подборки AliExpress')).toBeInTheDocument()
     expect(screen.getByText('AliExpress DAU Hackathon')).toBeInTheDocument()
     expect(screen.queryByText('Новый проект')).not.toBeInTheDocument()
     expect(screen.queryByText('Скоро')).not.toBeInTheDocument()
@@ -501,7 +511,7 @@ describe('WorksCardCarousel', () => {
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
 
-    fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 420 })
+    fireEvent.pointerDown(currentCenteredWorksCard(), { pointerId: 1, clientX: 420 })
     expect(fireEvent.pointerMove(carousel, { pointerId: 1, clientX: 95 })).toBe(false)
     expect(carousel).toHaveAttribute('data-works-position', '3.167')
     expect(document.querySelectorAll('.maria-works-deck-card:not(.is-hidden)')).toHaveLength(5)
@@ -518,7 +528,7 @@ describe('WorksCardCarousel', () => {
     renderReadyWorksCarousel()
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-    fireEvent.pointerDown(carousel, { pointerId: 2, clientY: 400 })
+    fireEvent.pointerDown(currentCenteredWorksCard(), { pointerId: 2, clientY: 400 })
     expect(fireEvent.pointerMove(carousel, { pointerId: 2, clientY: 280 })).toBe(false)
     expect(carousel).toHaveAttribute('data-works-position', '1.857')
     fireEvent.pointerUp(carousel, { pointerId: 2, clientY: 280 })
@@ -532,30 +542,30 @@ describe('WorksCardCarousel', () => {
     const project = cards[WORKS_PROJECT_INDEX]
 
     expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: 25, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.114')
     expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: 25, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.227')
     expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: 25, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.341')
     expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: 25, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.455')
     expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 25, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: 25, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.568')
     expect(project).not.toHaveClass('is-centered')
     expect(cards[2]).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 1, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: 1, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.573')
     expect(cards[2]).toHaveClass('is-centered')
     expect(container.querySelectorAll('.maria-works-deck-card.is-centered')).toHaveLength(1)
-    fireEvent.wheel(carousel, { deltaX: -76, deltaY: 0 })
+    wheelCenteredWorksCard( { deltaX: -76, deltaY: 0 })
     expect(carousel).toHaveAttribute('data-works-position', '1.227')
     expect(project).toHaveClass('is-centered')
-    fireEvent.wheel(carousel, { deltaX: 0, deltaY: 120 })
+    wheelCenteredWorksCard( { deltaX: 0, deltaY: 120 })
     expect(carousel).toHaveAttribute('data-works-position', '1.227')
   })
 
@@ -567,7 +577,7 @@ describe('WorksCardCarousel', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
       const cards = container.querySelectorAll<HTMLElement>('.maria-works-deck-card')
 
-      fireEvent.wheel(carousel, { deltaX: 120, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 120, deltaY: 0 })
       expect(carousel).toHaveAttribute('data-works-position', '1.545')
       expect(carousel).toHaveClass('is-wheeling')
       act(() => vi.advanceTimersByTime(119))
@@ -588,13 +598,13 @@ describe('WorksCardCarousel', () => {
       act(() => vi.advanceTimersByTime(600))
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-      fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
-      fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
-      fireEvent.wheel(carousel, { deltaX: 180, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 180, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 180, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 180, deltaY: 0 })
       expect(carousel).toHaveAttribute('data-works-position', '2')
 
       act(() => vi.advanceTimersByTime(120))
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       expect(carousel).toHaveAttribute('data-works-position', '3')
     } finally {
       vi.useRealTimers()
@@ -608,11 +618,11 @@ describe('WorksCardCarousel', () => {
       act(() => vi.advanceTimersByTime(600))
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       expect(carousel).toHaveAttribute('data-works-position', '2')
-      fireEvent.wheel(carousel, { deltaX: 2, deltaY: 0 })
-      fireEvent.wheel(carousel, { deltaX: 60, deltaY: 0 })
-      fireEvent.wheel(carousel, { deltaX: 160, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 2, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 60, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 160, deltaY: 0 })
 
       expect(carousel).toHaveAttribute('data-works-position', '3')
     } finally {
@@ -630,13 +640,13 @@ describe('WorksCardCarousel', () => {
       const project = cards[WORKS_PROJECT_INDEX]
 
       expect(project).toHaveClass('is-centered')
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       expect(project).not.toHaveClass('is-centered')
       expect(cards[WORKS_AUTOPAY_INDEX]).toHaveClass('is-centered')
 
       for (let step = 0; step < WORKS_CARD_COUNT - 1; step += 1) {
         act(() => vi.advanceTimersByTime(120))
-        fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+        wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
       }
 
       expect(carousel).toHaveAttribute('data-works-position', String(WORKS_PROJECT_INDEX))
@@ -657,7 +667,7 @@ describe('WorksCardCarousel', () => {
       act(() => vi.advanceTimersByTime(600))
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
-      fireEvent.wheel(carousel, { deltaX: 0, deltaY: 120 })
+      wheelCenteredWorksCard( { deltaX: 0, deltaY: 120 })
       expect(carousel).toHaveAttribute('data-works-position', '1.6')
       expect(carousel).toHaveClass('is-wheeling')
       act(() => vi.advanceTimersByTime(120))
@@ -678,16 +688,22 @@ describe('WorksCardCarousel', () => {
     }
 
     expect(dispatchHorizontalWheel(document.body)).toBe(false)
-    expect(dispatchHorizontalWheel(carousel)).toBe(true)
+    expect(dispatchHorizontalWheel(carousel)).toBe(false)
+    expect(dispatchHorizontalWheel(currentCenteredWorksCard())).toBe(true)
     expect(dispatchHorizontalWheel(document.body)).toBe(false)
   })
 
   it('blocks a window-targeted navigation gesture when its coordinates are inside the carousel', () => {
     render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
-    vi.spyOn(carousel, 'getBoundingClientRect').mockReturnValue({
-      left: 100, right: 900, top: 120, bottom: 620, width: 800, height: 500,
-      x: 100, y: 120, toJSON: () => ({}),
+    const centeredCard = currentCenteredWorksCard()
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn((x: number, y: number) => {
+      if (x === 450 && y === 300) return centeredCard
+      if (x === 500 && y === 500) return carousel
+      return document.body
+      }),
     })
 
     const inside = new WheelEvent('wheel', {
@@ -695,6 +711,12 @@ describe('WorksCardCarousel', () => {
     })
     window.dispatchEvent(inside)
     expect(inside.defaultPrevented).toBe(true)
+
+    const insideCarouselBackground = new WheelEvent('wheel', {
+      deltaX: 120, clientX: 500, clientY: 500, bubbles: true, cancelable: true,
+    })
+    window.dispatchEvent(insideCarouselBackground)
+    expect(insideCarouselBackground.defaultPrevented).toBe(false)
 
     const outside = new WheelEvent('wheel', {
       deltaX: 120, clientX: 50, clientY: 40, bubbles: true, cancelable: true,
@@ -723,7 +745,7 @@ describe('WorksCardCarousel', () => {
       expect(onOpen).toHaveBeenCalledTimes(1)
       expect(cards[WORKS_PROJECT_INDEX]).not.toHaveClass('is-press-opening')
 
-      fireEvent.pointerDown(carousel, { pointerId: 1, clientX: 300 })
+      fireEvent.pointerDown(currentCenteredWorksCard(), { pointerId: 1, clientX: 300 })
       fireEvent.pointerUp(carousel, { pointerId: 1, clientX: 100 })
       fireEvent.click(project)
       act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
@@ -742,7 +764,7 @@ describe('WorksCardCarousel', () => {
 
       act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
       for (let step = 0; step < 4; step += 1) {
-        fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+        wheelCenteredWorksCard( { deltaX: 220, deltaY: 0 })
         act(() => vi.advanceTimersByTime(WORKS_WHEEL_SETTLE_DELAY_MS))
       }
 

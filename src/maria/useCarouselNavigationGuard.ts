@@ -2,12 +2,17 @@ import { useEffect, type RefObject } from 'react'
 
 const ROOT_GUARD_ATTRIBUTE = 'data-carousel-navigation-guard'
 
-function pointInside(element: HTMLElement, x: number, y: number) {
+export function pointInside(element: HTMLElement, x: number, y: number) {
   const rect = element.getBoundingClientRect()
   return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
 }
 
-export default function useCarouselNavigationGuard(carouselElement: RefObject<HTMLElement | null>) {
+export type CarouselNavigationGuardHitTest = (element: HTMLElement, x: number, y: number, event: Event) => boolean
+
+export default function useCarouselNavigationGuard(
+  carouselElement: RefObject<HTMLElement | null>,
+  hitTest: CarouselNavigationGuardHitTest = pointInside,
+) {
   useEffect(() => {
     let pointerX = -1
     let pointerY = -1
@@ -20,16 +25,15 @@ export default function useCarouselNavigationGuard(carouselElement: RefObject<HT
     const handlePointerMove = (event: PointerEvent) => {
       pointerX = event.clientX
       pointerY = event.clientY
-      setRootGuard(Boolean(carouselElement.current && pointInside(carouselElement.current, pointerX, pointerY)))
+      setRootGuard(Boolean(carouselElement.current && hitTest(carouselElement.current, pointerX, pointerY, event)))
     }
 
     const preventHorizontalNavigation = (event: WheelEvent) => {
       if (event.deltaX === 0 || !carouselElement.current) return
-      const pathTargetsCarousel = event.composedPath().includes(carouselElement.current)
       const eventHasCoordinates = event.clientX !== 0 || event.clientY !== 0
       const x = eventHasCoordinates ? event.clientX : pointerX
       const y = eventHasCoordinates ? event.clientY : pointerY
-      if (pathTargetsCarousel || pointInside(carouselElement.current, x, y)) event.preventDefault()
+      if (hitTest(carouselElement.current, x, y, event)) event.preventDefault()
     }
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true })
@@ -39,5 +43,5 @@ export default function useCarouselNavigationGuard(carouselElement: RefObject<HT
       window.removeEventListener('wheel', preventHorizontalNavigation, { capture: true })
       setRootGuard(false)
     }
-  }, [carouselElement])
+  }, [carouselElement, hitTest])
 }
