@@ -9,9 +9,13 @@ import type { Language } from './maria/i18n'
 
 const themeSwitchTokens = new WeakMap<Element, number>()
 const THEME_COLORS = {
-  light: '#c8c8ca',
-  dark: '#05070d',
+  light: '#ffffff',
+  dark: '#000000',
 } as const
+
+function getInitialTheme(): 'light' | 'dark' {
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
 
 export function beginAtomicThemeSwitch(
   root: HTMLElement,
@@ -26,7 +30,7 @@ export function beginAtomicThemeSwitch(
 }
 
 export default function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme)
   const [language, setLanguage] = useState<Language>('ru')
   const [path, setPath] = useState(() => {
     const normalized = normalizePath(window.location.pathname)
