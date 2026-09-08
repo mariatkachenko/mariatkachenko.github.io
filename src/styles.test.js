@@ -386,6 +386,7 @@ describe('works responsive card deck', () => {
     expect(styles).toContain('cursor:grab;filter:saturate(var(--works-card-saturation-light))')
     expect(styles).toContain('.maria-works-carousel.is-dragging .maria-works-deck-card{cursor:grabbing;scale:1;transition:none}')
     expect(styles).not.toContain('.maria-works-carousel.has-clickable-center{cursor:pointer}')
+    expect(styles).toContain('.maria-works-deck-card:not(.is-centered) :is(button,[role="button"]){pointer-events:none}')
     expect(styles).toContain('transform:translateX(-50%);view-transition-name:works-carousel')
     expect(styles).toContain('-webkit-user-drag:none')
     expect(styles).toContain('var(--works-deck-y-mobile)')

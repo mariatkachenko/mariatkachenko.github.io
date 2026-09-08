@@ -296,6 +296,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }, [paused])
 
   const openAfterPressAnimation = (project: PresentationKind, index: number) => {
+    if (index !== centeredCardIndex) return
     if (openTimer.current !== null) window.clearTimeout(openTimer.current)
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       onOpen(project)
@@ -465,7 +466,13 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
         data-layer={pose.layer}
+        inert={!centered}
         key={index}
+        onClickCapture={(event) => {
+          if (centered) return
+          event.preventDefault()
+          event.stopPropagation()
+        }}
         style={{
           '--works-row-scale': 1.1,
           '--works-row-x': `${worksDesktopRowX(pose.x)}vw`,

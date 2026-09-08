@@ -782,9 +782,24 @@ describe('WorksCardCarousel', () => {
     try {
       render(<WorksCardCarousel onOpen={onOpen} language="ru" />)
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+      const cards = document.querySelectorAll<HTMLElement>('.maria-works-deck-card')
 
       act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
       expect(carousel).toHaveClass('has-clickable-center')
+      expect(cards[WORKS_PROJECT_INDEX]).not.toHaveAttribute('inert')
+      expect(cards[WORKS_SBP_INDEX]).toHaveAttribute('inert')
+
+      const sideQrButton = cards[WORKS_SBP_INDEX].querySelector('button')
+      expect(sideQrButton).not.toBeNull()
+      fireEvent.click(sideQrButton!)
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
+      expect(onOpen).not.toHaveBeenCalled()
+
+      wheelCenteredWorksCard({ deltaX: -220, deltaY: 0 })
+      act(() => vi.advanceTimersByTime(WORKS_WHEEL_SETTLE_DELAY_MS))
+      expect(cards[WORKS_SBP_INDEX]).toHaveClass('is-centered')
+      expect(cards[WORKS_SBP_INDEX]).not.toHaveAttribute('inert')
+
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
       act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
       expect(onOpen).toHaveBeenCalledWith('sbp')
