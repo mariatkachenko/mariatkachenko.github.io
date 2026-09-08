@@ -39,6 +39,10 @@ export const WORKS_INITIAL_POSITION = WORKS_PROJECT_INDEX
 export const WORKS_ENTRY_DURATION_MS = 600
 export const WORKS_AUTOPLAY_MS = 4800
 export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
+export const WORKS_WHEEL_FRESH_IMPULSE_MIN_PX = 24
+export const WORKS_WHEEL_FRESH_IMPULSE_ACCELERATION = 1.35
+export const WORKS_WHEEL_TAIL_DECAY_RATIO = 0.72
+export const WORKS_CLICK_SCROLL_MS_PER_CARD = 624
 export const WORKS_CARD_OPEN_DELAY_MS = 240
 export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
 export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
@@ -236,6 +240,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const [position, setPosition] = useState(WORKS_INITIAL_POSITION)
   const [dragging, setDragging] = useState(false)
   const [wheeling, setWheeling] = useState(false)
+  const [clickScrolling, setClickScrolling] = useState(false)
   const [isEntering, setIsEntering] = useState(true)
   const [interactionVersion, setInteractionVersion] = useState(0)
   const [pressOpeningIndex, setPressOpeningIndex] = useState<number | null>(null)
@@ -248,12 +253,14 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   } | null>(null)
   const suppressClick = useRef(false)
   const wheelSettleTimer = useRef<number | null>(null)
+  const clickScrollFrame = useRef<number | null>(null)
   const openTimer = useRef<number | null>(null)
   const wheelGesture = useRef<{
     position: number
     delta: number
     capped: boolean
     tailSeen: boolean
+    lastMagnitude: number
   } | null>(null)
   const carouselElement = useRef<HTMLElement | null>(null)
   const hitTestVisibleCard = useCallback((carousel: HTMLElement, x: number, y: number, event: Event) => (
@@ -281,17 +288,21 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   useEffect(() => () => {
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
     if (openTimer.current !== null) window.clearTimeout(openTimer.current)
   }, [])
 
   useEffect(() => {
     if (!paused) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
     wheelSettleTimer.current = null
+    clickScrollFrame.current = null
     wheelGesture.current = null
     pointerOrigin.current = null
     setPressOpeningIndex(null)
     setWheeling(false)
+    setClickScrolling(false)
     setDragging(false)
   }, [paused])
 
@@ -308,6 +319,40 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       setPressOpeningIndex(null)
       openTimer.current = null
     }, WORKS_CARD_OPEN_DELAY_MS)
+  }
+
+  const centerCardFromClick = (index: number) => {
+    if (isEntering || paused) return
+    if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
+    wheelSettleTimer.current = null
+    clickScrollFrame.current = null
+    wheelGesture.current = null
+    setWheeling(false)
+    setInteractionVersion((current) => current + 1)
+    const startPosition = position
+    const distance = continuousWorksOffset(index, startPosition)
+    if (distance === 0) return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setPosition(normalizeWorksPosition(startPosition + distance))
+      return
+    }
+    const duration = Math.abs(distance) * WORKS_CLICK_SCROLL_MS_PER_CARD
+    const startedAt = window.performance.now()
+    setClickScrolling(true)
+    const animate = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / duration)
+      const easedProgress = (1 - Math.cos(Math.PI * progress)) / 2
+      setPosition(normalizeWorksPosition(startPosition + distance * easedProgress))
+      if (progress < 1) {
+        clickScrollFrame.current = window.requestAnimationFrame(animate)
+        return
+      }
+      clickScrollFrame.current = null
+      setPosition(normalizeWorksPosition(startPosition + distance))
+      setClickScrolling(false)
+    }
+    clickScrollFrame.current = window.requestAnimationFrame(animate)
   }
 
   useEffect(() => {
@@ -331,8 +376,11 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     if (isEntering || paused) return
     if (!worksCarouselEventTargetsCard(event.currentTarget, event.target)) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
+    if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
+    clickScrollFrame.current = null
     wheelGesture.current = null
     setWheeling(false)
+    setClickScrolling(false)
     setInteractionVersion((current) => current + 1)
     const isMobile = window.matchMedia?.('(max-width: 600px)').matches ?? false
     pointerOrigin.current = {
@@ -390,23 +438,49 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     const delta = worksWheelDelta(event.deltaX, event.deltaY, event.shiftKey, isMobile)
     if (delta === 0) return
     event.preventDefault()
+    if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
+    clickScrollFrame.current = null
     setWheeling(true)
+    setClickScrolling(false)
     setInteractionVersion((current) => current + 1)
     const step = worksWheelStep(isMobile)
     if (!wheelGesture.current) {
-      wheelGesture.current = { position: Math.round(position), delta: 0, capped: false, tailSeen: false }
+      wheelGesture.current = {
+        position: Math.round(position),
+        delta: 0,
+        capped: false,
+        tailSeen: false,
+        lastMagnitude: 0,
+      }
     } else if (wheelGesture.current.capped) {
       const magnitude = Math.abs(delta)
       const reversesDirection = Math.sign(delta) !== Math.sign(wheelGesture.current.delta)
-      if (magnitude <= 6) {
+      const acceleratesAfterTail = wheelGesture.current.tailSeen
+        && magnitude >= WORKS_WHEEL_FRESH_IMPULSE_MIN_PX
+        && magnitude >= wheelGesture.current.lastMagnitude * WORKS_WHEEL_FRESH_IMPULSE_ACCELERATION
+      if ((acceleratesAfterTail || reversesDirection) && magnitude >= WORKS_WHEEL_FRESH_IMPULSE_MIN_PX) {
+        wheelGesture.current = {
+          position: Math.round(position),
+          delta: 0,
+          capped: false,
+          tailSeen: false,
+          lastMagnitude: 0,
+        }
+      } else if (magnitude <= WORKS_WHEEL_FRESH_IMPULSE_MIN_PX
+        || magnitude <= wheelGesture.current.lastMagnitude * WORKS_WHEEL_TAIL_DECAY_RATIO) {
         wheelGesture.current.tailSeen = true
-      } else if ((wheelGesture.current.tailSeen || reversesDirection) && magnitude >= 24) {
-        wheelGesture.current = { position: Math.round(position), delta: 0, capped: false, tailSeen: false }
       }
     }
+    const previousMagnitude = wheelGesture.current.lastMagnitude
     wheelGesture.current.delta += delta
     const gestureOffset = Math.max(-1, Math.min(1, wheelGesture.current.delta / step))
     wheelGesture.current.capped = Math.abs(gestureOffset) === 1
+    if (wheelGesture.current.capped
+      && previousMagnitude > 0
+      && Math.abs(delta) <= previousMagnitude * WORKS_WHEEL_TAIL_DECAY_RATIO) {
+      wheelGesture.current.tailSeen = true
+    }
+    wheelGesture.current.lastMagnitude = Math.abs(delta)
     setPosition(normalizeWorksPosition(wheelGesture.current.position + gestureOffset))
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     wheelSettleTimer.current = window.setTimeout(() => {
@@ -419,7 +493,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   return <section
     ref={carouselElement}
-    className={`maria-works-carousel${centeredCardIsOpenable ? ' has-clickable-center' : ''}${dragging ? ' is-dragging' : ''}${wheeling ? ' is-wheeling' : ''}${isEntering ? ' is-entering' : ''}${isEntering && entryReady ? ' is-entry-active' : ''}`}
+    className={`maria-works-carousel${centeredCardIsOpenable ? ' has-clickable-center' : ''}${dragging ? ' is-dragging' : ''}${wheeling ? ' is-wheeling' : ''}${clickScrolling ? ' is-click-scrolling' : ''}${isEntering ? ' is-entering' : ''}${isEntering && entryReady ? ' is-entry-active' : ''}`}
     aria-label={language === 'ru' ? 'Карусель рабочих проектов' : 'Work project carousel'}
     data-works-position={Number(position.toFixed(3))}
     onPointerDown={beginDrag}
@@ -466,12 +540,12 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         data-index={index}
         data-offset={Number(offset.toFixed(3))}
         data-layer={pose.layer}
-        inert={!centered}
         key={index}
         onClickCapture={(event) => {
           if (centered) return
           event.preventDefault()
           event.stopPropagation()
+          centerCardFromClick(index)
         }}
         style={{
           '--works-row-scale': 1.1,
@@ -502,7 +576,8 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
           '--works-card-mobile-lower-depth': gradient.mobileLowerDepth,
         } as CSSProperties}
       >
-        {projectCard
+        <div className="maria-works-deck-card__content" inert={!centered}>
+          {projectCard
           ? <ConceptProject
             onOpen={() => openAfterPressAnimation('mts', index)}
             language={language}
@@ -575,6 +650,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 placeholder
               />}
           </div>}
+        </div>
       </article>
     })}
   </section>

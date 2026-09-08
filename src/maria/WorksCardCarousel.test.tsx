@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import WorksCardCarousel, {
   WORKS_CARD_COUNT,
   WORKS_CARD_OPEN_DELAY_MS,
+  WORKS_CLICK_SCROLL_MS_PER_CARD,
   WORKS_AUTOPLAY_MS,
   WORKS_AUTOPAY_INDEX,
   WORKS_ALIEXPRESS_INDEX,
@@ -19,6 +20,9 @@ import WorksCardCarousel, {
   WORKS_TINNOTECH_INDEX,
   WORKS_WALLET_INDEX,
   WORKS_WHEEL_SETTLE_DELAY_MS,
+  WORKS_WHEEL_FRESH_IMPULSE_ACCELERATION,
+  WORKS_WHEEL_FRESH_IMPULSE_MIN_PX,
+  WORKS_WHEEL_TAIL_DECAY_RATIO,
   WORKS_WHEEL_STEP_PX,
   continuousWorksOffset,
   mobileWorksDeckPose,
@@ -76,6 +80,10 @@ describe('continuous works row geometry', () => {
     expect(worksDragStep(true)).toBe(140)
     expect(WORKS_WHEEL_STEP_PX).toBe(220)
     expect(WORKS_MOBILE_WHEEL_STEP_PX).toBe(200)
+    expect(WORKS_WHEEL_FRESH_IMPULSE_MIN_PX).toBe(24)
+    expect(WORKS_WHEEL_FRESH_IMPULSE_ACCELERATION).toBe(1.35)
+    expect(WORKS_WHEEL_TAIL_DECAY_RATIO).toBe(0.72)
+    expect(WORKS_CLICK_SCROLL_MS_PER_CARD).toBe(624)
     expect(worksWheelStep(false)).toBe(220)
     expect(worksWheelStep(true)).toBe(200)
     expect(worksPointerCoordinate({ clientX: 20, clientY: 80 }, false)).toBe(20)
@@ -630,6 +638,26 @@ describe('WorksCardCarousel', () => {
     }
   })
 
+  it('advances once for each quick trackpad impulse without waiting for settle', () => {
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      act(() => vi.advanceTimersByTime(600))
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+
+      wheelCenteredWorksCard({ deltaX: 220, deltaY: 0 })
+      wheelCenteredWorksCard({ deltaX: 70, deltaY: 0 })
+      wheelCenteredWorksCard({ deltaX: 170, deltaY: 0 })
+      wheelCenteredWorksCard({ deltaX: 60, deltaY: 0 })
+      wheelCenteredWorksCard({ deltaX: 160, deltaY: 0 })
+      wheelCenteredWorksCard({ deltaX: 60, deltaY: 0 })
+
+      expect(carousel).toHaveAttribute('data-works-position', '4')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('restores the MTS centered state after a complete carousel loop', () => {
     vi.useFakeTimers()
     try {
@@ -787,22 +815,53 @@ describe('WorksCardCarousel', () => {
       act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
       expect(carousel).toHaveClass('has-clickable-center')
       expect(cards[WORKS_PROJECT_INDEX]).not.toHaveAttribute('inert')
-      expect(cards[WORKS_SBP_INDEX]).toHaveAttribute('inert')
+      expect(cards[WORKS_SBP_INDEX]).not.toHaveAttribute('inert')
+      expect(cards[WORKS_PROJECT_INDEX].querySelector('.maria-works-deck-card__content')).not.toHaveAttribute('inert')
+      expect(cards[WORKS_SBP_INDEX].querySelector('.maria-works-deck-card__content')).toHaveAttribute('inert')
 
       const sideQrButton = cards[WORKS_SBP_INDEX].querySelector('button')
       expect(sideQrButton).not.toBeNull()
       fireEvent.click(sideQrButton!)
-      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD))
       expect(onOpen).not.toHaveBeenCalled()
-
-      wheelCenteredWorksCard({ deltaX: -220, deltaY: 0 })
-      act(() => vi.advanceTimersByTime(WORKS_WHEEL_SETTLE_DELAY_MS))
       expect(cards[WORKS_SBP_INDEX]).toHaveClass('is-centered')
       expect(cards[WORKS_SBP_INDEX]).not.toHaveAttribute('inert')
+      expect(cards[WORKS_SBP_INDEX].querySelector('.maria-works-deck-card__content')).not.toHaveAttribute('inert')
 
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
       act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
       expect(onOpen).toHaveBeenCalledWith('sbp')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('moves a clicked outer visible card to the center without opening it', () => {
+    const onOpen = vi.fn()
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={onOpen} language="ru" />)
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+      const cards = document.querySelectorAll<HTMLElement>('.maria-works-deck-card')
+
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      expect(cards[WORKS_CONNECTION_INDEX]).toHaveAttribute('data-offset', '2')
+
+      fireEvent.click(cards[WORKS_CONNECTION_INDEX])
+
+      expect(carousel).toHaveAttribute('data-works-position', String(WORKS_INITIAL_POSITION))
+      expect(carousel).toHaveClass('is-click-scrolling')
+      expect(cards[WORKS_CONNECTION_INDEX]).not.toHaveClass('is-centered')
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD))
+      const midwayPosition = Number(carousel.getAttribute('data-works-position'))
+      expect(midwayPosition).toBeGreaterThan(WORKS_INITIAL_POSITION)
+      expect(midwayPosition).toBeLessThan(WORKS_CONNECTION_INDEX)
+      expect(carousel).toHaveClass('is-click-scrolling')
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
+      expect(carousel).toHaveAttribute('data-works-position', String(WORKS_CONNECTION_INDEX))
+      expect(cards[WORKS_CONNECTION_INDEX]).toHaveClass('is-centered')
+      expect(carousel).not.toHaveClass('is-click-scrolling')
+      expect(onOpen).not.toHaveBeenCalled()
     } finally {
       vi.useRealTimers()
     }
