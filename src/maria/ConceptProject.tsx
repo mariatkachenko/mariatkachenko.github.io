@@ -4,14 +4,16 @@ type ConceptProjectProps = {
   onOpen: () => void
   language: Language
   loadArtwork: boolean
+  disabled?: boolean
 }
 
-export default function ConceptProject({ onOpen, language, loadArtwork }: ConceptProjectProps) {
+export default function ConceptProject({ onOpen, language, loadArtwork, disabled = false }: ConceptProjectProps) {
   const copy = copyFor(language)
   return <button
     type="button"
     className="mts-project-card"
     data-interaction-sound="open"
+    disabled={disabled}
     aria-label={copy.openPresentation}
     onClick={(event) => {
       event.currentTarget.focus()

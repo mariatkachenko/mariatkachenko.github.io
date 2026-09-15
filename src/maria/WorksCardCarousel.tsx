@@ -42,7 +42,7 @@ export const WORKS_WHEEL_SETTLE_DELAY_MS = 120
 export const WORKS_WHEEL_FRESH_IMPULSE_MIN_PX = 24
 export const WORKS_WHEEL_FRESH_IMPULSE_ACCELERATION = 1.35
 export const WORKS_WHEEL_TAIL_DECAY_RATIO = 0.72
-export const WORKS_CLICK_SCROLL_MS_PER_CARD = 624
+export const WORKS_CLICK_SCROLL_MS_PER_CARD = 768
 export const WORKS_CARD_OPEN_DELAY_MS = 240
 export const WORKS_DESKTOP_CARD_GAP_VW = 8.25
 export const WORKS_DESKTOP_OUTER_GAP_VW = 2.25
@@ -250,6 +250,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     isMobile: boolean
     pointerId: number
     captured: boolean
+    cardIndex: number
   } | null>(null)
   const suppressClick = useRef(false)
   const wheelSettleTimer = useRef<number | null>(null)
@@ -375,6 +376,11 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const beginDrag = (event: ReactPointerEvent<HTMLElement>) => {
     if (isEntering || paused) return
     if (!worksCarouselEventTargetsCard(event.currentTarget, event.target)) return
+    const card = event.target instanceof Element
+      ? event.target.closest<HTMLElement>('.maria-works-deck-card:not(.is-hidden)')
+      : null
+    const cardIndex = Number(card?.dataset.index)
+    if (!Number.isInteger(cardIndex)) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
     clickScrollFrame.current = null
@@ -389,6 +395,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       isMobile,
       pointerId: event.pointerId,
       captured: false,
+      cardIndex,
     }
     suppressClick.current = false
     setDragging(true)
@@ -411,18 +418,21 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
 
   const finishDrag = (event: ReactPointerEvent<HTMLElement>) => {
     if (!pointerOrigin.current) return
-    const delta = worksPointerCoordinate(event, pointerOrigin.current.isMobile) - pointerOrigin.current.coordinate
-    suppressClick.current = Math.abs(delta) >= 6
-    const finalPosition = worksPositionAfterDelta(pointerOrigin.current.position, delta, currentDragStep())
+    const origin = pointerOrigin.current
+    const delta = worksPointerCoordinate(event, origin.isMobile) - origin.coordinate
+    const tappedSideCard = Math.abs(delta) < 6 && origin.cardIndex !== centeredCardIndex
+    suppressClick.current = Math.abs(delta) >= 6 || tappedSideCard
+    const finalPosition = worksPositionAfterDelta(origin.position, delta, currentDragStep())
     setPosition(worksDragReleasePosition(
       finalPosition,
       WORKS_CARD_COUNT,
       true,
     ))
-    const captured = pointerOrigin.current.captured
+    const captured = origin.captured
     pointerOrigin.current = null
     setDragging(false)
     if (captured) event.currentTarget.releasePointerCapture?.(event.pointerId)
+    if (tappedSideCard) centerCardFromClick(origin.cardIndex)
   }
 
   const cancelDrag = () => {
@@ -576,12 +586,13 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
           '--works-card-mobile-lower-depth': gradient.mobileLowerDepth,
         } as CSSProperties}
       >
-        <div className="maria-works-deck-card__content" inert={!centered}>
+        <div className="maria-works-deck-card__content">
           {projectCard
           ? <ConceptProject
             onOpen={() => openAfterPressAnimation('mts', index)}
             language={language}
             loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+            disabled={!centered}
           />
           : raribleCard
             ? <RaribleProjectCard
@@ -591,6 +602,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 : 'Open presentation “Rarible Charity Program”'}
               language={language}
               loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+              disabled={!centered}
             />
             : aliexpressCard
               ? <AliExpressProjectCard
@@ -600,6 +612,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “Collections Prototype - AliExpress DAU Hackathon”'}
                 language={language}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+                disabled={!centered}
               />
             : mtsGameCard
               ? <MtsGameProjectCard
@@ -609,6 +622,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “Game pages on the MTS Payment website”'}
                 language={language}
                 loadArtwork={shouldLoadDeferredWorksArtwork(offset)}
+                disabled={!centered}
               />
             : sbpCard
               ? <SbpProjectCard
@@ -618,6 +632,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “QR Payment”'}
                 language={language}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+                disabled={!centered}
               />
             : autopayCard
               ? <AutopayProjectCard
@@ -627,6 +642,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “MTS Autopay”'}
                 language={language}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+                disabled={!centered}
               />
             : connectionCard
               ? <ConnectionProjectCard
@@ -636,6 +652,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                   : 'Open presentation “Balance top-up”'}
                 language={language}
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+                disabled={!centered}
               />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {tinnotechCard

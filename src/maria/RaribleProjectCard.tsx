@@ -5,13 +5,15 @@ type RaribleProjectCardProps = {
   ariaLabel: string
   language: Language
   loadArtwork: boolean
+  disabled?: boolean
 }
 
-export default function RaribleProjectCard({ onOpen, ariaLabel, language, loadArtwork }: RaribleProjectCardProps) {
+export default function RaribleProjectCard({ onOpen, ariaLabel, language, loadArtwork, disabled = false }: RaribleProjectCardProps) {
   return <button
     className="rarible-project-card"
     type="button"
     data-interaction-sound="open"
+    disabled={disabled}
     onClick={onOpen}
     aria-label={ariaLabel}
   >

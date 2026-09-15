@@ -5,10 +5,11 @@ type ConnectionProjectCardProps = {
   ariaLabel: string
   language: Language
   loadArtwork: boolean
+  disabled?: boolean
 }
 
-export default function ConnectionProjectCard({ onOpen, ariaLabel, language, loadArtwork }: ConnectionProjectCardProps) {
-  return <button className="wallet-project-card connection-project-card" type="button" data-interaction-sound="open" onClick={onOpen} aria-label={ariaLabel}>
+export default function ConnectionProjectCard({ onOpen, ariaLabel, language, loadArtwork, disabled = false }: ConnectionProjectCardProps) {
+  return <button className="wallet-project-card connection-project-card" type="button" data-interaction-sound="open" disabled={disabled} onClick={onOpen} aria-label={ariaLabel}>
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="connection-project-card__artwork" aria-hidden="true">
       {loadArtwork && (

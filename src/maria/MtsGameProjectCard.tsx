@@ -5,10 +5,11 @@ type MtsGameProjectCardProps = {
   ariaLabel: string
   language: Language
   loadArtwork: boolean
+  disabled?: boolean
 }
 
-export default function MtsGameProjectCard({ onOpen, ariaLabel, language, loadArtwork }: MtsGameProjectCardProps) {
-  return <button className="mts-game-card" type="button" data-interaction-sound="open" onClick={onOpen} aria-label={ariaLabel}>
+export default function MtsGameProjectCard({ onOpen, ariaLabel, language, loadArtwork, disabled = false }: MtsGameProjectCardProps) {
+  return <button className="mts-game-card" type="button" data-interaction-sound="open" disabled={disabled} onClick={onOpen} aria-label={ariaLabel}>
     <span className="mts-game-card__surface" aria-hidden="true" />
     <span className="mts-game-card__artwork" aria-hidden="true">
       {loadArtwork && <><img

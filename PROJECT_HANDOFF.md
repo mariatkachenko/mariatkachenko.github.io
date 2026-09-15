@@ -331,10 +331,10 @@ CSS показывает нужную картинку в зависимости
 
 ### Рука и телефон
 
-Используются две идеально совмещённые PNG-картинки:
+Используются две идеально совмещённые WebP-картинки:
 
-- primary: `/assets/maria/works-phone-hand.png`;
-- alternate lock screen: `/assets/maria/works-phone-hand-lock.png`.
+- primary MTS Pay: `/assets/maria/works-phone-hand.webp` (исходник `рука с мтс пэй.png`);
+- alternate Autopay: `/assets/maria/works-phone-hand-lock.webp` (исходник `рука с ап.png`).
 
 Обе картинки находятся в одном контейнере и переключаются только opacity, чтобы рука не дёргалась. Альтернативная версия выбирается по позиции карусели:
 
@@ -763,8 +763,8 @@ home-card-about.png
 
 ```text
 works-vector-pattern.svg
-works-phone-hand.png
-works-phone-hand-lock.png
+works-phone-hand.webp
+works-phone-hand-lock.webp
 mts-pay-cover.png
 mts-hanging-flag.png
 works-cover-01.jpg ... works-cover-05.jpg
@@ -793,8 +793,8 @@ favicon.svg
 | `home-portrait-dark.png` | ~1.7 MB |
 | `mts-pay-cover.png` | ~1.6 MB |
 | `home-card-about.png` | ~1.3 MB |
-| `works-phone-hand-lock.png` | ~1.3 MB |
-| `works-phone-hand.png` | ~1.2 MB |
+| `works-phone-hand.webp` | ~770 KB |
+| `works-phone-hand-lock.webp` | ~644 KB |
 | `astronaut-optimized.glb` | ~1.1 MB |
 | `home-card-works.png` | ~1.0 MB |
 
@@ -1060,7 +1060,7 @@ CSS: .works-project-card / .concept-cover
 ```text
 src/maria/WorksPage.tsx
 src/maria/PresentationModal.tsx
-works-phone-hand*.png
+works-phone-hand*.webp
 works-vector-pattern.svg
 CSS: works page / hand / modal
 ```

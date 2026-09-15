@@ -5,10 +5,11 @@ type AliExpressProjectCardProps = {
   ariaLabel: string
   language: Language
   loadArtwork: boolean
+  disabled?: boolean
 }
 
-export default function AliExpressProjectCard({ onOpen, ariaLabel, language, loadArtwork }: AliExpressProjectCardProps) {
-  return <button className="aliexpress-project-card" type="button" data-interaction-sound="open" onClick={onOpen} aria-label={ariaLabel}>
+export default function AliExpressProjectCard({ onOpen, ariaLabel, language, loadArtwork, disabled = false }: AliExpressProjectCardProps) {
+  return <button className="aliexpress-project-card" type="button" data-interaction-sound="open" disabled={disabled} onClick={onOpen} aria-label={ariaLabel}>
     <span className="aliexpress-project-card__surface" aria-hidden="true" />
     <span className="aliexpress-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
