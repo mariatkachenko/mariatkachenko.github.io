@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <title>Seamless hand-painted space doodle pattern</title>
+  <desc>Transparent repeating tile with white brush-like stars, planets, comets and dots.</desc>
+  <defs>
+    <clipPath id="tile"><rect width="512" height="512"/></clipPath>
+    <g id="star5" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0-30 L8-9 L31-8 L13 6 L20 29 L0 16 L-20 29 L-13 6 L-31-8 L-8-9 Z" stroke-width="7"/>
+      <path d="M1-28 L7-7 L28-7 M19 27 L0 14 L-18 27" opacity=".42" stroke-width="3"/>
+    </g>
+    <g id="spark" stroke="#fff" stroke-linecap="round">
+      <path d="M0-20 C1-8 2-5 4 0 C2 6 1 11 0 20 C-1 10-2 6-4 0 C-2-6-1-11 0-20Z" fill="#fff" stroke-width="3"/>
+      <path d="M-15 0 C-7-1-4-2 0-4 C4-2 8-1 15 0 C7 1 4 2 0 4 C-4 2-8 1-15 0Z" fill="#fff" stroke-width="2"/>
+    </g>
+    <g id="planet" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse rx="38" ry="34" stroke-width="7"/>
+      <path d="M-62 10 C-49-5-17-18 20-19 C49-20 66-12 64-3 C61 9 25 21-13 23 C-43 25-66 19-62 10Z" stroke-width="8"/>
+      <path d="M-59 7 C-32 17 20 11 56-7" opacity=".45" stroke-width="3"/>
+      <circle cx="-13" cy="-10" r="4" fill="#fff" stroke="none"/>
+      <circle cx="9" cy="2" r="3" fill="#fff" stroke="none"/>
+    </g>
+    <g id="comet" stroke="#fff" stroke-linecap="round">
+      <path d="M-38 14 C-18-9 11-19 36-17 C22-5 9 7-7 19 C9 15 25 11 41 10" stroke-width="8"/>
+      <path d="M-46 26 C-16 15 9 1 29-11" opacity=".55" stroke-width="4"/>
+      <path d="M-42 34 C-15 28 1 20 16 13" opacity=".35" stroke-width="3"/>
+    </g>
+    <g id="spiral" stroke="#fff" stroke-linecap="round">
+      <path d="M-43 18 C-20-15 19-28 41-10 C58 5 35 29 4 27 C-22 25-24 6-7-4 C10-14 25-5 17 5 C11 12 1 12-4 8" stroke-width="8"/>
+      <path d="M-45 24 C-9 35 25 32 46 14" opacity=".42" stroke-width="3"/>
+    </g>
+  </defs>
+  <g clip-path="url(#tile)">
+    <!-- edge-wrapped motifs -->
+    <g transform="translate(8 74) rotate(-12)"><use href="#planet"/></g>
+    <g transform="translate(520 74) rotate(-12)"><use href="#planet"/></g>
+    <g transform="translate(466 505) rotate(8)"><use href="#spiral"/></g>
+    <g transform="translate(466 -7) rotate(8)"><use href="#spiral"/></g>
+    <g transform="translate(164 4) rotate(-8)"><use href="#star5"/></g>
+    <g transform="translate(164 516) rotate(-8)"><use href="#star5"/></g>
+    <g transform="translate(507 290) rotate(13)"><use href="#star5"/></g>
+    <g transform="translate(-5 290) rotate(13)"><use href="#star5"/></g>
+
+    <!-- central composition -->
+    <g transform="translate(184 134) rotate(8)"><use href="#star5"/></g>
+    <g transform="translate(355 112) rotate(-10)"><use href="#spiral"/></g>
+    <g transform="translate(293 257) rotate(-7)"><use href="#planet"/></g>
+    <g transform="translate(96 270) rotate(-12)"><use href="#comet"/></g>
+    <g transform="translate(415 354) rotate(15)"><use href="#comet"/></g>
+    <g transform="translate(204 407) rotate(4)"><use href="#star5"/></g>
+    <g transform="translate(72 434) rotate(-8)"><use href="#planet"/></g>
+
+    <!-- sparks and painted dots -->
+    <g transform="translate(90 154) scale(.8)"><use href="#spark"/></g>
+    <g transform="translate(258 71) rotate(10) scale(.65)"><use href="#spark"/></g>
+    <g transform="translate(443 189) scale(.9)"><use href="#spark"/></g>
+    <g transform="translate(160 326) rotate(-12) scale(.7)"><use href="#spark"/></g>
+    <g transform="translate(337 412) scale(.75)"><use href="#spark"/></g>
+    <g transform="translate(489 431) scale(.55)"><use href="#spark"/></g>
+    <g transform="translate(-23 431) scale(.55)"><use href="#spark"/></g>
+    <g fill="#fff">
+      <circle cx="113" cy="94" r="6"/><circle cx="223" cy="184" r="8"/><circle cx="454" cy="114" r="5"/>
+      <circle cx="389" cy="215" r="7"/><circle cx="35" cy="201" r="5"/><circle cx="139" cy="376" r="6"/>
+      <circle cx="285" cy="348" r="5"/><circle cx="454" cy="469" r="7"/><circle cx="335" cy="475" r="4"/>
+      <circle cx="36" cy="336" r="8"/><circle cx="237" cy="299" r="4"/><circle cx="405" cy="62" r="4"/>
+    </g>
+    <g fill="#fff" opacity=".45">
+      <circle cx="118" cy="98" r="3"/><circle cx="227" cy="180" r="3"/><circle cx="394" cy="211" r="2"/>
+    </g>
+    <!-- loose brush strokes -->
+    <g stroke="#fff" stroke-linecap="round" fill="none">
+      <path d="M229 118 C244 105 254 101 269 98" stroke-width="7"/><path d="M232 128 C247 118 259 115 275 112" stroke-width="3" opacity=".5"/>
+      <path d="M347 327 C360 315 374 307 391 301" stroke-width="7"/><path d="M355 335 C370 326 383 321 396 319" stroke-width="3" opacity=".45"/>
+      <path d="M13 496 C30 486 45 480 60 479" stroke-width="6"/><path d="M13 -16 C30-26 45-32 60-33" stroke-width="6"/>
+    </g>
+  </g>
+</svg>
