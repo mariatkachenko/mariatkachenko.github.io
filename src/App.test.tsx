@@ -13,7 +13,7 @@ import {
   orbitOffset,
   orbitPose,
 } from './maria/HackathonOrbitCarousel'
-import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS, handVariantForWorksPosition } from './maria/WorksCardCarousel'
+import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS, darkHandVariantForWorksPosition, handVariantForWorksPosition } from './maria/WorksCardCarousel'
 import { routeTransitionDirection } from './router'
 
 beforeEach(() => {
@@ -50,6 +50,16 @@ describe('Maria Tkachenko portfolio', () => {
     expect(handVariantForWorksPosition(2.51)).toBe('alternate')
     expect(handVariantForWorksPosition(5.49)).toBe('alternate')
     expect(handVariantForWorksPosition(5.51)).toBe('primary')
+  })
+
+  it('switches the dark works hand artwork across all three carousel groups', () => {
+    expect(darkHandVariantForWorksPosition(0)).toBe('one')
+    expect(darkHandVariantForWorksPosition(2.49)).toBe('one')
+    expect(darkHandVariantForWorksPosition(2.51)).toBe('two')
+    expect(darkHandVariantForWorksPosition(5.49)).toBe('two')
+    expect(darkHandVariantForWorksPosition(5.51)).toBe('three')
+    expect(darkHandVariantForWorksPosition(8.49)).toBe('three')
+    expect(darkHandVariantForWorksPosition(8.51)).toBe('one')
   })
 
   it('renders the subpage home control as Comforter text with a decorative curved arrow', () => {
@@ -293,6 +303,8 @@ describe('Maria Tkachenko portfolio', () => {
     expect(hand).toHaveAttribute('alt', '')
     expect(hand).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
+    expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(3)
+    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp"]')).toHaveLength(3)
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
     expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)

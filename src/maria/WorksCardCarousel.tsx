@@ -107,6 +107,11 @@ export function handVariantForWorksPosition(position: number): 'primary' | 'alte
   return Math.floor(centeredIndex / 3) % 2 === 0 ? 'primary' : 'alternate'
 }
 
+export function darkHandVariantForWorksPosition(position: number): 'one' | 'two' | 'three' {
+  const centeredIndex = normalizeWorksPosition(Math.round(position))
+  return (['one', 'two', 'three'] as const)[Math.floor(centeredIndex / 3) % 3]
+}
+
 export function worksRowPose(offset: number): WorksRowPose {
   const magnitude = Math.min(80, Math.abs(offset) * 36)
   return {

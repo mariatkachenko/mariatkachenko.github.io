@@ -336,6 +336,10 @@ CSS показывает нужную картинку в зависимости
 - primary MTS Pay: `/assets/maria/works-phone-hand.webp` (исходник `рука с мтс пэй.png`);
 - alternate Autopay: `/assets/maria/works-phone-hand-lock.webp` (исходник `рука с ап.png`).
 
+В тёмной теме поверх того же контейнера используется спрайт `/assets/maria/works-phone-hand-dark.webp` с тремя вариантами, собранный без уменьшения исходного разрешения из файлов `ChatGPT Image 14 сент. 2026 г., 23_21_44.png`, `ChatGPT Image 14 сент. 2026 г., 23_25_08.png` и `ChatGPT Image 14 сент. 2026 г., 23_28_43.png`.
+
+Тёмные варианты переключаются последовательно по трём группам карточек. Чёрный фон исходников визуально сливается с фоном страницы через `mix-blend-mode: screen`.
+
 Обе картинки находятся в одном контейнере и переключаются только opacity, чтобы рука не дёргалась. Альтернативная версия выбирается по позиции карусели:
 
 ```ts
@@ -765,6 +769,7 @@ home-card-about.png
 works-vector-pattern.svg
 works-phone-hand.webp
 works-phone-hand-lock.webp
+works-phone-hand-dark.webp
 mts-pay-cover.png
 mts-hanging-flag.png
 works-cover-01.jpg ... works-cover-05.jpg

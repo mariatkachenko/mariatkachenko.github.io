@@ -32,6 +32,7 @@ const keepFiles = new Set([
   'maria/project-file-icon.svg',
   'maria/works-phone-hand.webp',
   'maria/works-phone-hand-lock.webp',
+  'maria/works-phone-hand-dark.webp',
   'maria/works-placeholder-payments-a.webp',
   'maria/mts-pay-card-composition-crisp.webp',
   'maria/mts-pay-logo-flyout.webp',

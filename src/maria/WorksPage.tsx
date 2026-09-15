@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import PresentationModal, { type PresentationKind } from './PresentationModal'
-import WorksCardCarousel, { handVariantForWorksPosition, worksPatternOffset, WORKS_INITIAL_POSITION, WORKS_PROJECT_INDEX } from './WorksCardCarousel'
+import WorksCardCarousel, { darkHandVariantForWorksPosition, handVariantForWorksPosition, worksPatternOffset, WORKS_INITIAL_POSITION, WORKS_PROJECT_INDEX } from './WorksCardCarousel'
 import HomeBackButton from './HomeBackButton'
 import MtsFlyoutOverlay from './MtsFlyoutOverlay'
 import { type Language } from './i18n'
@@ -10,6 +10,7 @@ export default function WorksPage({ language }: { language: Language }) {
   const [sceneReady, setSceneReady] = useState(() => !document.documentElement.dataset.transitionDirection)
   const [presentation, setPresentation] = useState<PresentationKind | null>(null)
   const [handVariant, setHandVariant] = useState(() => handVariantForWorksPosition(WORKS_INITIAL_POSITION))
+  const [darkHandVariant, setDarkHandVariant] = useState(() => darkHandVariantForWorksPosition(WORKS_INITIAL_POSITION))
   const [patternOffset, setPatternOffset] = useState(() => worksPatternOffset(WORKS_INITIAL_POSITION))
   const [flyoutActivation, setFlyoutActivation] = useState(1)
   const [flyoutVisible, setFlyoutVisible] = useState(false)
@@ -18,6 +19,7 @@ export default function WorksPage({ language }: { language: Language }) {
   const closePresentation = useCallback(() => setPresentation(null), [])
   const updateScene = useCallback((position: number) => {
     setHandVariant(handVariantForWorksPosition(position))
+    setDarkHandVariant(darkHandVariantForWorksPosition(position))
     setPatternOffset(worksPatternOffset(position))
   }, [])
   const updateCenteredIndex = useCallback((nextIndex: number) => {
@@ -52,9 +54,12 @@ export default function WorksPage({ language }: { language: Language }) {
     } as CSSProperties}
   >
     <HomeBackButton language={language} />
-    <div className={`maria-works-hand${handVariant === 'alternate' ? ' is-alternate' : ''}`} aria-hidden="true">
+    <div className={`maria-works-hand${handVariant === 'alternate' ? ' is-alternate' : ''} is-dark-${darkHandVariant}`} aria-hidden="true">
       <img className="maria-works-hand__image maria-works-hand__image--primary" src="/assets/maria/works-phone-hand.webp" alt="" aria-hidden="true" />
       <img className="maria-works-hand__image maria-works-hand__image--alternate" src="/assets/maria/works-phone-hand-lock.webp" alt="" aria-hidden="true" />
+      <img className="maria-works-hand__image maria-works-hand__image--dark maria-works-hand__image--dark-one" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
+      <img className="maria-works-hand__image maria-works-hand__image--dark maria-works-hand__image--dark-two" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
+      <img className="maria-works-hand__image maria-works-hand__image--dark maria-works-hand__image--dark-three" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
     </div>
     <WorksCardCarousel
       onOpen={setPresentation}
