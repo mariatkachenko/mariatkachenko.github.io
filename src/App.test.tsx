@@ -52,13 +52,13 @@ describe('Maria Tkachenko portfolio', () => {
     expect(handVariantForWorksPosition(5.51)).toBe('primary')
   })
 
-  it('switches the dark works hand artwork across all three carousel groups', () => {
+  it('switches the two dark works hand artworks in repeating groups of three', () => {
     expect(darkHandVariantForWorksPosition(0)).toBe('one')
     expect(darkHandVariantForWorksPosition(2.49)).toBe('one')
     expect(darkHandVariantForWorksPosition(2.51)).toBe('two')
     expect(darkHandVariantForWorksPosition(5.49)).toBe('two')
-    expect(darkHandVariantForWorksPosition(5.51)).toBe('three')
-    expect(darkHandVariantForWorksPosition(8.49)).toBe('three')
+    expect(darkHandVariantForWorksPosition(5.51)).toBe('one')
+    expect(darkHandVariantForWorksPosition(8.49)).toBe('one')
     expect(darkHandVariantForWorksPosition(8.51)).toBe('one')
   })
 
@@ -303,8 +303,8 @@ describe('Maria Tkachenko portfolio', () => {
     expect(hand).toHaveAttribute('alt', '')
     expect(hand).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
-    expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(3)
-    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp"]')).toHaveLength(3)
+    expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(2)
+    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp"]')).toHaveLength(2)
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
     expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)

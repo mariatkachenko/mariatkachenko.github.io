@@ -59,7 +59,6 @@ export default function WorksPage({ language }: { language: Language }) {
       <img className="maria-works-hand__image maria-works-hand__image--alternate" src="/assets/maria/works-phone-hand-lock.webp" alt="" aria-hidden="true" />
       <img className="maria-works-hand__image maria-works-hand__image--dark maria-works-hand__image--dark-one" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
       <img className="maria-works-hand__image maria-works-hand__image--dark maria-works-hand__image--dark-two" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
-      <img className="maria-works-hand__image maria-works-hand__image--dark maria-works-hand__image--dark-three" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
     </div>
     <WorksCardCarousel
       onOpen={setPresentation}
