@@ -12,7 +12,7 @@ const THEME_COLORS = {
   light: '#ffffff',
   dark: '#000000',
 } as const
-const productionWorksOnly = import.meta.env.PROD
+const productionWorksOnly = window.location.hostname === 'mariatkachenko.github.io'
 
 function getInitialTheme(): 'light' | 'dark' {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
