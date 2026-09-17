@@ -52,7 +52,7 @@ export default function WorksPage({ language }: { language: Language }) {
     {window.location.hostname !== 'mariatkachenko.github.io' && <HomeBackButton language={language} />}
     <div className="maria-works-hand" aria-hidden="true">
       <img className="maria-works-hand__image maria-works-hand__image--theme maria-works-hand__image--light" src="/assets/maria/works-phone-hand.webp" alt="" aria-hidden="true" />
-      <img className="maria-works-hand__image maria-works-hand__image--theme maria-works-hand__image--dark" src="/assets/maria/works-phone-hand-dark.webp" alt="" aria-hidden="true" />
+      <img className="maria-works-hand__image maria-works-hand__image--theme maria-works-hand__image--dark" src="/assets/maria/works-phone-hand-dark.webp?v=d1c6566" alt="" aria-hidden="true" />
     </div>
     <WorksCardCarousel
       onOpen={setPresentation}
