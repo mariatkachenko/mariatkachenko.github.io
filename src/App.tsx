@@ -12,6 +12,7 @@ const THEME_COLORS = {
   light: '#ffffff',
   dark: '#000000',
 } as const
+const productionWorksOnly = import.meta.env.PROD
 
 function getInitialTheme(): 'light' | 'dark' {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -34,8 +35,8 @@ export default function App() {
   const [language, setLanguage] = useState<Language>('ru')
   const [path, setPath] = useState(() => {
     const normalized = normalizePath(window.location.pathname)
-    if (normalized !== window.location.pathname) window.history.replaceState({}, '', normalized)
-    return normalized
+    if (!productionWorksOnly && normalized !== window.location.pathname) window.history.replaceState({}, '', normalized)
+    return productionWorksOnly ? '/works' : normalized
   })
   const [transitionDirection, setTransitionDirection] = useState<'forward' | 'back' | null>(null)
   const pathRef = useRef(path)
@@ -43,9 +44,10 @@ export default function App() {
   useEffect(() => {
     const handleLocationChange = () => {
       const nextPath = normalizePath(window.location.pathname)
-      setTransitionDirection(routeTransitionDirection(pathRef.current, nextPath))
-      pathRef.current = nextPath
-      setPath(nextPath)
+      const activePath = productionWorksOnly ? '/works' : nextPath
+      setTransitionDirection(productionWorksOnly ? null : routeTransitionDirection(pathRef.current, activePath))
+      pathRef.current = activePath
+      setPath(activePath)
     }
     window.addEventListener('popstate', handleLocationChange)
     return () => window.removeEventListener('popstate', handleLocationChange)

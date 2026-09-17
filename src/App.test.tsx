@@ -13,7 +13,7 @@ import {
   orbitOffset,
   orbitPose,
 } from './maria/HackathonOrbitCarousel'
-import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS, darkHandVariantForWorksPosition, handVariantForWorksPosition } from './maria/WorksCardCarousel'
+import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS } from './maria/WorksCardCarousel'
 import { routeTransitionDirection } from './router'
 
 beforeEach(() => {
@@ -42,24 +42,6 @@ describe('Maria Tkachenko portfolio', () => {
     expect(root).toHaveAttribute('data-theme-switching', 'true')
     frames.shift()?.(16)
     expect(root).not.toHaveAttribute('data-theme-switching')
-  })
-
-  it('switches the works hand artwork in repeating groups of three carousel positions', () => {
-    expect(handVariantForWorksPosition(0)).toBe('primary')
-    expect(handVariantForWorksPosition(2.49)).toBe('primary')
-    expect(handVariantForWorksPosition(2.51)).toBe('alternate')
-    expect(handVariantForWorksPosition(5.49)).toBe('alternate')
-    expect(handVariantForWorksPosition(5.51)).toBe('primary')
-  })
-
-  it('switches the two dark works hand artworks in repeating groups of three', () => {
-    expect(darkHandVariantForWorksPosition(0)).toBe('one')
-    expect(darkHandVariantForWorksPosition(2.49)).toBe('one')
-    expect(darkHandVariantForWorksPosition(2.51)).toBe('two')
-    expect(darkHandVariantForWorksPosition(5.49)).toBe('two')
-    expect(darkHandVariantForWorksPosition(5.51)).toBe('one')
-    expect(darkHandVariantForWorksPosition(8.49)).toBe('one')
-    expect(darkHandVariantForWorksPosition(8.51)).toBe('one')
   })
 
   it('renders the subpage home control as Comforter text with a decorative curved arrow', () => {
@@ -302,9 +284,10 @@ describe('Maria Tkachenko portfolio', () => {
     expect(hand).toHaveAttribute('src', '/assets/maria/works-phone-hand.webp')
     expect(hand).toHaveAttribute('alt', '')
     expect(hand).toHaveAttribute('aria-hidden', 'true')
-    expect(container.querySelector('.maria-works-hand img[src="/assets/maria/works-phone-hand-lock.webp"]')).toBeInTheDocument()
-    expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(2)
-    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp"]')).toHaveLength(2)
+    expect(container.querySelectorAll('.maria-works-hand__image--light')).toHaveLength(1)
+    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(1)
+    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp"]')).toHaveLength(1)
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
     expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)

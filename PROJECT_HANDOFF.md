@@ -331,22 +331,12 @@ CSS показывает нужную картинку в зависимости
 
 ### Рука и телефон
 
-Используются две идеально совмещённые WebP-картинки:
+Используются две идеально совмещённые WebP-картинки — по одной на тему:
 
-- primary MTS Pay: `/assets/maria/works-phone-hand.webp` (исходник `рука с мтс пэй.png`);
-- alternate Autopay: `/assets/maria/works-phone-hand-lock.webp` (исходник `рука с ап.png`).
+- light: `/assets/maria/works-phone-hand.webp` (исходник `ChatGPT-Image-Sep-17_-2026_-11_50_32-PM.webp`);
+- dark: `/assets/maria/works-phone-hand-dark.webp` (исходник `ChatGPT-Image-Sep-16_-2026_-10_14_22-PM-_1_.webp`).
 
-В тёмной теме поверх того же контейнера используется спрайт `/assets/maria/works-phone-hand-dark.webp` с двумя вариантами, собранный без уменьшения исходного разрешения из файлов `ChatGPT Image 14 сент. 2026 г., 23_21_44.png` и `ChatGPT Image 16 сент. 2026 г., 00_36_53.png`.
-
-Тёмные варианты чередуются теми же группами по три карточки, что и светлые. Чёрный фон исходников визуально сливается с фоном страницы через `mix-blend-mode: screen`.
-
-Обе картинки находятся в одном контейнере и переключаются только opacity, чтобы рука не дёргалась. Альтернативная версия выбирается по позиции карусели:
-
-```ts
-Math.floor(centeredIndex / 3) % 2
-```
-
-То есть изображение меняется группами примерно по три карточки.
+Обе картинки находятся в одном контейнере, используют общие размеры и координаты и переключаются только через `opacity`, поэтому при смене темы рука не смещается. При перелистывании карусели изображения руки больше не меняются.
 
 На desktop изображение повернуто на `-90deg` и позиционируется снизу. На mobile применяются отдельные размеры и offsets.
 
@@ -768,7 +758,6 @@ home-card-about.png
 ```text
 works-vector-pattern.svg
 works-phone-hand.webp
-works-phone-hand-lock.webp
 works-phone-hand-dark.webp
 mts-pay-cover.png
 mts-hanging-flag.png
@@ -798,8 +787,7 @@ favicon.svg
 | `home-portrait-dark.png` | ~1.7 MB |
 | `mts-pay-cover.png` | ~1.6 MB |
 | `home-card-about.png` | ~1.3 MB |
-| `works-phone-hand.webp` | ~770 KB |
-| `works-phone-hand-lock.webp` | ~644 KB |
+| `works-phone-hand.webp` | ~526 KB |
 | `astronaut-optimized.glb` | ~1.1 MB |
 | `home-card-works.png` | ~1.0 MB |
 

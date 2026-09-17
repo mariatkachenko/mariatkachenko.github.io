@@ -1,0 +1,5 @@
+@media (max-width: 600px) {
+  .maria-works-page .maria-works-hand {
+    display: none !important;
+  }
+}

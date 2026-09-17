@@ -823,7 +823,7 @@ describe('WorksCardCarousel', () => {
       expect(sideQrButton).not.toBeNull()
       expect(sideQrButton).toBeDisabled()
       fireEvent.click(cards[WORKS_SBP_INDEX])
-      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD))
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
       expect(onOpen).not.toHaveBeenCalled()
       expect(cards[WORKS_SBP_INDEX]).toHaveClass('is-centered')
       expect(cards[WORKS_SBP_INDEX]).not.toHaveAttribute('inert')
@@ -866,6 +866,35 @@ describe('WorksCardCarousel', () => {
       expect(cards[WORKS_CONNECTION_INDEX]).toHaveClass('is-centered')
       expect(carousel).not.toHaveClass('is-click-scrolling')
       expect(onOpen).not.toHaveBeenCalled()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('moves exactly one card with the previous and next controls', () => {
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+      const previous = screen.getByRole('button', { name: 'Предыдущий проект' })
+      const next = screen.getByRole('button', { name: 'Следующий проект' })
+
+      expect(previous).toBeDisabled()
+      expect(next).toBeDisabled()
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      expect(previous).not.toBeDisabled()
+      expect(next).not.toBeDisabled()
+
+      fireEvent.click(next)
+      expect(carousel).toHaveClass('is-click-scrolling')
+      expect(next).toBeDisabled()
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
+      expect(carousel).toHaveAttribute('data-works-position', String(WORKS_AUTOPAY_INDEX))
+      expect(carousel).not.toHaveClass('is-click-scrolling')
+
+      fireEvent.click(previous)
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
+      expect(carousel).toHaveAttribute('data-works-position', String(WORKS_PROJECT_INDEX))
     } finally {
       vi.useRealTimers()
     }

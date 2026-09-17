@@ -102,16 +102,6 @@ export function worksWheelStep(isMobile: boolean) {
   return isMobile ? WORKS_MOBILE_WHEEL_STEP_PX : WORKS_WHEEL_STEP_PX
 }
 
-export function handVariantForWorksPosition(position: number): 'primary' | 'alternate' {
-  const centeredIndex = normalizeWorksPosition(Math.round(position))
-  return Math.floor(centeredIndex / 3) % 2 === 0 ? 'primary' : 'alternate'
-}
-
-export function darkHandVariantForWorksPosition(position: number): 'one' | 'two' {
-  const centeredIndex = normalizeWorksPosition(Math.round(position))
-  return Math.floor(centeredIndex / 3) % 2 === 0 ? 'one' : 'two'
-}
-
 export function worksRowPose(offset: number): WorksRowPose {
   const magnitude = Math.min(80, Math.abs(offset) * 36)
   return {
@@ -361,6 +351,10 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     clickScrollFrame.current = window.requestAnimationFrame(animate)
   }
 
+  const moveOneCard = (direction: -1 | 1) => {
+    centerCardFromClick(normalizeWorksPosition(Math.round(position) + direction))
+  }
+
   useEffect(() => {
     onPositionChange?.(position)
   }, [onPositionChange, position])
@@ -524,6 +518,30 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
       suppressClick.current = false
     }}
   >
+    <div className="maria-works-carousel__controls" aria-label={language === 'ru' ? 'Управление каруселью' : 'Carousel controls'}>
+      <button
+        type="button"
+        data-interaction-sound="toggle"
+        aria-label={language === 'ru' ? 'Предыдущий проект' : 'Previous project'}
+        disabled={isEntering || paused || clickScrolling}
+        onClick={() => moveOneCard(-1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        data-interaction-sound="toggle"
+        aria-label={language === 'ru' ? 'Следующий проект' : 'Next project'}
+        disabled={isEntering || paused || clickScrolling}
+        onClick={() => moveOneCard(1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m9 6 6 6-6 6" />
+        </svg>
+      </button>
+    </div>
     {Array.from({ length: WORKS_CARD_COUNT }, (_, index) => {
       const offset = continuousWorksOffset(index, position)
       const pose = worksRowPose(offset)
