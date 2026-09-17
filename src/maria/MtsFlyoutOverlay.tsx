@@ -23,7 +23,7 @@ export default function MtsFlyoutOverlay({ activation, visible }: MtsFlyoutOverl
     />
     <img
       className="mts-flyout-overlay__butterfly"
-      src="/assets/maria/mts-pay-butterfly-flyout.webp"
+      src="/assets/maria/mts-pay-butterfly-flyout.webp?v=4"
       alt=""
       loading="eager"
       decoding="sync"

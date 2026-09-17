@@ -10,7 +10,7 @@ import { loadModelViewer } from './ModelBackground'
 
 const WORKS_FLYOUT_IMAGES = [
   '/assets/maria/mts-pay-logo-flyout.webp',
-  '/assets/maria/mts-pay-butterfly-flyout.webp',
+  '/assets/maria/mts-pay-butterfly-flyout.webp?v=4',
 ] as const
 
 const HOME_CARD_SOURCES = {

@@ -1,0 +1,53 @@
+/* Stronger, broad transitions without changing the card palettes. */
+.maria-works-deck-card {
+  --card-gradient-depth: linear-gradient(transparent,transparent);
+  --card-separation-shadow: rgba(112,118,132,.14);
+}
+
+.theme-dark .maria-works-deck-card {
+  --card-gradient-depth: radial-gradient(ellipse 92% 105% at 5% 2%, rgba(255,255,255,.2) 0%, rgba(255,255,255,.075) 34%, transparent 68%), radial-gradient(ellipse 92% 105% at 98% 96%, rgba(2,12,24,.18) 0%, rgba(2,12,24,.055) 38%, transparent 70%);
+  --card-separation-shadow: rgba(48,54,68,.18);
+}
+
+.maria-works-page :is(.mts-project-card,.works-project-card)::before,
+.maria-works-page [class$="project-card__surface"] {
+  background: var(--card-gradient-depth), var(--works-card-back);
+}
+
+.maria-works-page [class$="project-card__footer"]::before {
+  background: var(--card-gradient-depth), var(--works-card-footer);
+  filter: saturate(1.13) contrast(1.09) drop-shadow(0 10px 18px var(--card-separation-shadow));
+}
+
+.maria-works-page :is(.mts-project-card,.works-project-card)::before,
+.maria-works-page [class$="project-card__surface"],
+.maria-works-page [class$="project-card__footer"]::before {
+  filter: saturate(1.13) contrast(1.09);
+}
+
+.theme-dark .maria-works-page :is(.mts-project-card,.works-project-card)::before,
+.theme-dark .maria-works-page [class$="project-card__surface"],
+.theme-dark .maria-works-page [class$="project-card__footer"]::before {
+  filter: saturate(1.11) brightness(.96) contrast(1.09);
+}
+
+.theme-dark .maria-works-page [class$="project-card__footer"]::before {
+  filter: saturate(1.11) brightness(.96) contrast(1.09) drop-shadow(0 10px 18px var(--card-separation-shadow));
+}
+
+.theme-dark .maria-works-deck-card.has-project .mts-project-card::before {
+  filter: saturate(1.14) brightness(1.01) contrast(1.09);
+}
+
+.theme-dark .maria-works-deck-card.has-project .mts-project-card__footer::before {
+  filter: saturate(1.14) brightness(1.01) contrast(1.09) drop-shadow(0 10px 18px var(--card-separation-shadow));
+}
+
+/* Neutral separation shadows with theme-independent geometry. */
+.maria-works-page .maria-works-deck-card {
+  box-shadow: 0 clamp(8px,1.1vw,16px) clamp(26px,2.8vw,42px) rgba(110,116,130,.13), 0 3px 10px rgba(110,116,130,.08);
+}
+
+.theme-dark .maria-works-page .maria-works-deck-card {
+  box-shadow: 0 clamp(8px,1.1vw,16px) clamp(26px,2.8vw,42px) rgba(48,54,68,.18), 0 3px 10px rgba(48,54,68,.11);
+}

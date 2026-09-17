@@ -292,7 +292,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(cover.querySelector('.mts-project-card__logo-flyout')).toBeNull()
     expect(cover.querySelector('.mts-project-card__butterfly-flyout')).toBeNull()
     expect(container.querySelector('.mts-flyout-overlay__logo')).toHaveAttribute('src', '/assets/maria/mts-pay-logo-flyout.webp')
-    expect(container.querySelector('.mts-flyout-overlay__butterfly')).toHaveAttribute('src', '/assets/maria/mts-pay-butterfly-flyout.webp')
+    expect(container.querySelector('.mts-flyout-overlay__butterfly')).toHaveAttribute('src', '/assets/maria/mts-pay-butterfly-flyout.webp?v=4')
     expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
     expect(Array.from(cover.children).map((node) => node.className)).toEqual([
       'mts-project-card__media',
