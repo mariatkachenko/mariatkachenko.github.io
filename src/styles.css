@@ -61,7 +61,7 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 
 .maria-header{position:fixed;z-index:40;left:16px;right:24px;top:16px;display:grid;grid-template-columns:auto auto 1fr auto auto;align-items:center;column-gap:20px;font-size:clamp(14px,1vw,18px);white-space:nowrap;view-transition-name:fixed-header}
 .maria-identity{display:flex;align-items:center;gap:11px}.maria-identity h1{margin:0;font:inherit;font-weight:400}
-.maria-avatar{width:42px;height:42px;overflow:hidden;border-radius:12px}.maria-avatar img{width:100%;height:100%;object-fit:cover;object-position:85% 22%;transform:scale(2.72)}
+.maria-avatar{width:42px;height:42px;overflow:hidden;border-radius:12px}.maria-avatar img{width:100%;height:100%;object-fit:cover;object-position:70% 22%;transform:scale(2.72)}
 .maria-header>a:nth-child(2){justify-self:start;text-decoration:underline;text-underline-offset:.14em;text-decoration-thickness:1px}.maria-meta{grid-column:4;display:flex;gap:20px}
 .maria-contact{grid-column:5;display:flex;align-items:center;gap:3px;padding:10px 0;border:0;background:transparent;transition:opacity .18s ease}.maria-contact span{position:relative;top:-.16em;font-size:1.15em;line-height:1}.maria-contact:hover{opacity:.7}
 
