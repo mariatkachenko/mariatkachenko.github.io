@@ -73,7 +73,7 @@ export default function App() {
       document.head.append(favicon)
     }
     favicon.type = 'image/svg+xml'
-    favicon.href = '/favicon.svg'
+    favicon.href = '/favicon.svg?v=10'
   }, [])
 
   const changeTheme = (nextTheme: 'light' | 'dark') => {

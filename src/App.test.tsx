@@ -80,7 +80,7 @@ describe('Maria Tkachenko portfolio', () => {
   it('uses the portfolio title and favicon', () => {
     render(<App />)
     expect(document.title).toBe('Maria Tkachenko Portfolio')
-    expect(document.querySelector('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg')
+    expect(document.querySelector('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg?v=10')
   })
 
   it('renders the identity and contact navigation', () => {
