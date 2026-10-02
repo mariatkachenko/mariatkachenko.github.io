@@ -287,7 +287,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(container.querySelectorAll('.maria-works-hand__image--light')).toHaveLength(1)
     expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand.webp?v=a907d93"]')).toHaveLength(1)
     expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(1)
-    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp?v=d1c6566"]')).toHaveLength(1)
+    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp?v=8e6f5ac"]')).toHaveLength(1)
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
     expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)

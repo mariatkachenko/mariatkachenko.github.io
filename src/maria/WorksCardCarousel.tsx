@@ -236,6 +236,8 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   const [dragging, setDragging] = useState(false)
   const [wheeling, setWheeling] = useState(false)
   const [clickScrolling, setClickScrolling] = useState(false)
+  const [activeControl, setActiveControl] = useState<-1 | 1 | null>(null)
+  const clickScrollTarget = useRef(WORKS_INITIAL_POSITION)
   const [isEntering, setIsEntering] = useState(true)
   const [interactionVersion, setInteractionVersion] = useState(0)
   const [pressOpeningIndex, setPressOpeningIndex] = useState<number | null>(null)
@@ -317,7 +319,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     }, WORKS_CARD_OPEN_DELAY_MS)
   }
 
-  const centerCardFromClick = (index: number) => {
+  const centerCardFromClick = (index: number, control: -1 | 1 | null = null) => {
     if (isEntering || paused) return
     if (wheelSettleTimer.current !== null) window.clearTimeout(wheelSettleTimer.current)
     if (clickScrollFrame.current !== null) window.cancelAnimationFrame(clickScrollFrame.current)
@@ -326,6 +328,9 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     wheelGesture.current = null
     setWheeling(false)
     setInteractionVersion((current) => current + 1)
+    setClickScrolling(false)
+    setActiveControl(control)
+    clickScrollTarget.current = index
     const startPosition = position
     const distance = continuousWorksOffset(index, startPosition)
     if (distance === 0) return
@@ -352,7 +357,8 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
   }
 
   const moveOneCard = (direction: -1 | 1) => {
-    centerCardFromClick(normalizeWorksPosition(Math.round(position) + direction))
+    const origin = clickScrolling && activeControl !== null ? clickScrollTarget.current : Math.round(position)
+    centerCardFromClick(normalizeWorksPosition(origin + direction), direction)
   }
 
   useEffect(() => {
@@ -523,7 +529,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         type="button"
         data-interaction-sound="toggle"
         aria-label={language === 'ru' ? 'Предыдущий проект' : 'Previous project'}
-        disabled={isEntering || paused || clickScrolling}
+        disabled={isEntering || paused || (clickScrolling && activeControl === -1)}
         onClick={() => moveOneCard(-1)}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -534,7 +540,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
         type="button"
         data-interaction-sound="toggle"
         aria-label={language === 'ru' ? 'Следующий проект' : 'Next project'}
-        disabled={isEntering || paused || clickScrolling}
+        disabled={isEntering || paused || (clickScrolling && activeControl === 1)}
         onClick={() => moveOneCard(1)}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

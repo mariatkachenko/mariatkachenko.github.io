@@ -888,6 +888,7 @@ describe('WorksCardCarousel', () => {
       fireEvent.click(next)
       expect(carousel).toHaveClass('is-click-scrolling')
       expect(next).toBeDisabled()
+      expect(previous).not.toBeDisabled()
       act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
       expect(carousel).toHaveAttribute('data-works-position', String(WORKS_AUTOPAY_INDEX))
       expect(carousel).not.toHaveClass('is-click-scrolling')
@@ -897,6 +898,41 @@ describe('WorksCardCarousel', () => {
       expect(carousel).toHaveAttribute('data-works-position', String(WORKS_PROJECT_INDEX))
     } finally {
       vi.useRealTimers()
+    }
+  })
+
+  it.each([false, true])('keeps the opposite arrow usable and reverses an unfinished step (mobile=%s)', (mobile) => {
+    vi.useFakeTimers()
+    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({
+      matches: mobile && query === '(max-width: 600px)',
+      addEventListener: vi.fn(), removeEventListener: vi.fn(),
+    })))
+    try {
+      render(<WorksCardCarousel onOpen={vi.fn()} language="ru" />)
+      const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
+      const previous = screen.getByRole('button', { name: 'Предыдущий проект' })
+      const next = screen.getByRole('button', { name: 'Следующий проект' })
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      fireEvent.click(next)
+      expect(next).toBeDisabled()
+      expect(previous).toBeEnabled()
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD / 3))
+      fireEvent.click(previous)
+      expect(previous).toBeDisabled()
+      expect(next).toBeEnabled()
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
+      expect(carousel).toHaveAttribute('data-works-position', String(WORKS_INITIAL_POSITION))
+      expect(previous).toBeEnabled()
+      expect(next).toBeEnabled()
+      expect(carousel).not.toHaveClass('is-click-scrolling')
+      fireEvent.click(next)
+      fireEvent.click(previous)
+      expect(previous).toBeEnabled()
+      expect(next).toBeEnabled()
+      expect(carousel).not.toHaveClass('is-click-scrolling')
+    } finally {
+      vi.useRealTimers()
+      vi.unstubAllGlobals()
     }
   })
 
