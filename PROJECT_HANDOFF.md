@@ -333,7 +333,7 @@ CSS показывает нужную картинку в зависимости
 
 Используются две идеально совмещённые WebP-картинки — по одной на тему:
 
-- light: `/assets/maria/works-phone-hand.webp` (исходник `ChatGPT-Image-Sep-17_-2026_-11_50_32-PM.webp`);
+- light: `/assets/maria/works-phone-hand.webp` (исходник `full-hand-smooth-bezel (1).webp`);
 - dark: `/assets/maria/works-phone-hand-dark.webp` (исходник `ChatGPT-Image-Sep-16_-2026_-10_14_22-PM-_1_.webp`).
 
 Обе картинки находятся в одном контейнере, используют общие размеры и координаты и переключаются только через `opacity`, поэтому при смене темы рука не смещается. При перелистывании карусели изображения руки больше не меняются.
@@ -787,7 +787,7 @@ favicon.svg
 | `home-portrait-dark.png` | ~1.7 MB |
 | `mts-pay-cover.png` | ~1.6 MB |
 | `home-card-about.png` | ~1.3 MB |
-| `works-phone-hand.webp` | ~526 KB |
+| `works-phone-hand.webp` | ~904 KB |
 | `astronaut-optimized.glb` | ~1.1 MB |
 | `home-card-works.png` | ~1.0 MB |
 

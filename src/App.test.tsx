@@ -281,11 +281,11 @@ describe('Maria Tkachenko portfolio', () => {
       'mts-project-card__footer',
     ])
     const hand = container.querySelector<HTMLImageElement>('.maria-works-hand img')
-    expect(hand).toHaveAttribute('src', '/assets/maria/works-phone-hand.webp')
+    expect(hand).toHaveAttribute('src', '/assets/maria/works-phone-hand.webp?v=a907d93')
     expect(hand).toHaveAttribute('alt', '')
     expect(hand).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelectorAll('.maria-works-hand__image--light')).toHaveLength(1)
-    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand.webp"]')).toHaveLength(1)
+    expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand.webp?v=a907d93"]')).toHaveLength(1)
     expect(container.querySelectorAll('.maria-works-hand__image--dark')).toHaveLength(1)
     expect(container.querySelectorAll('.maria-works-hand img[src="/assets/maria/works-phone-hand-dark.webp?v=d1c6566"]')).toHaveLength(1)
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })

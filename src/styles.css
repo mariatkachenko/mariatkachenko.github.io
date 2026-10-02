@@ -126,10 +126,10 @@ html[data-transition-route="works"]::view-transition-new(works-carousel){display
 .maria-works-page::before{content:"";position:absolute;z-index:0;inset:-3%;background-image:url('/assets/maria/works-vector-pattern.svg');background-size:cover;background-position:calc(50% + var(--works-pattern-x)) calc(50% + var(--works-pattern-y));background-repeat:no-repeat;opacity:.5;pointer-events:none;transition:background-position .78s cubic-bezier(.22,.72,.22,1);will-change:background-position}
 .theme-dark .maria-works-page{background:radial-gradient(circle at 22% 18%,rgba(78,10,45,.42),transparent 48%),radial-gradient(circle at 80% 78%,rgba(54,9,38,.32),transparent 46%),#030811}
 .theme-dark .maria-works-page::before{background-image:url('/assets/maria/works-vector-pattern.svg');opacity:.24;filter:brightness(.32) saturate(.58) hue-rotate(-6deg)}
-.maria-works-hand{--works-hand-final-rotation:-90deg;--works-hand-x:0;--works-hand-y:0;position:absolute;z-index:1;left:50%;right:auto;bottom:-52vh;width:min(55vw,940px);translate:-18.2% 0;pointer-events:none;transform-origin:100% 54%;view-transition-name:works-hand;animation:maria-works-hand-enter .52s cubic-bezier(.2,.8,.2,1) both}
+.maria-works-hand{--works-hand-final-rotation:-90deg;--works-hand-x:0;--works-hand-y:0;position:absolute;z-index:1;left:50%;right:auto;bottom:-52vh;width:55vw;translate:-18.2% 0;pointer-events:none;transform-origin:100% 54%;view-transition-name:works-hand;animation:maria-works-hand-enter .52s cubic-bezier(.2,.8,.2,1) both}
 .maria-works-hand img{display:block;width:100%;height:auto;transform:translate3d(var(--works-hand-x),var(--works-hand-y),0) rotate(var(--works-hand-final-rotation));transform-origin:50% 50%;transition:opacity .28s ease}
 .maria-works-hand__image--theme{left:50%;top:0;bottom:auto;width:100%;height:auto;aspect-ratio:2/3;translate:-50% 0;object-fit:cover;object-position:center center;opacity:0}
-.maria-works-hand__image--light{position:relative}
+.maria-works-hand__image--light{position:relative;--works-hand-x:-4%}
 .maria-works-hand__image--dark{position:absolute;mix-blend-mode:screen}
 .theme-light .maria-works-hand__image--light{opacity:1}
 .theme-dark .maria-works-hand__image--dark{opacity:1}
