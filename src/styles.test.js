@@ -625,7 +625,7 @@ describe('mobile works card artwork geometry', () => {
     expect(styles).toContain('.tinnotech-project-card__phones{transform:translate3d(-50%,calc(1% + 10.5cqi + 17vh),0) scale(1.18)}')
     expect(styles).toContain('.wallet-project-card__phones{transform:translate3d(-50%,calc(1% - 5.25cqi + 16.75vh),0) scale(1.12)}')
     expect(styles).toContain('.wallet-project-card__drink{transform:translate3d(calc(9% + 7cqi),calc(1% - 7.875cqi + 3vh),0) scaleX(-1) rotate(31deg) scale(2.9025)}')
-    expect(styles).toContain('.wallet-project-card__bottle{transform:translate3d(2%,calc(1% - 7.525cqi - 3vh),0) rotate(-2deg) scale(1.4175)}')
+    expect(styles).toContain('.wallet-project-card__bottle{transform:translate3d(calc(5% + 2vh),calc(1% - 7.525cqi - 3vh),0) rotate(0deg) scale(1.4175)}')
     expect(styles).toContain('.wallet-project-card__cart{transform:translate3d(calc(11% - 7cqi),calc(1% - .875cqi),0) rotate(10deg) scale(1.298)}')
     expect(styles).not.toContain('.wallet-project-card__cart{transform:translate3d(calc(11% - 7cqi),calc(1% - .875cqi),0) rotate(10deg) scale(1.12875)}')
     expect(styles).toContain('.autopay-project-card__phones{transform:translate3d(-50%,calc(1% + 5.25cqi + 19vh),0) scale(1.36)}')
