@@ -71,6 +71,7 @@ const keepDirectories = [
   'maria/sbp-presentation/',
   'maria/autopay-presentation/',
   'maria/connection-presentation/',
+  'maria/anyexcuse-presentation/',
 ]
 
 async function filesBelow(directory, prefix = '') {

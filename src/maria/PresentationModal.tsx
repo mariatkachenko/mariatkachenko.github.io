@@ -8,8 +8,9 @@ import AliExpressPresentation from './AliExpressPresentation'
 import AutopayPresentation from './AutopayPresentation'
 import ConnectionPresentation from './ConnectionPresentation'
 import SbpPresentation from './SbpPresentation'
+import AnyExcusePresentation from './AnyExcusePresentation'
 
-export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress' | 'sbp' | 'autopay' | 'connection'
+export type PresentationKind = 'mts' | 'mts-game' | 'rarible' | 'aliexpress' | 'sbp' | 'autopay' | 'connection' | 'anyexcuse'
 
 type PresentationModalProps = {
   project: PresentationKind | null
@@ -30,6 +31,8 @@ export default function PresentationModal({ project, onClose, language }: Presen
         ? (language === 'ru' ? 'Автоплатежи МТС' : 'MTS Autopay')
       : project === 'connection'
         ? (language === 'ru' ? 'Пополнение баланса' : 'Balance top-up')
+      : project === 'anyexcuse'
+        ? (language === 'ru' ? 'Сервис доставки anyExcuse' : 'anyExcuse delivery service')
       : project === 'mts-game'
         ? (language === 'ru' ? 'Страницы игр на сайте МТС Оплата' : 'Game pages on the MTS Payment website')
         : copy.presentation
@@ -87,6 +90,8 @@ export default function PresentationModal({ project, onClose, language }: Presen
               ? <AutopayPresentation language={language} />
               : project === 'connection'
                 ? <ConnectionPresentation language={language} />
+              : project === 'anyexcuse'
+                ? <AnyExcusePresentation language={language} />
               : <SbpPresentation language={language} />}
   </div>, document.body)
 }

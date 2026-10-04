@@ -1,12 +1,15 @@
 import type { Language } from './i18n'
 
 type WalletProjectCardProps = {
+  onOpen: () => void
+  ariaLabel: string
   language: Language
   loadArtwork: boolean
+  disabled?: boolean
 }
 
-export default function WalletProjectCard({ language, loadArtwork }: WalletProjectCardProps) {
-  return <div className="wallet-project-card">
+export default function WalletProjectCard({ onOpen, ariaLabel, language, loadArtwork, disabled = false }: WalletProjectCardProps) {
+  return <button className="wallet-project-card" type="button" data-interaction-sound="open" disabled={disabled} onClick={onOpen} aria-label={ariaLabel}>
     <span className="wallet-project-card__surface" aria-hidden="true" />
     <span className="wallet-project-card__artwork" aria-hidden="true">
       {loadArtwork && <>
@@ -28,5 +31,5 @@ export default function WalletProjectCard({ language, loadArtwork }: WalletProje
         <span className="wallet-project-card__meta">{language === 'ru' ? 'anyExcuse, Дублин 2021' : 'anyExcuse, Dublin 2021'}</span>
       </span>
     </span>
-  </div>
+  </button>
 }

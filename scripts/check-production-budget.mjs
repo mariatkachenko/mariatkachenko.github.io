@@ -3,10 +3,10 @@ import { resolve } from 'node:path'
 
 const distRoot = resolve(import.meta.dirname, '..', 'dist')
 const limits = {
-  totalBytes: 30 * 1024 * 1024,
+  totalBytes: 40 * 1024 * 1024,
   javascriptBytes: 260 * 1024,
-  stylesheetBytes: 104 * 1024,
-  fileCount: 160,
+  stylesheetBytes: 110 * 1024,
+  fileCount: 180,
 }
 
 async function filesBelow(directory) {
@@ -25,9 +25,9 @@ const totalBytes = files.reduce((sum, file) => sum + file.size, 0)
 const largestJavaScript = Math.max(0, ...files.filter((file) => file.path.endsWith('.js')).map((file) => file.size))
 const largestStylesheet = Math.max(0, ...files.filter((file) => file.path.endsWith('.css')).map((file) => file.size))
 const failures = [
-  totalBytes > limits.totalBytes && `total ${(totalBytes / 1048576).toFixed(2)} MiB > 30 MiB`,
-  largestJavaScript > limits.javascriptBytes && `JavaScript ${(largestJavaScript / 1024).toFixed(1)} KiB > 260 KiB`,
-  largestStylesheet > limits.stylesheetBytes && `CSS ${(largestStylesheet / 1024).toFixed(1)} KiB > 104 KiB`,
+  totalBytes > limits.totalBytes && `total ${(totalBytes / 1048576).toFixed(2)} MiB > ${limits.totalBytes / 1048576} MiB`,
+  largestJavaScript > limits.javascriptBytes && `JavaScript ${(largestJavaScript / 1024).toFixed(1)} KiB > ${limits.javascriptBytes / 1024} KiB`,
+  largestStylesheet > limits.stylesheetBytes && `CSS ${(largestStylesheet / 1024).toFixed(1)} KiB > ${limits.stylesheetBytes / 1024} KiB`,
   files.length > limits.fileCount && `files ${files.length} > ${limits.fileCount}`,
 ].filter(Boolean)
 

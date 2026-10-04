@@ -274,6 +274,7 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
     || centeredCardIndex === WORKS_SBP_INDEX
     || centeredCardIndex === WORKS_AUTOPAY_INDEX
     || centeredCardIndex === WORKS_CONNECTION_INDEX
+    || centeredCardIndex === WORKS_WALLET_INDEX
 
   useEffect(() => {
     if (!entryReady) return
@@ -683,11 +684,19 @@ export default function WorksCardCarousel({ onOpen, onPositionChange, onCentered
                 loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
                 disabled={!centered}
               />
+            : walletCard
+              ? <WalletProjectCard
+                onOpen={() => openAfterPressAnimation('anyexcuse', index)}
+                ariaLabel={language === 'ru'
+                  ? 'Открыть презентацию «Сервис доставки anyExcuse»'
+                  : 'Open presentation “anyExcuse delivery service”'}
+                language={language}
+                loadArtwork={shouldLoadVisibleWorksArtwork(offset)}
+                disabled={!centered}
+              />
             : <div className="maria-works-deck-card__empty" aria-hidden="true">
             {tinnotechCard
                 ? <TinnotechProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
-              : walletCard
-                ? <WalletProjectCard language={language} loadArtwork={shouldLoadVisibleWorksArtwork(offset)} />
               : <WorksProjectCard
                 title={language === 'ru' ? 'Новый проект' : 'New project'}
                 meta={language === 'ru' ? 'Скоро' : 'Coming soon'}

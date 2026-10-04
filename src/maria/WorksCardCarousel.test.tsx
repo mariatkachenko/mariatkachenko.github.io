@@ -307,7 +307,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_RARIBLE_INDEX]).toHaveAttribute('data-offset', '-4')
     expect(screen.queryByText('MTS Pay')).not.toBeInTheDocument()
     expect(screen.queryByText('Coming soon')).not.toBeInTheDocument()
-    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(2)
+    expect(container.querySelectorAll('.maria-works-deck-card__empty')).toHaveLength(1)
     expect(container.querySelectorAll('.works-project-card')).toHaveLength(0)
     expect(container.querySelectorAll('.works-project-card__media')).toHaveLength(0)
     expect(container.querySelectorAll('.works-project-card__footer')).toHaveLength(0)
@@ -332,6 +332,7 @@ describe('WorksCardCarousel', () => {
     expect(cards[WORKS_TINNOTECH_INDEX].querySelectorAll('.tinnotech-project-card__footer')).toHaveLength(1)
     expect(cards[WORKS_WALLET_INDEX].querySelector('.wallet-project-card')).not.toBeNull()
     expect(cards[WORKS_WALLET_INDEX]).toHaveClass('has-wallet')
+    expect(cards[WORKS_WALLET_INDEX].querySelector('.maria-works-deck-card__empty')).toBeNull()
     expect(cards[WORKS_WALLET_INDEX].querySelectorAll('.wallet-project-card__phones')).toHaveLength(0)
     expect(screen.getByText('anyExcuse, Дублин 2021')).toBeInTheDocument()
     expect(cards[WORKS_AUTOPAY_INDEX]).toHaveClass('has-autopay')
@@ -833,6 +834,31 @@ describe('WorksCardCarousel', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
       act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
       expect(onOpen).toHaveBeenCalledWith('sbp')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('opens the anyExcuse presentation only after centering its card', () => {
+    const onOpen = vi.fn()
+    vi.useFakeTimers()
+    try {
+      render(<WorksCardCarousel onOpen={onOpen} language="ru" />)
+      const cards = document.querySelectorAll<HTMLElement>('.maria-works-deck-card')
+      const anyExcuseButton = cards[WORKS_WALLET_INDEX].querySelector<HTMLButtonElement>('button')
+
+      act(() => vi.advanceTimersByTime(WORKS_ENTRY_DURATION_MS))
+      expect(anyExcuseButton).toBeDisabled()
+      for (let step = 0; step < 6; step += 1) {
+        wheelCenteredWorksCard({ deltaX: 220, deltaY: 0 })
+        act(() => vi.advanceTimersByTime(WORKS_WHEEL_SETTLE_DELAY_MS))
+      }
+
+      expect(cards[WORKS_WALLET_INDEX]).toHaveClass('is-centered')
+      expect(anyExcuseButton).not.toBeDisabled()
+      fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Сервис доставки anyExcuse»' }))
+      act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
+      expect(onOpen).toHaveBeenCalledWith('anyexcuse')
     } finally {
       vi.useRealTimers()
     }

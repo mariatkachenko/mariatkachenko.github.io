@@ -13,7 +13,7 @@ import {
   orbitOffset,
   orbitPose,
 } from './maria/HackathonOrbitCarousel'
-import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS } from './maria/WorksCardCarousel'
+import { WORKS_CARD_COUNT, WORKS_CARD_OPEN_DELAY_MS, WORKS_CLICK_SCROLL_MS_PER_CARD } from './maria/WorksCardCarousel'
 import { routeTransitionDirection } from './router'
 
 beforeEach(() => {
@@ -291,7 +291,7 @@ describe('Maria Tkachenko portfolio', () => {
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     expect(container.querySelector('.maria-works-page')).toContainElement(carousel)
     expect(carousel.querySelectorAll('.maria-works-deck-card')).toHaveLength(WORKS_CARD_COUNT)
-    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(2)
+    expect(carousel.querySelectorAll('.maria-works-deck-card__empty[aria-hidden="true"]')).toHaveLength(1)
     expect(carousel).toContainElement(cover)
     expect(container.querySelector('.maria-works-grid')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'На Главную' })).toBeInTheDocument()
@@ -435,7 +435,7 @@ describe('Maria Tkachenko portfolio', () => {
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     act(() => vi.advanceTimersByTime(600))
     for (let step = 0; step < 5; step += 1) {
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      fireEvent.wheel(carousel.querySelector('.maria-works-deck-card.is-centered')!, { deltaX: 220, deltaY: 0 })
       act(() => vi.advanceTimersByTime(120))
     }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Rarible Charity Program»' }))
@@ -466,7 +466,7 @@ describe('Maria Tkachenko portfolio', () => {
     const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
     act(() => vi.advanceTimersByTime(600))
     for (let step = 0; step < 4; step += 1) {
-      fireEvent.wheel(carousel, { deltaX: 220, deltaY: 0 })
+      fireEvent.wheel(carousel.querySelector('.maria-works-deck-card.is-centered')!, { deltaX: 220, deltaY: 0 })
       act(() => vi.advanceTimersByTime(120))
     }
     fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Collections Prototype - AliExpress DAU Hackathon»' }))
@@ -494,6 +494,8 @@ describe('Maria Tkachenko portfolio', () => {
       const carousel = screen.getByRole('region', { name: 'Карусель рабочих проектов' })
 
       act(() => vi.advanceTimersByTime(600))
+      fireEvent.click(carousel.querySelector('.maria-works-deck-card.has-sbp')!)
+      act(() => vi.advanceTimersByTime(WORKS_CLICK_SCROLL_MS_PER_CARD + 16))
       fireEvent.click(screen.getByRole('button', { name: 'Открыть презентацию «Оплата по QR»' }))
       act(() => vi.advanceTimersByTime(WORKS_CARD_OPEN_DELAY_MS))
 
