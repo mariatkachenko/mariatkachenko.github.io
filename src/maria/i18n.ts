@@ -3,6 +3,7 @@ export type Language = 'ru' | 'en'
 const copy = {
   ru: {
     name: 'МАРИЯ ТКАЧЕНКО',
+    location: 'МОСКВА',
     contact: 'СВЯЗАТЬСЯ',
     homeWorks: 'Работы',
     homeAbout: 'Обо мне',
@@ -25,6 +26,7 @@ const copy = {
   },
   en: {
     name: 'MARIA TKACHENKO',
+    location: 'MOSCOW',
     contact: 'CONTACT',
     homeWorks: 'Works',
     homeAbout: 'About Me',

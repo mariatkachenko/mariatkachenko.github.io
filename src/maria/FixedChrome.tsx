@@ -16,7 +16,7 @@ export default function FixedChrome({ theme, onThemeChange, language, onLanguage
         <h1>{copy.name}</h1>
       </div>
       <a href="https://marykllj.notion.site/89f5a1082f494a0ea0c5c362a32a808c" target="_blank" rel="noreferrer">CV NOTION</a>
-      <div className="maria-meta"><span>МОСКВА</span><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@MARYKLLJ</a></div>
+      <div className="maria-meta"><span>{copy.location}</span><a href="https://t.me/marykllj" target="_blank" rel="noreferrer">@MARYKLLJ</a></div>
       <a className="maria-contact" href="mailto:mery.tkachenko@gmail.com">{copy.contact} <span aria-hidden="true">↗</span></a>
     </header>
     <footer className="maria-controls maria-fixed-bottom">
