@@ -10,16 +10,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script>
-      if (window.location.pathname.replace(/\/+$/, '') === '/works') {
-        ['/assets/maria/mts-pay-logo-flyout.webp', '/assets/maria/mts-pay-butterfly-flyout.webp'].forEach((href) => {
-          const preload = document.createElement('link')
-          preload.rel = 'preload'
-          preload.as = 'image'
-          preload.href = href
-          preload.fetchPriority = 'high'
-          document.head.append(preload)
-        })
-      }
       if (window.location.pathname.replace(/\/+$/, '') === '/hackathons') {
         const modelViewer = document.createElement('script')
         modelViewer.type = 'module'
@@ -29,8 +19,8 @@
       }
     </script>
     <title>Maria Tkachenko Portfolio</title>
-    <link rel="stylesheet" href="/mobile-works-overrides.css?v=20261005-landscape-header">
-    <script type="module" crossorigin src="/assets/index-yh7UWEaA.js"></script>
+    <link rel="stylesheet" href="/mobile-works-overrides.css?v=20261112-no-mts-flyout">
+    <script type="module" crossorigin src="/assets/index-D4ruHons.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-B80IjR0o.css">
   </head>
   <body>

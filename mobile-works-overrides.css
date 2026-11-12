@@ -21,3 +21,4 @@ html .theme-dark .maria-works-deck-card.has-wallet .wallet-project-card__surface
 
 html .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__bottle{transform:translate3d(calc(8% + 2vh),calc(1% - 7.525cqi - 1vh),0) rotate(0deg) scale(1.4175)}
 @media (max-width: 600px){html .maria-works-deck-card.has-wallet.is-centered .wallet-project-card__bottle{transform:translate3d(calc(5% + 2vh),calc(1% - 7.525cqi - 3vh),0) rotate(0deg) scale(1.4175)}}
+html .mts-flyout-overlay{display:none!important}

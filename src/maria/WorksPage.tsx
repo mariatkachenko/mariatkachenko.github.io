@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useState, type CSSProperties } from 'react'
 import PresentationModal, { type PresentationKind } from './PresentationModal'
-import WorksCardCarousel, { worksPatternOffset, WORKS_INITIAL_POSITION, WORKS_PROJECT_INDEX } from './WorksCardCarousel'
+import WorksCardCarousel, { worksPatternOffset, WORKS_INITIAL_POSITION } from './WorksCardCarousel'
 import HomeBackButton from './HomeBackButton'
-import MtsFlyoutOverlay from './MtsFlyoutOverlay'
 import { type Language } from './i18n'
 import { ROUTE_TRANSITION_READY_EVENT } from '../router'
 
@@ -10,28 +9,9 @@ export default function WorksPage({ language }: { language: Language }) {
   const [sceneReady, setSceneReady] = useState(() => !document.documentElement.dataset.transitionDirection)
   const [presentation, setPresentation] = useState<PresentationKind | null>(null)
   const [patternOffset, setPatternOffset] = useState(() => worksPatternOffset(WORKS_INITIAL_POSITION))
-  const [flyoutActivation, setFlyoutActivation] = useState(1)
-  const [flyoutVisible, setFlyoutVisible] = useState(false)
-  const previousCenteredIndex = useRef<number | null>(WORKS_INITIAL_POSITION)
-  const carouselEntryComplete = useRef(false)
   const closePresentation = useCallback(() => setPresentation(null), [])
   const updateScene = useCallback((position: number) => {
     setPatternOffset(worksPatternOffset(position))
-  }, [])
-  const updateCenteredIndex = useCallback((nextIndex: number) => {
-    if (nextIndex === WORKS_PROJECT_INDEX) {
-      if (carouselEntryComplete.current) setFlyoutVisible(true)
-      if (previousCenteredIndex.current !== WORKS_PROJECT_INDEX) {
-        setFlyoutActivation((current) => current + 1)
-      }
-    } else {
-      setFlyoutVisible(false)
-    }
-    previousCenteredIndex.current = nextIndex
-  }, [])
-  const finishCarouselEntry = useCallback(() => {
-    carouselEntryComplete.current = true
-    if (previousCenteredIndex.current === WORKS_PROJECT_INDEX) setFlyoutVisible(true)
   }, [])
   useEffect(() => {
     if (sceneReady) return
@@ -57,13 +37,10 @@ export default function WorksPage({ language }: { language: Language }) {
     <WorksCardCarousel
       onOpen={setPresentation}
       onPositionChange={updateScene}
-      onCenteredIndexChange={updateCenteredIndex}
       entryReady={sceneReady}
-      onEntryComplete={finishCarouselEntry}
       paused={presentation !== null}
       language={language}
     />
-    <MtsFlyoutOverlay activation={flyoutActivation} visible={sceneReady && flyoutVisible} />
     <PresentationModal project={presentation} onClose={closePresentation} language={language} />
   </main>
 }

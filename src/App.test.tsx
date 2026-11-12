@@ -245,12 +245,11 @@ describe('Maria Tkachenko portfolio', () => {
       expect(container.querySelector('.maria-works-page')).toHaveClass('is-scene-ready')
       expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entering')
       expect(container.querySelector('.maria-works-carousel')).toHaveClass('is-entry-active')
-      expect(container.querySelector('.mts-flyout-overlay')).toBeInTheDocument()
-      expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
+      expect(container.querySelector('.mts-flyout-overlay')).not.toBeInTheDocument()
 
       act(() => vi.advanceTimersByTime(600))
       expect(container.querySelector('.maria-works-carousel')).not.toHaveClass('is-entering')
-      expect(container.querySelector('.mts-flyout-overlay')).toHaveClass('is-active')
+      expect(container.querySelector('.mts-flyout-overlay')).not.toBeInTheDocument()
     } finally {
       Object.defineProperty(document, 'startViewTransition', {
         value: undefined,
@@ -276,9 +275,7 @@ describe('Maria Tkachenko portfolio', () => {
     expect(cover.querySelector('.mts-project-card__artwork')?.parentElement).toHaveClass('mts-project-card__media')
     expect(cover.querySelector('.mts-project-card__logo-flyout')).toBeNull()
     expect(cover.querySelector('.mts-project-card__butterfly-flyout')).toBeNull()
-    expect(container.querySelector('.mts-flyout-overlay__logo')).toHaveAttribute('src', '/assets/maria/mts-pay-logo-flyout.webp')
-    expect(container.querySelector('.mts-flyout-overlay__butterfly')).toHaveAttribute('src', '/assets/maria/mts-pay-butterfly-flyout.webp?v=4')
-    expect(container.querySelector('.mts-flyout-overlay')).not.toHaveClass('is-active')
+    expect(container.querySelector('.mts-flyout-overlay')).not.toBeInTheDocument()
     expect(Array.from(cover.children).map((node) => node.className)).toEqual([
       'mts-project-card__media',
       'mts-project-card__footer',
